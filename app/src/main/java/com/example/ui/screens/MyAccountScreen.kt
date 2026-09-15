@@ -1,5 +1,8 @@
 package com.example.ui.screens
 
+import androidx.compose.material3.MaterialTheme
+
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,6 +38,7 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Science
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material3.Card
+import com.example.presentation.components.KisanCard
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -60,25 +64,16 @@ import androidx.compose.ui.unit.sp
 import com.example.data.model.AppLanguage
 import com.example.data.model.FarmerProfile
 import com.example.ui.components.KisanLogoHeader
-import com.example.ui.theme.KisanCardBorder
-import com.example.ui.theme.KisanCharcoal
-import com.example.ui.theme.KisanDeepForest
-import com.example.ui.theme.KisanEmerald
-import com.example.ui.theme.KisanEmeraldLight
-import com.example.ui.theme.KisanHarvestGold
-import com.example.ui.theme.KisanMutedSage
-import com.example.ui.theme.KisanWarmIvory
-import com.example.ui.theme.KisanWhite
 
 @Composable
 fun MyAccountScreen(
   farmerProfile: FarmerProfile,
   currentLanguage: AppLanguage,
   onLanguageSelected: (AppLanguage) -> Unit,
-  onNavigateToBiometric: () -> Unit,
   onNavigateToHistory: () -> Unit,
   onNavigateToWeather: () -> Unit,
   onNavigateToTransparency: () -> Unit = {},
+  onNavigateToBiometric: () -> Unit = {},
   onLogout: () -> Unit,
   onBackClick: () -> Unit = {},
   modifier: Modifier = Modifier
@@ -89,8 +84,7 @@ fun MyAccountScreen(
   Column(
     modifier = modifier
       .fillMaxSize()
-      .background(KisanWarmIvory)
-      .statusBarsPadding()
+      .background(MaterialTheme.colorScheme.background)
       .verticalScroll(rememberScrollState())
       .padding(horizontal = 16.dp, vertical = 12.dp)
       .testTag("my_account_screen")
@@ -107,7 +101,7 @@ fun MyAccountScreen(
         Icon(
           imageVector = Icons.AutoMirrored.Filled.ArrowBack,
           contentDescription = "Back",
-          tint = KisanCharcoal
+          tint = MaterialTheme.colorScheme.onBackground
         )
       }
       Spacer(modifier = Modifier.width(6.dp))
@@ -115,16 +109,16 @@ fun MyAccountScreen(
         text = "My Account",
         fontSize = 20.sp,
         fontWeight = FontWeight.Bold,
-        color = KisanCharcoal
+        color = MaterialTheme.colorScheme.onBackground
       )
     }
 
     Spacer(modifier = Modifier.height(16.dp))
 
     // Profile Identity Card
-    Card(
+    KisanCard(
       shape = RoundedCornerShape(20.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanWhite),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
       elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
       modifier = Modifier.fillMaxWidth()
     ) {
@@ -136,8 +130,8 @@ fun MyAccountScreen(
       ) {
         Surface(
           shape = CircleShape,
-          color = KisanEmeraldLight,
-          border = BorderStroke(2.dp, KisanEmerald),
+          color = MaterialTheme.colorScheme.primaryContainer,
+          border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
           modifier = Modifier.size(72.dp)
         ) {
           Box(contentAlignment = Alignment.Center) {
@@ -145,7 +139,7 @@ fun MyAccountScreen(
               text = "RP",
               fontSize = 26.sp,
               fontWeight = FontWeight.Bold,
-              color = KisanDeepForest
+              color = MaterialTheme.colorScheme.onPrimaryContainer
             )
           }
         }
@@ -156,20 +150,20 @@ fun MyAccountScreen(
           text = farmerProfile.name,
           fontSize = 18.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
 
         Text(
           text = "${farmerProfile.village}, ${farmerProfile.state}",
           fontSize = 13.sp,
-          color = KisanMutedSage
+          color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         Surface(
           shape = RoundedCornerShape(12.dp),
-          color = KisanEmeraldLight,
+          color = MaterialTheme.colorScheme.primaryContainer,
           modifier = Modifier.padding(top = 4.dp)
         ) {
           Row(
@@ -179,7 +173,7 @@ fun MyAccountScreen(
             Icon(
               imageVector = Icons.Default.Phone,
               contentDescription = null,
-              tint = KisanEmerald,
+              tint = MaterialTheme.colorScheme.primary,
               modifier = Modifier.size(13.dp)
             )
             Spacer(modifier = Modifier.width(4.dp))
@@ -187,7 +181,7 @@ fun MyAccountScreen(
               text = farmerProfile.mobileNumber,
               fontSize = 12.sp,
               fontWeight = FontWeight.SemiBold,
-              color = KisanEmerald
+              color = MaterialTheme.colorScheme.primary
             )
           }
         }
@@ -197,9 +191,9 @@ fun MyAccountScreen(
     Spacer(modifier = Modifier.height(16.dp))
 
     // Farm Summary Card
-    Card(
+    KisanCard(
       shape = RoundedCornerShape(18.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanWhite),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
       elevation = CardDefaults.cardElevation(defaultElevation = 1.5.dp),
       modifier = Modifier.fillMaxWidth()
     ) {
@@ -208,7 +202,7 @@ fun MyAccountScreen(
           text = "Farm Details",
           fontSize = 14.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanMutedSage
+          color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -217,16 +211,16 @@ fun MyAccountScreen(
           horizontalArrangement = Arrangement.SpaceBetween
         ) {
           Column {
-            Text("Farm Name", fontSize = 12.sp, color = KisanMutedSage)
-            Text(farmerProfile.farmName, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = KisanCharcoal)
+            Text("Farm Name", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(farmerProfile.farmName, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
           }
           Column {
-            Text("Land Size", fontSize = 12.sp, color = KisanMutedSage)
-            Text("${farmerProfile.totalLandAcres} Acres", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = KisanCharcoal)
+            Text("Land Size", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text("${farmerProfile.totalLandAcres} Acres", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
           }
           Column {
-            Text("Primary Crop", fontSize = 12.sp, color = KisanMutedSage)
-            Text(farmerProfile.primaryCrop, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = KisanCharcoal)
+            Text("Primary Crop", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(farmerProfile.primaryCrop, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
           }
         }
       }
@@ -234,165 +228,25 @@ fun MyAccountScreen(
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    // Security & Biometrics Section
-    Text(
-      text = "Security & Biometrics",
-      fontSize = 14.sp,
-      fontWeight = FontWeight.Bold,
-      color = KisanMutedSage,
-      modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
-    )
-
-    Card(
-      shape = RoundedCornerShape(18.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanWhite),
-      elevation = CardDefaults.cardElevation(defaultElevation = 1.5.dp),
-      modifier = Modifier.fillMaxWidth()
-    ) {
-      Column {
-        // Biometric Toggle Item
-        Row(
-          modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-          horizontalArrangement = Arrangement.SpaceBetween,
-          verticalAlignment = Alignment.CenterVertically
-        ) {
-          Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1f)
-          ) {
-            Surface(
-              shape = CircleShape,
-              color = KisanEmeraldLight,
-              modifier = Modifier.size(38.dp)
-            ) {
-              Box(contentAlignment = Alignment.Center) {
-                Icon(
-                  imageVector = Icons.Default.Fingerprint,
-                  contentDescription = null,
-                  tint = KisanEmerald,
-                  modifier = Modifier.size(22.dp)
-                )
-              }
-            }
-            Spacer(modifier = Modifier.width(12.dp))
-            Column {
-              Text(
-                text = "Biometric Quick Approval",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = KisanCharcoal
-              )
-              Text(
-                text = "Fast login with fingerprint sensor",
-                fontSize = 12.sp,
-                color = KisanMutedSage
-              )
-            }
-          }
-          Switch(
-            checked = biometricEnabled,
-            onCheckedChange = { biometricEnabled = it },
-            colors = SwitchDefaults.colors(
-              checkedThumbColor = Color.White,
-              checkedTrackColor = KisanEmerald
-            )
-          )
-        }
-
-        HorizontalDivider(color = KisanCardBorder.copy(alpha = 0.5f))
-
-        // Quick Test Biometric Screen
-        AccountSettingRow(
-          icon = Icons.Default.Security,
-          title = "Test Biometric Approval Screen",
-          subtitle = "Preview biometric authentication UI",
-          onClick = onNavigateToBiometric
-        )
-      }
-    }
-
-    Spacer(modifier = Modifier.height(16.dp))
 
     // Preferences & Services Section
     Text(
       text = "App Settings & Farm Services",
       fontSize = 14.sp,
       fontWeight = FontWeight.Bold,
-      color = KisanMutedSage,
+      color = MaterialTheme.colorScheme.onSurfaceVariant,
       modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
     )
 
-    Card(
+    KisanCard(
       shape = RoundedCornerShape(18.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanWhite),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
       elevation = CardDefaults.cardElevation(defaultElevation = 1.5.dp),
       modifier = Modifier.fillMaxWidth()
     ) {
       Column {
-        // App Language
-        Row(
-          modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-          horizontalArrangement = Arrangement.SpaceBetween,
-          verticalAlignment = Alignment.CenterVertically
-        ) {
-          Row(verticalAlignment = Alignment.CenterVertically) {
-            Surface(
-              shape = CircleShape,
-              color = KisanEmeraldLight,
-              modifier = Modifier.size(38.dp)
-            ) {
-              Box(contentAlignment = Alignment.Center) {
-                Icon(
-                  imageVector = Icons.Default.Language,
-                  contentDescription = null,
-                  tint = KisanEmerald,
-                  modifier = Modifier.size(20.dp)
-                )
-              }
-            }
-            Spacer(modifier = Modifier.width(12.dp))
-            Column {
-              Text(
-                text = "App Language",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = KisanCharcoal
-              )
-              Text(
-                text = currentLanguage.displayName,
-                fontSize = 12.sp,
-                color = KisanMutedSage
-              )
-            }
-          }
 
-          Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            AppLanguage.values().forEach { lang ->
-              Surface(
-                shape = RoundedCornerShape(8.dp),
-                color = if (currentLanguage == lang) KisanDeepForest else KisanWarmIvory,
-                border = BorderStroke(1.dp, if (currentLanguage == lang) KisanDeepForest else KisanCardBorder),
-                modifier = Modifier
-                  .clickable { onLanguageSelected(lang) }
-                  .padding(1.dp)
-              ) {
-                Text(
-                  text = lang.code.uppercase(),
-                  fontSize = 11.sp,
-                  fontWeight = FontWeight.Bold,
-                  color = if (currentLanguage == lang) Color.White else KisanCharcoal,
-                  modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
-                )
-              }
-            }
-          }
-        }
-
-        HorizontalDivider(color = KisanCardBorder.copy(alpha = 0.5f))
+        HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
 
         // Live GPS Location
         AccountSettingRow(
@@ -402,7 +256,7 @@ fun MyAccountScreen(
           onClick = onNavigateToWeather
         )
 
-        HorizontalDivider(color = KisanCardBorder.copy(alpha = 0.5f))
+        HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
 
         // Scan History
         AccountSettingRow(
@@ -412,7 +266,7 @@ fun MyAccountScreen(
           onClick = onNavigateToHistory
         )
 
-        HorizontalDivider(color = KisanCardBorder.copy(alpha = 0.5f))
+        HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
 
         // AI Model Transparency & Dataset Provenance
         AccountSettingRow(
@@ -480,14 +334,14 @@ private fun AccountSettingRow(
     Row(verticalAlignment = Alignment.CenterVertically) {
       Surface(
         shape = CircleShape,
-        color = KisanEmeraldLight,
+        color = MaterialTheme.colorScheme.primaryContainer,
         modifier = Modifier.size(38.dp)
       ) {
         Box(contentAlignment = Alignment.Center) {
           Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = KisanEmerald,
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(20.dp)
           )
         }
@@ -498,12 +352,12 @@ private fun AccountSettingRow(
           text = title,
           fontSize = 14.sp,
           fontWeight = FontWeight.SemiBold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
         Text(
           text = subtitle,
           fontSize = 12.sp,
-          color = KisanMutedSage
+          color = MaterialTheme.colorScheme.onSurfaceVariant
         )
       }
     }
@@ -511,7 +365,7 @@ private fun AccountSettingRow(
     Icon(
       imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
       contentDescription = null,
-      tint = KisanMutedSage,
+      tint = MaterialTheme.colorScheme.onSurfaceVariant,
       modifier = Modifier.size(20.dp)
     )
   }

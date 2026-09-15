@@ -1,5 +1,13 @@
 package com.example.ui.screens
 
+import androidx.compose.material3.MaterialTheme
+
+
+
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.AddLocationAlt
+import androidx.compose.material.icons.filled.WarningAmber
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,11 +39,21 @@ import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.material.icons.filled.Speed
+import androidx.compose.material.icons.filled.AutoGraph
+import androidx.compose.material.icons.filled.Store
+import androidx.compose.material.icons.filled.Memory
+import androidx.compose.material.icons.filled.SatelliteAlt
+import androidx.compose.material.icons.filled.TrendingUp
+import androidx.compose.material.icons.filled.NetworkCheck
 import androidx.compose.material3.Button
+import com.example.presentation.components.KisanPrimaryButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import com.example.presentation.components.KisanCard
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -52,21 +70,15 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.local.FarmCropEntity
 import com.example.data.model.AppStrings
 import com.example.data.model.FarmerProfile
+import com.example.data.model.RiskSeverity
 import com.example.data.model.WeatherInfo
-import com.example.ui.theme.KisanCardBorder
-import com.example.ui.theme.KisanCharcoal
-import com.example.ui.theme.KisanDeepForest
-import com.example.ui.theme.KisanEmerald
-import com.example.ui.theme.KisanEmeraldLight
-import com.example.ui.theme.KisanHarvestGold
-import com.example.ui.theme.KisanMutedSage
-import com.example.ui.theme.KisanWarmIvory
-import com.example.ui.theme.KisanWhite
+import com.example.data.model.WeatherRiskAlert
 
 @Composable
 fun HomeScreen(
@@ -74,6 +86,7 @@ fun HomeScreen(
   farmerProfile: FarmerProfile,
   weather: WeatherInfo,
   crops: List<FarmCropEntity>,
+  alerts: List<WeatherRiskAlert> = emptyList(),
   onNavigateToScan: () -> Unit,
   onNavigateToFarm: () -> Unit,
   onNavigateToWeather: () -> Unit,
@@ -85,12 +98,11 @@ fun HomeScreen(
   LazyColumn(
     modifier = modifier
       .fillMaxSize()
-      .background(KisanWarmIvory)
-      .statusBarsPadding()
+      .background(MaterialTheme.colorScheme.background)
       .padding(horizontal = 16.dp),
     verticalArrangement = Arrangement.spacedBy(16.dp)
   ) {
-    // 1. Top Farmer Header
+    // 1. Header (Good morning, Farmer Name, Location, Temperature)
     item {
       Spacer(modifier = Modifier.height(4.dp))
       Row(
@@ -107,16 +119,16 @@ fun HomeScreen(
           // Farmer Avatar
           Surface(
             shape = CircleShape,
-            color = KisanEmeraldLight,
-            border = androidx.compose.foundation.BorderStroke(1.5.dp, KisanEmerald),
+            color = MaterialTheme.colorScheme.primaryContainer,
+            border = androidx.compose.foundation.BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary),
             modifier = Modifier.size(44.dp)
           ) {
             Box(contentAlignment = Alignment.Center) {
               Text(
-                text = "RP",
+                text = farmerProfile.name.take(1),
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
-                color = KisanDeepForest
+                color = MaterialTheme.colorScheme.onPrimaryContainer
               )
             }
           }
@@ -127,154 +139,63 @@ fun HomeScreen(
             Text(
               text = "Good morning,",
               fontSize = 12.sp,
-              color = KisanMutedSage
+              color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Row(verticalAlignment = Alignment.CenterVertically) {
-              Text(
-                text = farmerProfile.name,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = KisanCharcoal
-              )
-              Icon(
-                imageVector = Icons.Default.KeyboardArrowDown,
-                contentDescription = null,
-                tint = KisanCharcoal,
-                modifier = Modifier.size(18.dp)
-              )
-            }
+            Text(
+              text = farmerProfile.name,
+              fontSize = 16.sp,
+              fontWeight = FontWeight.Bold,
+              color = MaterialTheme.colorScheme.onBackground
+            )
           }
         }
 
-        // Quick Actions: Filter & Add Crop Icons
-        Row(
-          horizontalArrangement = Arrangement.spacedBy(8.dp),
-          verticalAlignment = Alignment.CenterVertically
-        ) {
-          Surface(
-            shape = CircleShape,
-            color = KisanWhite,
-            border = androidx.compose.foundation.BorderStroke(1.dp, KisanCardBorder),
-            modifier = Modifier
-              .size(40.dp)
-              .clickable { onOpenFilter() }
-              .testTag("home_filter_button")
-          ) {
-            Box(contentAlignment = Alignment.Center) {
-              Icon(
-                imageVector = Icons.Default.FilterList,
-                contentDescription = "Filter",
-                tint = KisanCharcoal,
-                modifier = Modifier.size(18.dp)
-              )
-            }
-          }
-
-          Surface(
-            shape = CircleShape,
-            color = KisanWhite,
-            border = androidx.compose.foundation.BorderStroke(1.dp, KisanCardBorder),
-            modifier = Modifier
-              .size(40.dp)
-              .clickable { onNavigateToFarm() }
-              .testTag("home_add_crop_button")
-          ) {
-            Box(contentAlignment = Alignment.Center) {
-              Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Add Crop",
-                tint = KisanDeepForest,
-                modifier = Modifier.size(20.dp)
-              )
-            }
-          }
+        Column(horizontalAlignment = Alignment.End) {
+           Text(
+             text = "${farmerProfile.village}, ${farmerProfile.state}",
+             fontSize = 12.sp,
+             fontWeight = FontWeight.Medium,
+             color = MaterialTheme.colorScheme.onSurfaceVariant
+           )
+           Text(
+             text = "${weather.temperatureC}°C",
+             fontSize = 16.sp,
+             fontWeight = FontWeight.Bold,
+             color = MaterialTheme.colorScheme.onBackground
+           )
         }
       }
     }
 
-    // 2. Location & Live Weather Strip
+    // 2. Hero card
     item {
-      Row(
-        modifier = Modifier
-          .fillMaxWidth()
-          .clickable { onNavigateToWeather() },
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-      ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-          Text(
-            text = "📍 ${farmerProfile.village}, ${farmerProfile.state}",
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Medium,
-            color = KisanMutedSage
-          )
-        }
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-          Icon(
-            imageVector = Icons.Default.WbSunny,
-            contentDescription = null,
-            tint = KisanHarvestGold,
-            modifier = Modifier.size(16.dp)
-          )
-          Spacer(modifier = Modifier.width(4.dp))
-          Text(
-            text = "${weather.temperatureC}°C",
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Bold,
-            color = KisanCharcoal
-          )
-        }
-      }
-    }
-
-    // 3. Hero Card: "Healthy Crops Better Tomorrow"
-    item {
-      Card(
+      KisanCard(
         shape = RoundedCornerShape(22.dp),
-        colors = CardDefaults.cardColors(containerColor = KisanDeepForest),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onPrimaryContainer),
         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
         modifier = Modifier
           .fillMaxWidth()
-          .height(170.dp)
+          .height(160.dp)
       ) {
         Box(modifier = Modifier.fillMaxSize()) {
-          // Lush layered foliage background
+          val onPrimaryContainer = MaterialTheme.colorScheme.onPrimaryContainer
+          val primary = MaterialTheme.colorScheme.primary
           Canvas(modifier = Modifier.fillMaxSize()) {
             val w = size.width
             val h = size.height
-
-            // Background subtle gradient
             drawRect(
               brush = Brush.horizontalGradient(
-                colors = listOf(KisanDeepForest, Color(0xFF1B4D3B), Color(0xFF133E2F))
+                colors = listOf(onPrimaryContainer, Color(0xFF1B4D3B), Color(0xFF133E2F))
               )
             )
-
-            // Right decorative leaves silhouette
             val leafPath = Path().apply {
               moveTo(w * 0.62f, h)
               cubicTo(w * 0.70f, h * 0.35f, w * 0.85f, h * 0.15f, w, h * 0.05f)
               lineTo(w, h)
               close()
             }
-            drawPath(
-              path = leafPath,
-              color = KisanEmerald.copy(alpha = 0.35f)
-            )
-
-            val leafPath2 = Path().apply {
-              moveTo(w * 0.75f, h)
-              cubicTo(w * 0.82f, h * 0.50f, w * 0.90f, h * 0.30f, w, h * 0.20f)
-              lineTo(w, h)
-              close()
-            }
-            drawPath(
-              path = leafPath2,
-              color = KisanHarvestGold.copy(alpha = 0.25f)
-            )
+            drawPath(path = leafPath, color = primary.copy(alpha = 0.35f))
           }
-
           Column(
             modifier = Modifier
               .fillMaxSize()
@@ -282,48 +203,46 @@ fun HomeScreen(
             verticalArrangement = Arrangement.SpaceBetween
           ) {
             Column {
-              Text(
-                text = "Healthy Crops\nBetter Tomorrow",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                lineHeight = 25.sp
-              )
+                Text(
+                  text = "Healthy Crops",
+                  fontSize = 22.sp,
+                  fontWeight = FontWeight.Bold,
+                  color = Color.White
+                )
+                Text(
+                  text = "Better Tomorrow",
+                  fontSize = 18.sp,
+                  color = MaterialTheme.colorScheme.secondary
+                )
             }
-
-            Button(
-              onClick = onNavigateToScan,
-              colors = ButtonDefaults.buttonColors(
-                containerColor = KisanWhite,
-                contentColor = KisanDeepForest
-              ),
-              shape = RoundedCornerShape(20.dp),
-              modifier = Modifier.testTag("hero_start_scan_button")
+            Row(
+              modifier = Modifier.fillMaxWidth(),
+              horizontalArrangement = Arrangement.End
             ) {
-              Text(
-                text = "Start AI Scan",
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold
-              )
-              Spacer(modifier = Modifier.width(6.dp))
-              Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                contentDescription = null,
-                modifier = Modifier.size(14.dp)
-              )
+              KisanPrimaryButton(
+                onClick = onNavigateToScan,
+                colors = ButtonDefaults.buttonColors(
+                  containerColor = MaterialTheme.colorScheme.surface,
+                  contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.testTag("hero_start_scan_button")
+              ) {
+                Text(text = "Start AI Scan →", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+              }
             }
           }
         }
       }
     }
 
-    // 4. Quick Actions Grid (6 items matching mockup)
+    // 3. Quick Actions
     item {
       Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
       ) {
-        // Row 1: My Farms, Crop Health, Irrigation
+        // Row 1
         Row(
           modifier = Modifier.fillMaxWidth(),
           horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -331,49 +250,48 @@ fun HomeScreen(
           QuickActionTile(
             icon = Icons.Default.Agriculture,
             label = "My Farms",
-            testTag = "quick_action_my_farms",
+            testTag = "qa_my_farms",
             modifier = Modifier.weight(1f),
             onClick = onNavigateToFarm
           )
           QuickActionTile(
             icon = Icons.Default.Eco,
             label = "Crop Health",
-            testTag = "quick_action_crop_health",
+            testTag = "qa_crop_health",
             modifier = Modifier.weight(1f),
-            onClick = onNavigateToFarm
+            onClick = onNavigateToScan
           )
           QuickActionTile(
             icon = Icons.Default.WaterDrop,
             label = "Irrigation",
-            testTag = "quick_action_irrigation",
+            testTag = "qa_irrigation",
             modifier = Modifier.weight(1f),
             onClick = onNavigateToWeather
           )
         }
-
-        // Row 2: Climate Risk, Scan History, More
+        // Row 2
         Row(
           modifier = Modifier.fillMaxWidth(),
           horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
           QuickActionTile(
-            icon = Icons.Default.CloudQueue,
+            icon = Icons.Default.WbSunny,
             label = "Climate Risk",
-            testTag = "quick_action_climate_risk",
+            testTag = "qa_climate_risk",
             modifier = Modifier.weight(1f),
             onClick = onNavigateToWeather
           )
           QuickActionTile(
-            icon = Icons.Default.DocumentScanner,
+            icon = Icons.Default.History,
             label = "Scan History",
-            testTag = "quick_action_scan_history",
+            testTag = "qa_scan_history",
             modifier = Modifier.weight(1f),
             onClick = onNavigateToHistory
           )
           QuickActionTile(
-            icon = Icons.Default.FilterList,
-            label = "Filter",
-            testTag = "quick_action_filter",
+            icon = Icons.Default.MoreHoriz,
+            label = "More",
+            testTag = "qa_more",
             modifier = Modifier.weight(1f),
             onClick = onOpenFilter
           )
@@ -381,36 +299,22 @@ fun HomeScreen(
       }
     }
 
-    // 5. Featured Farm Plots Section
+    // 4. Farm/Crop summary
     item {
-      Row(
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(top = 4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-      ) {
-        Text(
-          text = "Registered Plots",
-          fontSize = 16.sp,
-          fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
-        )
-        Text(
-          text = "Manage All",
-          fontSize = 13.sp,
-          fontWeight = FontWeight.SemiBold,
-          color = KisanEmerald,
-          modifier = Modifier.clickable { onNavigateToFarm() }
-        )
-      }
+      Text(
+        text = "Your Farms",
+        fontSize = 18.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.onBackground,
+        modifier = Modifier.padding(top = 8.dp)
+      )
     }
 
     if (crops.isEmpty()) {
       item {
-        Card(
+        KisanCard(
           shape = RoundedCornerShape(16.dp),
-          colors = CardDefaults.cardColors(containerColor = KisanWhite),
+          colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
           modifier = Modifier.fillMaxWidth()
         ) {
           Column(
@@ -422,112 +326,229 @@ fun HomeScreen(
           ) {
             Surface(
               shape = CircleShape,
-              color = KisanEmeraldLight,
-              modifier = Modifier.size(48.dp)
+              color = MaterialTheme.colorScheme.primaryContainer,
+              modifier = Modifier.size(54.dp)
             ) {
               Box(contentAlignment = Alignment.Center) {
-                Icon(
-                  imageVector = Icons.Default.Eco,
-                  contentDescription = null,
-                  tint = KisanEmerald,
-                  modifier = Modifier.size(24.dp)
-                )
+                Icon(Icons.Default.AddLocationAlt, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
               }
             }
+            Text("No farms yet", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = MaterialTheme.colorScheme.onBackground)
             Text(
-              text = "No plots registered yet",
-              fontSize = 15.sp,
-              fontWeight = FontWeight.Bold,
-              color = KisanCharcoal
-            )
-            Text(
-              text = "Add your crops and acreage to track crop health & irrigation schedules.",
+              "Add your first farm to start tracking crop health.",
               fontSize = 12.sp,
-              color = KisanMutedSage,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
               textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(4.dp))
-            Button(
+            Spacer(modifier = Modifier.height(6.dp))
+            OutlinedButton(
               onClick = onNavigateToFarm,
-              shape = RoundedCornerShape(10.dp),
-              colors = ButtonDefaults.buttonColors(containerColor = KisanEmerald)
+              shape = RoundedCornerShape(12.dp),
+              border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
             ) {
-              Icon(imageVector = Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
-              Spacer(modifier = Modifier.width(6.dp))
-              Text("Add Farm Plot", fontSize = 13.sp)
+              Text("Add Farm", color = MaterialTheme.colorScheme.primary)
             }
           }
         }
       }
     } else {
-      items(crops) { crop ->
-      Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = KisanWhite),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        modifier = Modifier
-          .fillMaxWidth()
-          .clickable { onNavigateToFarm() }
-          .testTag("crop_item_${crop.id}")
-      ) {
-        Row(
+      items(crops.take(2)) { crop ->
+        KisanCard(
+          shape = RoundedCornerShape(16.dp),
+          colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
           modifier = Modifier
             .fillMaxWidth()
-            .padding(14.dp),
-          horizontalArrangement = Arrangement.SpaceBetween,
-          verticalAlignment = Alignment.CenterVertically
+            .clickable { onNavigateToFarm() }
         ) {
-          Row(verticalAlignment = Alignment.CenterVertically) {
-            Surface(
-              shape = CircleShape,
-              color = if (crop.healthStatus.contains("Attention", ignoreCase = true)) {
-                KisanHarvestGold.copy(alpha = 0.15f)
-              } else {
-                KisanEmeraldLight
-              },
-              modifier = Modifier.size(42.dp)
-            ) {
-              Box(contentAlignment = Alignment.Center) {
-                Icon(
-                  imageVector = Icons.Default.Eco,
-                  contentDescription = null,
-                  tint = if (crop.healthStatus.contains("Attention", ignoreCase = true)) {
-                    KisanHarvestGold
-                  } else {
-                    KisanEmerald
-                  },
-                  modifier = Modifier.size(22.dp)
-                )
-              }
-            }
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Column {
+          Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+              text = farmerProfile.farmName.ifEmpty { "Green Valley Farm" },
+              fontWeight = FontWeight.Bold,
+              fontSize = 16.sp,
+              color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+              text = "${crop.areaAcres} acres · ${crop.cropName}",
+              fontSize = 14.sp,
+              color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+              Text("Health: ", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+              val healthColor = if (crop.healthStatus == "Critical") Color(0xFFD32F2F) else MaterialTheme.colorScheme.primary
               Text(
-                text = "${farmerProfile.farmName} - ${crop.cropName}",
-                fontSize = 14.sp,
+                text = crop.healthStatus.ifEmpty { "Good" },
                 fontWeight = FontWeight.Bold,
-                color = KisanCharcoal
-              )
-              Text(
-                text = "${crop.areaAcres} acres • ${crop.variety}",
-                fontSize = 12.sp,
-                color = KisanMutedSage
+                fontSize = 14.sp,
+                color = healthColor
               )
             }
           }
+        }
+      }
+    }
 
+    // 5. Important alerts
+    val criticalAlerts = alerts.filter { it.severity.name == "CRITICAL" || it.severity.name == "HIGH" }
+    if (criticalAlerts.isNotEmpty()) {
+        item {
+          Text(
+            text = "Important Alerts",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.padding(top = 8.dp)
+          )
+        }
+        items(criticalAlerts.take(1)) { alert ->
+            KisanCard(
+              shape = RoundedCornerShape(14.dp),
+              colors = CardDefaults.cardColors(containerColor = Color(0xFFFDE8E8)),
+              border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE53935)),
+              modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onNavigateToWeather() }
+            ) {
+              Row(
+                modifier = Modifier.padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+              ) {
+                Icon(
+                  imageVector = Icons.Default.WarningAmber,
+                  contentDescription = "Alert",
+                  tint = Color(0xFFD32F2F),
+                  modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                  Text(
+                    text = alert.title,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp,
+                    color = Color(0xFFB71C1C)
+                  )
+                  Text(
+                    text = "Attention required",
+                    fontSize = 13.sp,
+                    color = Color(0xFFB71C1C).copy(alpha = 0.8f)
+                  )
+                }
+                Icon(
+                  imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                  contentDescription = "View",
+                  tint = Color(0xFFB71C1C)
+                )
+              }
+            }
+        }
+    } else {
+        item {
+          Text(
+            text = "Field Health Status",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.padding(top = 8.dp)
+          )
+        }
+        item {
+          KisanCard(
+            shape = RoundedCornerShape(14.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f)),
+            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)),
+            modifier = Modifier
+              .fillMaxWidth()
+              .clickable { onNavigateToScan() }
+          ) {
+            Row(
+              modifier = Modifier.padding(16.dp),
+              verticalAlignment = Alignment.CenterVertically
+            ) {
+              Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(36.dp)
+              ) {
+                Box(contentAlignment = Alignment.Center) {
+                  Icon(
+                    imageVector = Icons.Default.Eco,
+                    contentDescription = "Healthy",
+                    tint = Color.White,
+                    modifier = Modifier.size(20.dp)
+                  )
+                }
+              }
+              Spacer(modifier = Modifier.width(12.dp))
+              Column(modifier = Modifier.weight(1f)) {
+                Text(
+                  text = "All Monitored Crops Healthy",
+                  fontWeight = FontWeight.Bold,
+                  fontSize = 15.sp,
+                  color = MaterialTheme.colorScheme.onBackground
+                )
+                Text(
+                  text = "No disease risks detected • Tap to run scan",
+                  fontSize = 13.sp,
+                  color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+              }
+              Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = "Scan",
+                tint = MaterialTheme.colorScheme.primary
+              )
+            }
+          }
+        }
+    }
+
+    // 6. Recommendations
+    item {
+      Text(
+        text = "Recommendations",
+        fontSize = 18.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.onBackground,
+        modifier = Modifier.padding(top = 8.dp)
+      )
+    }
+    item {
+      KisanCard(
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD)),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF1976D2)),
+        modifier = Modifier
+          .fillMaxWidth()
+          .clickable { onNavigateToWeather() }
+      ) {
+        Row(
+          modifier = Modifier.padding(16.dp),
+          verticalAlignment = Alignment.CenterVertically
+        ) {
           Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null,
-            tint = KisanMutedSage,
-            modifier = Modifier.size(20.dp)
+            imageVector = Icons.Default.WaterDrop,
+            contentDescription = "Irrigation",
+            tint = Color(0xFF1565C0),
+            modifier = Modifier.size(24.dp)
+          )
+          Spacer(modifier = Modifier.width(12.dp))
+          Column(modifier = Modifier.weight(1f)) {
+            Text(
+              text = "Irrigation recommended",
+              fontWeight = FontWeight.Bold,
+              fontSize = 15.sp,
+              color = Color(0xFF0D47A1)
+            )
+          }
+          Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+            contentDescription = "View",
+            tint = Color(0xFF0D47A1)
           )
         }
       }
     }
-  }
 
     item {
       Spacer(modifier = Modifier.height(24.dp))
@@ -543,44 +564,37 @@ private fun QuickActionTile(
   onClick: () -> Unit,
   modifier: Modifier = Modifier
 ) {
-  Card(
+  KisanCard(
     shape = RoundedCornerShape(16.dp),
-    colors = CardDefaults.cardColors(containerColor = KisanWhite),
-    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     modifier = modifier
+      .height(74.dp)
       .clickable(onClick = onClick)
       .testTag(testTag)
   ) {
     Column(
       modifier = Modifier
         .fillMaxWidth()
-        .padding(vertical = 14.dp, horizontal = 6.dp),
+        .padding(vertical = 12.dp),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center
     ) {
-      Surface(
-        shape = CircleShape,
-        color = KisanEmeraldLight,
-        modifier = Modifier.size(42.dp)
-      ) {
-        Box(contentAlignment = Alignment.Center) {
-          Icon(
-            imageVector = icon,
-            contentDescription = label,
-            tint = KisanEmerald,
-            modifier = Modifier.size(22.dp)
-          )
-        }
-      }
-
+      Icon(
+        imageVector = icon,
+        contentDescription = label,
+        tint = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.size(24.dp)
+      )
       Spacer(modifier = Modifier.height(8.dp))
-
       Text(
         text = label,
-        fontSize = 12.sp,
+        fontSize = 11.sp,
         fontWeight = FontWeight.Medium,
-        color = KisanCharcoal,
-        maxLines = 1
+        color = MaterialTheme.colorScheme.onBackground,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
       )
     }
   }

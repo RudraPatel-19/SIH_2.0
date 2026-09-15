@@ -1,5 +1,17 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 package com.example.ui.screens
 
+import androidx.compose.material3.MaterialTheme
+
+
+
+
+
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.AddLocationAlt
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -32,8 +44,10 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import com.example.presentation.components.KisanPrimaryButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import com.example.presentation.components.KisanCard
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -70,17 +84,8 @@ import com.example.data.local.FarmCropEntity
 import com.example.data.model.AppStrings
 import com.example.data.model.CropGrowthStage
 import com.example.data.model.FarmerProfile
-import com.example.ui.theme.KisanCardBorder
-import com.example.ui.theme.KisanCharcoal
-import com.example.ui.theme.KisanDeepForest
-import com.example.ui.theme.KisanEmerald
-import com.example.ui.theme.KisanEmeraldLight
-import com.example.ui.theme.KisanHarvestGold
-import com.example.ui.theme.KisanMutedSage
 import com.example.ui.components.ConfirmDialog
 import com.example.ui.components.EmptyStateView
-import com.example.ui.theme.KisanWarmIvory
-import com.example.ui.theme.KisanWhite
 
 @Composable
 fun FarmScreen(
@@ -90,467 +95,187 @@ fun FarmScreen(
   onDeleteCrop: (FarmCropEntity) -> Unit,
   strings: AppStrings,
   onOpenFilter: () -> Unit = {},
+  onBackClick: () -> Unit = {},
   modifier: Modifier = Modifier
 ) {
   var showAddDialog by remember { mutableStateOf(false) }
-  var cropToDelete by remember { mutableStateOf<FarmCropEntity?>(null) }
-
-  val healthyCount = crops.count { !it.healthStatus.contains("Attention", ignoreCase = true) && !it.healthStatus.contains("Critical", ignoreCase = true) }
-  val attentionCount = crops.count { it.healthStatus.contains("Attention", ignoreCase = true) }
-  val criticalCount = crops.count { it.healthStatus.contains("Critical", ignoreCase = true) }
-  val totalCrops = crops.size.coerceAtLeast(1)
-
-  LazyColumn(
+  var searchQuery by remember { mutableStateOf("") }
+  
+  Column(
     modifier = modifier
       .fillMaxSize()
-      .background(KisanWarmIvory)
-      .statusBarsPadding()
-      .padding(horizontal = 16.dp),
-    verticalArrangement = Arrangement.spacedBy(16.dp)
+      .background(MaterialTheme.colorScheme.background)
+      .padding(horizontal = 16.dp, vertical = 12.dp)
   ) {
-    // Top Header: "My Farms" + Filter & Add Button
-    item {
-      Spacer(modifier = Modifier.height(4.dp))
+    // Top Bar
+    Row(
+      modifier = Modifier.fillMaxWidth(),
+      horizontalArrangement = Arrangement.SpaceBetween,
+      verticalAlignment = Alignment.CenterVertically
+    ) {
+      Row(verticalAlignment = Alignment.CenterVertically) {
+        IconButton(onClick = onBackClick, modifier = Modifier.size(36.dp)) {
+          Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onBackground)
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        Text("My Farms", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+      }
+      
       Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
       ) {
-        Text(
-          text = "My Farms",
-          fontSize = 20.sp,
-          fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
-        )
-
-        Row(
-          horizontalArrangement = Arrangement.spacedBy(8.dp),
-          verticalAlignment = Alignment.CenterVertically
+        IconButton(
+          onClick = onOpenFilter,
+          modifier = Modifier.size(38.dp)
         ) {
-          Surface(
-            shape = CircleShape,
-            color = KisanWhite,
-            border = BorderStroke(1.dp, KisanCardBorder),
-            modifier = Modifier
-              .size(38.dp)
-              .clickable { onOpenFilter() }
-              .testTag("farm_filter_button")
-          ) {
-            Box(contentAlignment = Alignment.Center) {
-              Icon(
-                imageVector = Icons.Default.FilterList,
-                contentDescription = "Filter Crops",
-                tint = KisanCharcoal,
-                modifier = Modifier.size(18.dp)
-              )
-            }
-          }
-
-          Surface(
-            shape = CircleShape,
-            color = KisanEmerald,
-            modifier = Modifier
-              .size(38.dp)
-              .clickable { showAddDialog = true }
-              .testTag("farm_add_crop_button")
-          ) {
-            Box(contentAlignment = Alignment.Center) {
-              Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Add Crop",
-                tint = Color.White,
-                modifier = Modifier.size(20.dp)
-              )
-            }
-          }
-        }
-      }
-    }
-
-    // Main Farm Card: "Green Valley Farm" - 2.5 acres • Tomato >
-    item {
-      Card(
-        shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = KisanWhite),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        modifier = Modifier.fillMaxWidth()
-      ) {
-        Row(
-          modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-          horizontalArrangement = Arrangement.SpaceBetween,
-          verticalAlignment = Alignment.CenterVertically
-        ) {
-          Row(verticalAlignment = Alignment.CenterVertically) {
-            Surface(
-              shape = CircleShape,
-              color = KisanEmeraldLight,
-              modifier = Modifier.size(46.dp)
-            ) {
-              Box(contentAlignment = Alignment.Center) {
-                Icon(
-                  imageVector = Icons.Default.Eco,
-                  contentDescription = null,
-                  tint = KisanEmerald,
-                  modifier = Modifier.size(24.dp)
-                )
-              }
-            }
-
-            Spacer(modifier = Modifier.width(14.dp))
-
-            Column {
-              Text(
-                text = farmerProfile.farmName,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = KisanCharcoal
-              )
-              Text(
-                text = "${farmerProfile.totalLandAcres} acres • ${farmerProfile.primaryCrop}",
-                fontSize = 13.sp,
-                color = KisanMutedSage
-              )
-            }
-          }
-
           Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null,
-            tint = KisanCharcoal,
-            modifier = Modifier.size(22.dp)
+            imageVector = Icons.Default.FilterList,
+            contentDescription = "Filter",
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
           )
         }
-      }
-    }
-
-    // Crop Health Donut Summary Card
-    item {
-      Card(
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = KisanWhite),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        modifier = Modifier.fillMaxWidth()
-      ) {
-        Column(
+        Surface(
+          shape = CircleShape,
+          color = MaterialTheme.colorScheme.primary,
           modifier = Modifier
-            .fillMaxWidth()
-            .padding(18.dp)
+            .size(38.dp)
+            .clickable { showAddDialog = true }
+            .testTag("farm_add_crop_button")
         ) {
-          Text(
-            text = "Crop Health",
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Bold,
-            color = KisanCharcoal
-          )
-
-          Spacer(modifier = Modifier.height(16.dp))
-
-          Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-          ) {
-            // Donut Canvas
-            Box(
-              modifier = Modifier.size(110.dp),
-              contentAlignment = Alignment.Center
-            ) {
-              Canvas(modifier = Modifier.size(100.dp)) {
-                val strokeWidth = 14.dp.toPx()
-                val arcSize = size.width - strokeWidth
-                val topLeft = Offset(strokeWidth / 2, strokeWidth / 2)
-
-                // Background track
-                drawArc(
-                  color = Color(0xFFE8ECE9),
-                  startAngle = 0f,
-                  sweepAngle = 360f,
-                  useCenter = false,
-                  topLeft = topLeft,
-                  size = Size(arcSize, arcSize),
-                  style = Stroke(strokeWidth, cap = StrokeCap.Round)
-                )
-
-                // Green healthy segment
-                val greenSweep = (healthyCount.toFloat() / totalCrops) * 360f
-                drawArc(
-                  color = KisanEmerald,
-                  startAngle = -90f,
-                  sweepAngle = greenSweep.coerceAtLeast(10f),
-                  useCenter = false,
-                  topLeft = topLeft,
-                  size = Size(arcSize, arcSize),
-                  style = Stroke(strokeWidth, cap = StrokeCap.Round)
-                )
-
-                // Amber attention segment
-                val amberSweep = (attentionCount.toFloat() / totalCrops) * 360f
-                if (attentionCount > 0) {
-                  drawArc(
-                    color = KisanHarvestGold,
-                    startAngle = -90f + greenSweep,
-                    sweepAngle = amberSweep.coerceAtLeast(10f),
-                    useCenter = false,
-                    topLeft = topLeft,
-                    size = Size(arcSize, arcSize),
-                    style = Stroke(strokeWidth, cap = StrokeCap.Round)
-                  )
-                }
-              }
-
-              Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                  text = "Good",
-                  fontSize = 13.sp,
-                  fontWeight = FontWeight.Bold,
-                  color = KisanCharcoal
-                )
-                Text(
-                  text = "$totalCrops crops",
-                  fontSize = 11.sp,
-                  color = KisanMutedSage
-                )
-              }
-            }
-
-            // Stats Breakdown
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-              HealthStatRow(color = KisanEmerald, label = "Healthy", count = healthyCount)
-              HealthStatRow(color = KisanHarvestGold, label = "Needs Attention", count = attentionCount)
-              HealthStatRow(color = Color(0xFFC94C4C), label = "Critical", count = criticalCount)
-            }
+          Box(contentAlignment = Alignment.Center) {
+            Icon(Icons.Default.Add, contentDescription = "Add Farm", tint = Color.White, modifier = Modifier.size(22.dp))
           }
         }
       }
     }
-
-    // Recent Activity Section
-    item {
-      Card(
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = KisanWhite),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        modifier = Modifier.fillMaxWidth()
-      ) {
-        Column(
-          modifier = Modifier
-            .fillMaxWidth()
-            .padding(18.dp)
-        ) {
-          Text(
-            text = "Recent Activity",
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Bold,
-            color = KisanCharcoal
-          )
-
-          Spacer(modifier = Modifier.height(14.dp))
-
-          ActivityItem(
-            iconColor = Color(0xFFC94C4C),
-            title = "Late Blight detected",
-            subtitle = "Tomato • 2 hours ago"
-          )
-          Spacer(modifier = Modifier.height(12.dp))
-          ActivityItem(
-            iconColor = KisanHarvestGold,
-            title = "Irrigation recommended",
-            subtitle = "Maize • 5 hours ago"
-          )
-          Spacer(modifier = Modifier.height(12.dp))
-          ActivityItem(
-            iconColor = KisanEmerald,
-            title = "Weather alert: Heat risk",
-            subtitle = "Surat, Gujarat • 1 day ago"
-          )
+    
+    Spacer(modifier = Modifier.height(16.dp))
+    
+    // Search Bar
+    OutlinedTextField(
+      value = searchQuery,
+      onValueChange = { searchQuery = it },
+      placeholder = { Text("Search farms...", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp) },
+      leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.onSurfaceVariant) },
+      shape = RoundedCornerShape(16.dp),
+      colors = OutlinedTextFieldDefaults.colors(
+        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+        focusedBorderColor = MaterialTheme.colorScheme.primary,
+        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+        focusedContainerColor = MaterialTheme.colorScheme.surface
+      ),
+      modifier = Modifier.fillMaxWidth().height(52.dp),
+      singleLine = true
+    )
+    
+    Spacer(modifier = Modifier.height(20.dp))
+    
+    // Farm List
+    val filteredCrops = crops.filter { farmerProfile.farmName.contains(searchQuery, ignoreCase = true) || it.cropName.contains(searchQuery, ignoreCase = true) }
+    
+    if (filteredCrops.isEmpty()) {
+      Box(modifier = Modifier.fillMaxSize().padding(bottom = 60.dp), contentAlignment = Alignment.Center) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+          Surface(shape = CircleShape, color = MaterialTheme.colorScheme.primaryContainer, modifier = Modifier.size(64.dp)) {
+            Box(contentAlignment = Alignment.Center) {
+              Icon(Icons.Default.AddLocationAlt, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(32.dp))
+            }
+          }
+          Spacer(modifier = Modifier.height(16.dp))
+          Text("No farms found", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.onBackground)
+          Spacer(modifier = Modifier.height(8.dp))
+          Text("Add your first farm to start tracking.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
+          Spacer(modifier = Modifier.height(20.dp))
+          KisanPrimaryButton(
+            onClick = { showAddDialog = true },
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+            shape = RoundedCornerShape(12.dp)
+          ) {
+            Text("Add Farm", fontWeight = FontWeight.Bold)
+          }
         }
-      }
-    }
-
-    // Registered Farm Plots List Header
-    item {
-      Text(
-        text = "Registered Plots (${crops.size})",
-        fontSize = 15.sp,
-        fontWeight = FontWeight.Bold,
-        color = KisanCharcoal
-      )
-    }
-
-    if (crops.isEmpty()) {
-      item {
-        EmptyStateView(
-          icon = Icons.Default.Eco,
-          title = "No Farm Plots Added",
-          description = "Add your farm plots to monitor crop health, growth stages, and irrigation needs.",
-          actionText = "Add Plot",
-          onActionClick = { showAddDialog = true }
-        )
       }
     } else {
-      items(crops) { crop ->
-        Card(
-          shape = RoundedCornerShape(16.dp),
-          colors = CardDefaults.cardColors(containerColor = KisanWhite),
-          elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-          modifier = Modifier.fillMaxWidth()
-        ) {
-          Row(
-            modifier = Modifier
-              .fillMaxWidth()
-              .padding(14.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+      LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        items(filteredCrops) { crop ->
+          KisanCard(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(2.dp),
+            modifier = Modifier.fillMaxWidth().clickable { /* Opens Farm Details */ }
           ) {
-            Row(
-              verticalAlignment = Alignment.CenterVertically,
-              modifier = Modifier.weight(1f)
-            ) {
-              Surface(
-                shape = CircleShape,
-                color = if (crop.healthStatus.contains("Attention", ignoreCase = true)) {
-                  KisanHarvestGold.copy(alpha = 0.15f)
-                } else {
-                  KisanEmeraldLight
-                },
-                modifier = Modifier.size(38.dp)
+            Column(modifier = Modifier.padding(16.dp)) {
+              Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
               ) {
-                Box(contentAlignment = Alignment.Center) {
-                  Icon(
-                    imageVector = Icons.Default.Eco,
-                    contentDescription = null,
-                    tint = if (crop.healthStatus.contains("Attention", ignoreCase = true)) {
-                      KisanHarvestGold
-                    } else {
-                      KisanEmerald
-                    },
-                    modifier = Modifier.size(20.dp)
+                Column {
+                  Text(
+                    text = farmerProfile.farmName.ifEmpty { "Green Valley Farm" },
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onBackground
+                  )
+                  Spacer(modifier = Modifier.height(4.dp))
+                  Text(
+                    text = "${farmerProfile.village}, ${farmerProfile.state}",
+                    fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                   )
                 }
+                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "View details", tint = MaterialTheme.colorScheme.onSurfaceVariant)
               }
-
-              Spacer(modifier = Modifier.width(12.dp))
-
-              Column {
-                Text(
-                  text = crop.cropName,
-                  fontSize = 14.sp,
-                  fontWeight = FontWeight.Bold,
-                  color = KisanCharcoal
-                )
-                Text(
-                  text = "${crop.areaAcres} acres • ${crop.growthStage} • ${crop.healthStatus}",
-                  fontSize = 12.sp,
-                  color = KisanMutedSage
-                )
-              }
-            }
-
-            IconButton(
-              onClick = { cropToDelete = crop },
-              modifier = Modifier.size(32.dp)
-            ) {
-              Icon(
-                imageVector = Icons.Default.DeleteOutline,
-                contentDescription = "Delete plot",
-                tint = KisanMutedSage,
-                modifier = Modifier.size(18.dp)
+              
+              Spacer(modifier = Modifier.height(12.dp))
+              
+              Text(
+                text = "${crop.areaAcres} acres · ${crop.cropName}",
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onBackground
               )
+              
+              Spacer(modifier = Modifier.height(8.dp))
+              
+              Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Health: ", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                
+                val isHealthy = !crop.healthStatus.contains("Attention") && !crop.healthStatus.contains("Critical")
+                val healthColor = if (isHealthy) MaterialTheme.colorScheme.primary else Color(0xFFD32F2F)
+                
+                Text(
+                  text = crop.healthStatus.ifEmpty { "Good" },
+                  fontWeight = FontWeight.Bold,
+                  fontSize = 13.sp,
+                  color = healthColor
+                )
+                
+                Spacer(modifier = Modifier.width(6.dp))
+                Surface(
+                  shape = CircleShape,
+                  color = healthColor,
+                  modifier = Modifier.size(8.dp)
+                ) {}
+              }
             }
           }
         }
+        item { Spacer(modifier = Modifier.height(30.dp)) }
       }
     }
-
-    item {
-      Spacer(modifier = Modifier.height(24.dp))
-    }
   }
 
-  // Delete Confirmation Dialog
-  cropToDelete?.let { crop ->
-    ConfirmDialog(
-      title = "Delete Farm Plot",
-      message = "Are you sure you want to remove '${crop.cropName}' (${crop.areaAcres} acres) from your farm records?",
-      confirmText = "Delete",
-      cancelText = "Cancel",
-      isDestructive = true,
-      onConfirm = {
-        onDeleteCrop(crop)
-        cropToDelete = null
-      },
-      onDismiss = { cropToDelete = null }
-    )
-  }
-
-  // Add Crop Dialog
   if (showAddDialog) {
     AddCropModalDialog(
       onDismiss = { showAddDialog = false },
-      onConfirm = { newCrop ->
-        onAddCrop(newCrop)
-        showAddDialog = false
+      onConfirm = { 
+        onAddCrop(it)
+        showAddDialog = false 
       }
     )
   }
 }
-
-@Composable
-private fun HealthStatRow(color: Color, label: String, count: Int) {
-  Row(verticalAlignment = Alignment.CenterVertically) {
-    Box(
-      modifier = Modifier
-        .size(10.dp)
-        .clip(CircleShape)
-        .background(color)
-    )
-    Spacer(modifier = Modifier.width(8.dp))
-    Text(
-      text = "$label: ",
-      fontSize = 12.sp,
-      color = KisanCharcoal
-    )
-    Text(
-      text = "$count",
-      fontSize = 12.sp,
-      fontWeight = FontWeight.Bold,
-      color = KisanCharcoal
-    )
-  }
-}
-
-@Composable
-private fun ActivityItem(iconColor: Color, title: String, subtitle: String) {
-  Row(
-    verticalAlignment = Alignment.CenterVertically,
-    modifier = Modifier.fillMaxWidth()
-  ) {
-    Box(
-      modifier = Modifier
-        .size(8.dp)
-        .clip(CircleShape)
-        .background(iconColor)
-    )
-    Spacer(modifier = Modifier.width(12.dp))
-    Column {
-      Text(
-        text = title,
-        fontSize = 13.sp,
-        fontWeight = FontWeight.SemiBold,
-        color = KisanCharcoal
-      )
-      Text(
-        text = subtitle,
-        fontSize = 11.sp,
-        color = KisanMutedSage
-      )
-    }
-  }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AddCropModalDialog(
   onDismiss: () -> Unit,
@@ -568,13 +293,13 @@ private fun AddCropModalDialog(
   AlertDialog(
     onDismissRequest = onDismiss,
     shape = RoundedCornerShape(20.dp),
-    containerColor = KisanWhite,
+    containerColor = MaterialTheme.colorScheme.surface,
     title = {
       Text(
         text = "Register Farm Plot",
         fontSize = 18.sp,
         fontWeight = FontWeight.Bold,
-        color = KisanCharcoal
+        color = MaterialTheme.colorScheme.onBackground
       )
     },
     text = {
@@ -589,8 +314,8 @@ private fun AddCropModalDialog(
           singleLine = true,
           shape = RoundedCornerShape(12.dp),
           colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = KisanEmerald,
-            unfocusedBorderColor = KisanCardBorder
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedBorderColor = MaterialTheme.colorScheme.outline
           ),
           modifier = Modifier.fillMaxWidth()
         )
@@ -602,8 +327,8 @@ private fun AddCropModalDialog(
           singleLine = true,
           shape = RoundedCornerShape(12.dp),
           colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = KisanEmerald,
-            unfocusedBorderColor = KisanCardBorder
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedBorderColor = MaterialTheme.colorScheme.outline
           ),
           modifier = Modifier.fillMaxWidth()
         )
@@ -616,8 +341,8 @@ private fun AddCropModalDialog(
           singleLine = true,
           shape = RoundedCornerShape(12.dp),
           colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = KisanEmerald,
-            unfocusedBorderColor = KisanCardBorder
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedBorderColor = MaterialTheme.colorScheme.outline
           ),
           modifier = Modifier.fillMaxWidth()
         )
@@ -634,8 +359,8 @@ private fun AddCropModalDialog(
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = stageDropdownExpanded) },
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
-              focusedBorderColor = KisanEmerald,
-              unfocusedBorderColor = KisanCardBorder
+              focusedBorderColor = MaterialTheme.colorScheme.primary,
+              unfocusedBorderColor = MaterialTheme.colorScheme.outline
             ),
             modifier = Modifier
               .fillMaxWidth()
@@ -659,7 +384,7 @@ private fun AddCropModalDialog(
       }
     },
     confirmButton = {
-      Button(
+      KisanPrimaryButton(
         onClick = {
           if (cropName.isNotBlank()) {
             val acres = areaAcresText.toDoubleOrNull() ?: 1.0
@@ -679,7 +404,7 @@ private fun AddCropModalDialog(
           }
         },
         colors = ButtonDefaults.buttonColors(
-          containerColor = KisanEmerald,
+          containerColor = MaterialTheme.colorScheme.primary,
           contentColor = Color.White
         ),
         shape = RoundedCornerShape(20.dp)
@@ -689,7 +414,7 @@ private fun AddCropModalDialog(
     },
     dismissButton = {
       TextButton(onClick = onDismiss) {
-        Text("Cancel", color = KisanMutedSage)
+        Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
       }
     }
   )

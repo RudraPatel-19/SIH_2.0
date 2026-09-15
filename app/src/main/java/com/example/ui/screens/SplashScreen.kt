@@ -1,5 +1,8 @@
 package com.example.ui.screens
 
+import androidx.compose.material3.MaterialTheme
+
+
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -21,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import com.example.presentation.components.KisanPrimaryButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,13 +46,9 @@ import androidx.compose.ui.unit.sp
 import com.example.ui.components.KisanLogoHeader
 import com.example.ui.components.KisanLogoIcon
 import com.example.ui.components.LogoOrientation
-import com.example.ui.theme.KisanDeepForest
-import com.example.ui.theme.KisanEmerald
-import com.example.ui.theme.KisanHarvestGold
 
 @Composable
 fun SplashScreen(
-  onGetStarted: () -> Unit,
   modifier: Modifier = Modifier
 ) {
   val infiniteTransition = rememberInfiniteTransition(label = "pulse")
@@ -68,16 +68,17 @@ fun SplashScreen(
       .background(
         brush = Brush.verticalGradient(
           colors = listOf(
-            KisanDeepForest,
+            MaterialTheme.colorScheme.onPrimaryContainer,
             Color(0xFF0D251C),
             Color(0xFF091913)
           )
         )
       )
-      .clickable { onGetStarted() }
+      
       .testTag("splash_screen_container")
   ) {
     // Decorative organic background leaf silhouette
+    val primaryContainer = MaterialTheme.colorScheme.primaryContainer
     Canvas(modifier = Modifier.fillMaxSize()) {
       val w = size.width
       val h = size.height
@@ -90,7 +91,7 @@ fun SplashScreen(
       drawPath(
         path = leafGlowPath,
         brush = Brush.radialGradient(
-          colors = listOf(KisanEmerald.copy(alpha = 0.22f), Color.Transparent),
+          colors = listOf(primaryContainer.copy(alpha = 0.22f), Color.Transparent),
           center = Offset(w * 0.5f, h * 0.7f),
           radius = w * 0.8f
         ),
@@ -120,25 +121,6 @@ fun SplashScreen(
       }
 
       Spacer(modifier = Modifier.height(48.dp))
-
-      Button(
-        onClick = onGetStarted,
-        colors = ButtonDefaults.buttonColors(
-          containerColor = KisanEmerald,
-          contentColor = Color.White
-        ),
-        shape = RoundedCornerShape(28.dp),
-        modifier = Modifier
-          .fillMaxWidth(0.7f)
-          .height(52.dp)
-          .testTag("splash_continue_button")
-      ) {
-        Text(
-          text = "Explore Farm →",
-          fontSize = 16.sp,
-          fontWeight = FontWeight.Bold
-        )
-      }
     }
 
     // Bottom Sub-motto from the Design
@@ -154,7 +136,7 @@ fun SplashScreen(
         fontSize = 14.sp,
         fontWeight = FontWeight.Medium,
         fontStyle = FontStyle.Italic,
-        color = KisanHarvestGold.copy(alpha = 0.9f)
+        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.9f)
       )
       Text(
         text = "Stronger Farmers.",

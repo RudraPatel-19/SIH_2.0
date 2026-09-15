@@ -1,5 +1,8 @@
 package com.example.ui.screens
 
+import androidx.compose.material3.MaterialTheme
+
+
 import android.graphics.Bitmap
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -54,8 +57,10 @@ import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
+import com.example.presentation.components.KisanPrimaryButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import com.example.presentation.components.KisanCard
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -87,15 +92,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.data.model.CropDisease
 import com.example.data.model.DiseaseSeverity
-import com.example.ui.theme.KisanCardBorder
-import com.example.ui.theme.KisanCharcoal
-import com.example.ui.theme.KisanDeepForest
-import com.example.ui.theme.KisanEmerald
-import com.example.ui.theme.KisanEmeraldLight
-import com.example.ui.theme.KisanHarvestGold
-import com.example.ui.theme.KisanMutedSage
-import com.example.ui.theme.KisanWarmIvory
-import com.example.ui.theme.KisanWhite
 
 const val DEFAULT_CONFIDENCE_THRESHOLD = 0.70f
 
@@ -136,9 +132,7 @@ fun ResultsScreen(
   Column(
     modifier = modifier
       .fillMaxSize()
-      .background(KisanWarmIvory)
-      .statusBarsPadding()
-      .navigationBarsPadding()
+      .background(MaterialTheme.colorScheme.background)
       .verticalScroll(rememberScrollState())
       .padding(horizontal = 18.dp, vertical = 12.dp)
       .testTag("results_screen")
@@ -178,7 +172,7 @@ fun ResultsScreen(
         Icon(
           imageVector = Icons.Default.AutoAwesome,
           contentDescription = null,
-          tint = KisanEmerald,
+          tint = MaterialTheme.colorScheme.primary,
           modifier = Modifier.size(20.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -186,15 +180,15 @@ fun ResultsScreen(
           text = "AI Disease Detection Output",
           fontSize = 16.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
       }
 
       Surface(
         shape = RoundedCornerShape(12.dp),
         color = when {
-          isAnalyzing -> KisanHarvestGold.copy(alpha = 0.2f)
-          activeResult != null -> if (activeResult.confidence < confidenceThreshold) Color(0xFFFFF3CD) else KisanEmeraldLight
+          isAnalyzing -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)
+          activeResult != null -> if (activeResult.confidence < confidenceThreshold) Color(0xFFFFF3CD) else MaterialTheme.colorScheme.primaryContainer
           else -> Color(0xFFE8ECE9)
         }
       ) {
@@ -208,8 +202,8 @@ fun ResultsScreen(
           fontWeight = FontWeight.SemiBold,
           color = when {
             isAnalyzing -> Color(0xFFB26A00)
-            activeResult != null -> if (activeResult.confidence < confidenceThreshold) Color(0xFFB26A00) else KisanDeepForest
-            else -> KisanMutedSage
+            activeResult != null -> if (activeResult.confidence < confidenceThreshold) Color(0xFFB26A00) else MaterialTheme.colorScheme.onPrimaryContainer
+            else -> MaterialTheme.colorScheme.onSurfaceVariant
           },
           modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
         )
@@ -281,7 +275,7 @@ private fun ResultsTopBar(
         Icon(
           imageVector = Icons.AutoMirrored.Filled.ArrowBack,
           contentDescription = "Back",
-          tint = KisanCharcoal
+          tint = MaterialTheme.colorScheme.onBackground
         )
       }
       Spacer(modifier = Modifier.width(6.dp))
@@ -290,12 +284,12 @@ private fun ResultsTopBar(
           text = "Scan & Analysis",
           fontSize = 18.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
         Text(
           text = if (hasResult) "AI Diagnosis Generated" else "Specimen Ready for Model",
           fontSize = 11.sp,
-          color = KisanMutedSage
+          color = MaterialTheme.colorScheme.onSurfaceVariant
         )
       }
     }
@@ -303,7 +297,7 @@ private fun ResultsTopBar(
     // Interactive toggle to preview placeholder vs output
     Surface(
       shape = RoundedCornerShape(16.dp),
-      color = KisanEmeraldLight,
+      color = MaterialTheme.colorScheme.primaryContainer,
       modifier = Modifier
         .clickable(onClick = onTogglePlaceholderDemo)
         .testTag("results_toggle_placeholder_demo")
@@ -312,7 +306,7 @@ private fun ResultsTopBar(
         text = if (hasResult) "Show Placeholder" else "Show Output",
         fontSize = 11.sp,
         fontWeight = FontWeight.Bold,
-        color = KisanEmerald,
+        color = MaterialTheme.colorScheme.primary,
         modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
       )
     }
@@ -332,14 +326,14 @@ private fun CapturedImageViewport(
   confidenceThreshold: Float = DEFAULT_CONFIDENCE_THRESHOLD,
   onRetake: () -> Unit
 ) {
-  Card(
+  KisanCard(
     shape = RoundedCornerShape(20.dp),
-    colors = CardDefaults.cardColors(containerColor = KisanWhite),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-    border = BorderStroke(1.dp, KisanCardBorder),
+    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     modifier = Modifier
       .fillMaxWidth()
-      .height(220.dp)
+      .height(240.dp)
       .testTag("results_image_viewport")
   ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -439,7 +433,7 @@ private fun CapturedImageViewport(
         val isInconclusive = matchPercentage < (confidenceThreshold * 100).toInt()
         Surface(
           shape = RoundedCornerShape(12.dp),
-          color = if (isInconclusive) KisanHarvestGold else KisanEmerald,
+          color = if (isInconclusive) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
           shadowElevation = 3.dp,
           modifier = Modifier
             .align(Alignment.TopEnd)
@@ -448,7 +442,7 @@ private fun CapturedImageViewport(
         ) {
           Text(
             text = if (isInconclusive) "$matchPercentage% • Inconclusive" else "$matchPercentage% Match",
-            color = if (isInconclusive) KisanCharcoal else Color.White,
+            color = if (isInconclusive) MaterialTheme.colorScheme.onBackground else Color.White,
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp)
@@ -457,7 +451,7 @@ private fun CapturedImageViewport(
       } else {
         Surface(
           shape = RoundedCornerShape(12.dp),
-          color = KisanDeepForest.copy(alpha = 0.85f),
+          color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.85f),
           modifier = Modifier
             .align(Alignment.TopEnd)
             .padding(12.dp)
@@ -489,7 +483,7 @@ private fun CapturedImageViewport(
           Icon(
             imageVector = Icons.Default.Refresh,
             contentDescription = "Retake photo",
-            tint = KisanDeepForest,
+            tint = MaterialTheme.colorScheme.onPrimaryContainer,
             modifier = Modifier.size(18.dp)
           )
         }
@@ -508,11 +502,11 @@ private fun AiDetectionPlaceholderCard(
   cropName: String,
   onRunDetection: () -> Unit
 ) {
-  Card(
+  KisanCard(
     shape = RoundedCornerShape(20.dp),
-    colors = CardDefaults.cardColors(containerColor = KisanWhite),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-    border = BorderStroke(1.5.dp, KisanEmerald.copy(alpha = 0.4f)),
+    border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)),
     modifier = Modifier
       .fillMaxWidth()
       .testTag("ai_detection_placeholder_card")
@@ -529,14 +523,14 @@ private fun AiDetectionPlaceholderCard(
       ) {
         Surface(
           shape = CircleShape,
-          color = KisanEmeraldLight,
+          color = MaterialTheme.colorScheme.primaryContainer,
           modifier = Modifier.size(44.dp)
         ) {
           Box(contentAlignment = Alignment.Center) {
             Icon(
               imageVector = Icons.Default.Biotech,
               contentDescription = null,
-              tint = KisanEmerald,
+              tint = MaterialTheme.colorScheme.primary,
               modifier = Modifier.size(24.dp)
             )
           }
@@ -549,12 +543,12 @@ private fun AiDetectionPlaceholderCard(
             text = "AI Model Output Space",
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
-            color = KisanCharcoal
+            color = MaterialTheme.colorScheme.onBackground
           )
           Text(
             text = "Awaiting model evaluation on $cropName leaf",
             fontSize = 12.sp,
-            color = KisanMutedSage
+            color = MaterialTheme.colorScheme.onSurfaceVariant
           )
         }
       }
@@ -587,10 +581,10 @@ private fun AiDetectionPlaceholderCard(
       Spacer(modifier = Modifier.height(18.dp))
 
       // Primary Trigger CTA
-      Button(
+      KisanPrimaryButton(
         onClick = onRunDetection,
         shape = RoundedCornerShape(14.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = KisanEmerald),
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         modifier = Modifier
           .fillMaxWidth()
           .height(48.dp)
@@ -625,7 +619,7 @@ private fun PlaceholderSlotItem(
 ) {
   Surface(
     shape = RoundedCornerShape(12.dp),
-    color = KisanWarmIvory.copy(alpha = 0.7f),
+    color = MaterialTheme.colorScheme.background.copy(alpha = 0.7f),
     border = BorderStroke(1.dp, Color(0xFFE2E7E2)),
     modifier = Modifier.fillMaxWidth()
   ) {
@@ -635,14 +629,14 @@ private fun PlaceholderSlotItem(
     ) {
       Surface(
         shape = CircleShape,
-        color = KisanWhite,
+        color = MaterialTheme.colorScheme.surface,
         modifier = Modifier.size(32.dp)
       ) {
         Box(contentAlignment = Alignment.Center) {
           Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = KisanMutedSage,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(16.dp)
           )
         }
@@ -655,13 +649,13 @@ private fun PlaceholderSlotItem(
           text = title,
           fontSize = 13.sp,
           fontWeight = FontWeight.SemiBold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
           text = subtitle,
           fontSize = 11.sp,
-          color = KisanMutedSage,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
           lineHeight = 15.sp
         )
       }
@@ -685,11 +679,11 @@ private fun AiModelInferenceCard() {
     label = "pulse"
   )
 
-  Card(
+  KisanCard(
     shape = RoundedCornerShape(20.dp),
-    colors = CardDefaults.cardColors(containerColor = KisanWhite),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-    border = BorderStroke(1.dp, KisanCardBorder),
+    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     modifier = Modifier
       .fillMaxWidth()
       .testTag("ai_model_inference_card")
@@ -702,14 +696,14 @@ private fun AiModelInferenceCard() {
     ) {
       Surface(
         shape = CircleShape,
-        color = KisanEmeraldLight,
+        color = MaterialTheme.colorScheme.primaryContainer,
         modifier = Modifier.size(56.dp)
       ) {
         Box(contentAlignment = Alignment.Center) {
           Icon(
             imageVector = Icons.Default.AutoAwesome,
             contentDescription = null,
-            tint = KisanEmerald,
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(28.dp)
           )
         }
@@ -721,7 +715,7 @@ private fun AiModelInferenceCard() {
         text = "Running AI Disease Inference...",
         fontSize = 16.sp,
         fontWeight = FontWeight.Bold,
-        color = KisanCharcoal
+        color = MaterialTheme.colorScheme.onBackground
       )
 
       Spacer(modifier = Modifier.height(6.dp))
@@ -729,7 +723,7 @@ private fun AiModelInferenceCard() {
       Text(
         text = "Scanning leaf pathology, color spectrum, and chlorosis spots",
         fontSize = 12.sp,
-        color = KisanMutedSage,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         textAlign = TextAlign.Center
       )
 
@@ -740,7 +734,7 @@ private fun AiModelInferenceCard() {
           .fillMaxWidth(0.8f)
           .height(6.dp)
           .clip(RoundedCornerShape(3.dp)),
-        color = KisanEmerald,
+        color = MaterialTheme.colorScheme.primary,
         trackColor = Color(0xFFE2E8E4)
       )
     }
@@ -762,16 +756,19 @@ private fun PopulatedDetectionOutputCard(
   onScanAnother: () -> Unit,
   onRetake: () -> Unit = {}
 ) {
-  var currentRating by remember(feedbackRating) { mutableStateOf(feedbackRating) }
-  var showReasons by remember { mutableStateOf(false) }
-  var feedbackSubmittedReason by remember { mutableStateOf<String?>(null) }
   val isInconclusive = disease.confidence < confidenceThreshold
+  val severityColor = when (disease.severity) {
+    DiseaseSeverity.NONE -> MaterialTheme.colorScheme.primary
+    DiseaseSeverity.LOW -> Color(0xFFB28900)
+    DiseaseSeverity.MEDIUM -> Color(0xFFF57C00)
+    DiseaseSeverity.HIGH -> Color(0xFFD32F2F)
+  }
 
-  Card(
+  KisanCard(
     shape = RoundedCornerShape(20.dp),
-    colors = CardDefaults.cardColors(containerColor = KisanWhite),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-    border = BorderStroke(1.dp, if (isInconclusive) KisanHarvestGold.copy(alpha = 0.8f) else KisanCardBorder),
+    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     modifier = Modifier
       .fillMaxWidth()
       .testTag("populated_detection_output_card")
@@ -781,7 +778,6 @@ private fun PopulatedDetectionOutputCard(
         .fillMaxWidth()
         .padding(20.dp)
     ) {
-      // Inconclusive Confidence Warning Banner (if confidence < threshold)
       if (isInconclusive) {
         InconclusiveConfidenceWarningBanner(
           confidence = disease.confidence,
@@ -791,439 +787,100 @@ private fun PopulatedDetectionOutputCard(
         Spacer(modifier = Modifier.height(16.dp))
       }
 
-      // Disease Title & Severity
-      Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-      ) {
-        Row(
-          modifier = Modifier.weight(1f),
-          verticalAlignment = Alignment.CenterVertically
-        ) {
-          Surface(
-            shape = CircleShape,
-            color = if (disease.isHealthy) KisanEmeraldLight else Color(0xFFFDECEB),
-            modifier = Modifier.size(44.dp)
-          ) {
-            Box(contentAlignment = Alignment.Center) {
-              Icon(
-                imageVector = if (disease.isHealthy) Icons.Default.Eco else Icons.Default.Warning,
-                contentDescription = null,
-                tint = if (disease.isHealthy) KisanEmerald else Color(0xFFC94C4C),
-                modifier = Modifier.size(24.dp)
-              )
-            }
-          }
-
-          Spacer(modifier = Modifier.width(12.dp))
-
-          Column {
+      // Summary Info
+      Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+          Text("Diagnosis:", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+          Text(disease.diseaseName.split("(")[0].trim(), fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+        }
+        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+          Text("Crop:", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+          Text(disease.cropName, fontSize = 15.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onBackground)
+        }
+        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+          Text("Confidence:", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+          Text("${(disease.confidence * 100).toInt()}%", fontSize = 15.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onBackground)
+        }
+        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+          Text("Status:", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+          Surface(shape = RoundedCornerShape(8.dp), color = severityColor.copy(alpha=0.15f)) {
             Text(
-              text = disease.diseaseName.split("(")[0].trim(),
-              fontSize = 17.sp,
+              text = if (disease.isHealthy) "Healthy" else "Attention",
+              fontSize = 13.sp,
               fontWeight = FontWeight.Bold,
-              color = KisanCharcoal
+              color = severityColor,
+              modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
             )
-            Text(
-              text = disease.scientificName,
-              fontSize = 12.sp,
-              color = KisanMutedSage
-            )
-          }
-        }
-
-        // Severity Tag
-        Surface(
-          shape = RoundedCornerShape(10.dp),
-          color = when (disease.severity) {
-            DiseaseSeverity.NONE -> KisanEmeraldLight
-            DiseaseSeverity.LOW -> Color(0xFFFFF8E1)
-            DiseaseSeverity.MEDIUM -> Color(0xFFFFF3E0)
-            DiseaseSeverity.HIGH -> Color(0xFFFFEBEE)
-          }
-        ) {
-          Text(
-            text = disease.severity.label,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Bold,
-            color = when (disease.severity) {
-              DiseaseSeverity.NONE -> KisanEmerald
-              DiseaseSeverity.LOW -> Color(0xFFB28900)
-              DiseaseSeverity.MEDIUM -> Color(0xFFB26A00)
-              DiseaseSeverity.HIGH -> Color(0xFFC62828)
-            },
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-          )
-        }
-      }
-
-      Spacer(modifier = Modifier.height(16.dp))
-
-      // Confidence Score Bar
-      Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-      ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-          Text(
-            text = "AI Confidence Score",
-            fontSize = 13.sp,
-            color = KisanMutedSage
-          )
-          if (isInconclusive) {
-            Spacer(modifier = Modifier.width(6.dp))
-            Surface(
-              shape = RoundedCornerShape(6.dp),
-              color = Color(0xFFFFF3CD),
-              border = BorderStroke(0.5.dp, KisanHarvestGold.copy(alpha = 0.6f))
-            ) {
-              Text(
-                text = "Below ${(confidenceThreshold * 100).toInt()}% Threshold",
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFFB28900),
-                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-              )
-            }
-          }
-        }
-        Text(
-          text = "${(disease.confidence * 100).toInt()}%",
-          fontSize = 14.sp,
-          fontWeight = FontWeight.Bold,
-          color = if (isInconclusive) Color(0xFFB28900) else KisanCharcoal
-        )
-      }
-
-      Spacer(modifier = Modifier.height(6.dp))
-
-      LinearProgressIndicator(
-        progress = { disease.confidence },
-        modifier = Modifier
-          .fillMaxWidth()
-          .height(6.dp)
-          .clip(RoundedCornerShape(3.dp)),
-        color = if (isInconclusive) KisanHarvestGold else KisanEmerald,
-        trackColor = Color(0xFFE2E8E4)
-      )
-
-      if (isInconclusive) {
-        Spacer(modifier = Modifier.height(6.dp))
-        Text(
-          text = "⚠️ Prediction confidence is below ${(confidenceThreshold * 100).toInt()}%. Please retake with better lighting and focus for higher diagnostic certainty.",
-          fontSize = 11.sp,
-          color = Color(0xFFB28900),
-          fontWeight = FontWeight.Medium,
-          lineHeight = 15.sp
-        )
-      }
-
-      Spacer(modifier = Modifier.height(18.dp))
-
-      // Symptoms List
-      Text(
-        text = "Identified Symptoms",
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Bold,
-        color = KisanCharcoal
-      )
-      Spacer(modifier = Modifier.height(6.dp))
-      disease.symptoms.forEach { symptom ->
-        Row(
-          modifier = Modifier.padding(vertical = 2.dp),
-          verticalAlignment = Alignment.Top
-        ) {
-          Text(text = "• ", color = KisanEmerald, fontWeight = FontWeight.Bold)
-          Text(
-            text = symptom,
-            fontSize = 13.sp,
-            color = KisanCharcoal.copy(alpha = 0.85f),
-            lineHeight = 18.sp
-          )
-        }
-      }
-
-      Spacer(modifier = Modifier.height(16.dp))
-      HorizontalDivider(color = Color(0xFFF0F0F0))
-      Spacer(modifier = Modifier.height(16.dp))
-
-      // Recommended Treatment Plan
-      Text(
-        text = "Recommended Treatment",
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Bold,
-        color = KisanCharcoal
-      )
-      Spacer(modifier = Modifier.height(8.dp))
-
-      Surface(
-        shape = RoundedCornerShape(12.dp),
-        color = KisanEmeraldLight.copy(alpha = 0.5f),
-        modifier = Modifier.fillMaxWidth()
-      ) {
-        Column(modifier = Modifier.padding(12.dp)) {
-          Text(
-            text = "🌿 Organic Solution",
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold,
-            color = KisanDeepForest
-          )
-          Spacer(modifier = Modifier.height(2.dp))
-          Text(
-            text = disease.organicTreatment,
-            fontSize = 12.sp,
-            color = KisanCharcoal
-          )
-          Spacer(modifier = Modifier.height(8.dp))
-          Text(
-            text = "🧪 Chemical Fungicide & Dosage",
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold,
-            color = KisanDeepForest
-          )
-          Spacer(modifier = Modifier.height(2.dp))
-          Text(
-            text = "${disease.chemicalTreatment} (${disease.dosage})",
-            fontSize = 12.sp,
-            color = KisanCharcoal
-          )
-        }
-      }
-
-      Spacer(modifier = Modifier.height(16.dp))
-
-      // ML Continuous Learning Feedback Loop
-      Surface(
-        shape = RoundedCornerShape(14.dp),
-        color = KisanWarmIvory,
-        border = BorderStroke(1.dp, Color(0xFFE2E8E4)),
-        modifier = Modifier
-          .fillMaxWidth()
-          .testTag("model_feedback_section")
-      ) {
-        Column(modifier = Modifier.padding(14.dp)) {
-          Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-          ) {
-            Column(modifier = Modifier.weight(1f)) {
-              Text(
-                text = "Was this diagnosis accurate?",
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = KisanCharcoal
-              )
-              Text(
-                text = "Your feedback improves our on-device vision model.",
-                fontSize = 11.sp,
-                color = KisanMutedSage
-              )
-            }
-
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-              // Thumbs Up
-              Surface(
-                shape = CircleShape,
-                color = if (currentRating == 1) KisanEmerald else Color.White,
-                border = BorderStroke(1.dp, if (currentRating == 1) KisanEmerald else Color(0xFFCFD8DC)),
-                modifier = Modifier
-                  .size(36.dp)
-                  .clickable {
-                    currentRating = 1
-                    showReasons = false
-                    feedbackSubmittedReason = "Accurate diagnosis"
-                    onSubmitFeedback(1, "Accurate diagnosis")
-                  }
-                  .testTag("feedback_thumbs_up_button")
-              ) {
-                Box(contentAlignment = Alignment.Center) {
-                  Icon(
-                    imageVector = Icons.Default.ThumbUp,
-                    contentDescription = "Accurate diagnosis",
-                    tint = if (currentRating == 1) Color.White else KisanDeepForest,
-                    modifier = Modifier.size(18.dp)
-                  )
-                }
-              }
-
-              // Thumbs Down
-              Surface(
-                shape = CircleShape,
-                color = if (currentRating == -1) Color(0xFFC62828) else Color.White,
-                border = BorderStroke(1.dp, if (currentRating == -1) Color(0xFFC62828) else Color(0xFFCFD8DC)),
-                modifier = Modifier
-                  .size(36.dp)
-                  .clickable {
-                    currentRating = -1
-                    showReasons = true
-                  }
-                  .testTag("feedback_thumbs_down_button")
-              ) {
-                Box(contentAlignment = Alignment.Center) {
-                  Icon(
-                    imageVector = Icons.Default.ThumbDown,
-                    contentDescription = "Inaccurate diagnosis",
-                    tint = if (currentRating == -1) Color.White else Color(0xFFB71C1C),
-                    modifier = Modifier.size(18.dp)
-                  )
-                }
-              }
-            }
-          }
-
-          if (currentRating == 1) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-              Icon(
-                imageVector = Icons.Default.CheckCircle,
-                contentDescription = null,
-                tint = KisanEmerald,
-                modifier = Modifier.size(14.dp)
-              )
-              Spacer(modifier = Modifier.width(4.dp))
-              Text(
-                text = "Thank you! Validated diagnosis recorded for model benchmarking.",
-                fontSize = 11.sp,
-                color = KisanEmerald,
-                fontWeight = FontWeight.Medium
-              )
-            }
-          }
-
-          if (showReasons && currentRating == -1) {
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-              text = "What was incorrect?",
-              fontSize = 12.sp,
-              fontWeight = FontWeight.SemiBold,
-              color = KisanCharcoal
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            val reasonsList = listOf(
-              "Wrong Disease",
-              "Wrong Crop",
-              "Symptoms Differ",
-              "Treatment Unclear"
-            )
-            Row(
-              modifier = Modifier.fillMaxWidth(),
-              horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-              reasonsList.forEach { reason ->
-                val isSelected = feedbackSubmittedReason == reason
-                Surface(
-                  shape = RoundedCornerShape(8.dp),
-                  color = if (isSelected) Color(0xFFFFEBEE) else Color.White,
-                  border = BorderStroke(1.dp, if (isSelected) Color(0xFFC62828) else Color(0xFFCFD8DC)),
-                  modifier = Modifier
-                    .clickable {
-                      feedbackSubmittedReason = reason
-                      onSubmitFeedback(-1, reason)
-                    }
-                    .testTag("feedback_reason_${reason.replace(" ", "_")}")
-                ) {
-                  Text(
-                    text = reason,
-                    fontSize = 10.sp,
-                    color = if (isSelected) Color(0xFFC62828) else KisanCharcoal,
-                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)
-                  )
-                }
-              }
-            }
-            if (feedbackSubmittedReason != null) {
-              Spacer(modifier = Modifier.height(6.dp))
-              Text(
-                text = "Feedback recorded ($feedbackSubmittedReason). Thank you for improving KisanAI!",
-                fontSize = 11.sp,
-                color = Color(0xFFC62828)
-              )
-            }
           }
         }
       }
 
       Spacer(modifier = Modifier.height(20.dp))
+      androidx.compose.material3.Divider(color = MaterialTheme.colorScheme.outline)
+      Spacer(modifier = Modifier.height(16.dp))
 
-      // Actions: Save and Scan Another
-      Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+      // What we found
+      Text("What we found", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+      Spacer(modifier = Modifier.height(6.dp))
+      Text(disease.symptoms.firstOrNull() ?: "Symptoms observed in leaf structure.", fontSize = 14.sp, color = MaterialTheme.colorScheme.onPrimaryContainer, lineHeight = 20.sp)
+
+      Spacer(modifier = Modifier.height(20.dp))
+
+      // Recommended Action
+      Text("Recommended Action", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+      Spacer(modifier = Modifier.height(6.dp))
+      Text(disease.organicTreatment.ifEmpty { disease.chemicalTreatment }.ifEmpty { "Monitor the crop closely." }, fontSize = 14.sp, color = MaterialTheme.colorScheme.onPrimaryContainer, lineHeight = 20.sp)
+
+      Spacer(modifier = Modifier.height(20.dp))
+
+      // Prevention
+      if (disease.preventiveMeasures.isNotEmpty()) {
+        Text("Prevention", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+        Spacer(modifier = Modifier.height(6.dp))
+        disease.preventiveMeasures.forEach { measure ->
+          Row(modifier = Modifier.padding(bottom = 4.dp)) {
+            Text("•", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground, modifier = Modifier.padding(end = 6.dp))
+            Text(measure, fontSize = 14.sp, color = MaterialTheme.colorScheme.onPrimaryContainer, lineHeight = 20.sp)
+          }
+        }
+      }
+
+      Spacer(modifier = Modifier.height(24.dp))
+
+      // Bottom Actions
+      KisanPrimaryButton(
+        onClick = onSaveResult,
+        enabled = !isSaved,
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, disabledContainerColor = MaterialTheme.colorScheme.onSurfaceVariant),
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth().height(50.dp)
       ) {
-        OutlinedButton(
-          onClick = onSaveResult,
-          shape = RoundedCornerShape(14.dp),
-          border = BorderStroke(1.dp, if (isSaved) Color(0xFF81C784) else KisanEmerald),
-          colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = if (isSaved) KisanEmeraldLight else Color.Transparent
-          ),
-          modifier = Modifier
-            .weight(1f)
-            .height(46.dp)
-            .testTag("results_save_button")
-        ) {
-          Icon(
-            imageVector = if (isSaved) Icons.Default.Check else Icons.Default.BookmarkBorder,
-            contentDescription = null,
-            tint = KisanEmerald,
-            modifier = Modifier.size(16.dp)
-          )
-          Spacer(modifier = Modifier.width(6.dp))
-          Text(
-            text = if (isSaved) "Saved" else "Save Result",
-            color = KisanEmerald,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.SemiBold
-          )
-        }
-
-        Button(
-          onClick = onScanAnother,
-          shape = RoundedCornerShape(14.dp),
-          colors = ButtonDefaults.buttonColors(containerColor = KisanEmerald),
-          modifier = Modifier
-            .weight(1f)
-            .height(46.dp)
-            .testTag("results_scan_another_button")
-        ) {
-          Icon(
-            imageVector = Icons.Default.PhotoCamera,
-            contentDescription = null,
-            tint = Color.White,
-            modifier = Modifier.size(16.dp)
-          )
-          Spacer(modifier = Modifier.width(6.dp))
-          Text(
-            text = "Scan Another",
-            color = Color.White,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.SemiBold
-          )
-        }
+        Text(if (isSaved) "Result Saved" else "Save Result", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
+      }
+      
+      Spacer(modifier = Modifier.height(12.dp))
+      
+      OutlinedButton(
+        onClick = onScanAnother,
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+        modifier = Modifier.fillMaxWidth().height(50.dp)
+      ) {
+        Text("Scan Another", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
       }
     }
   }
 }
-
-/**
- * Inconclusive Confidence Warning Banner
- * Displayed when the AI model's prediction confidence is below the reliability threshold (e.g. 70%).
- * Prompts the farmer to retake a clearer, better-lit photo and provides actionable photography tips.
- */
 @Composable
 private fun InconclusiveConfidenceWarningBanner(
   confidence: Float,
   confidenceThreshold: Float = DEFAULT_CONFIDENCE_THRESHOLD,
   onRetake: () -> Unit
 ) {
-  Card(
+  KisanCard(
     shape = RoundedCornerShape(16.dp),
     colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF8E1)),
-    border = BorderStroke(1.5.dp, KisanHarvestGold),
+    border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.secondary),
     elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
     modifier = Modifier
       .fillMaxWidth()
@@ -1241,7 +898,7 @@ private fun InconclusiveConfidenceWarningBanner(
       ) {
         Surface(
           shape = CircleShape,
-          color = KisanHarvestGold,
+          color = MaterialTheme.colorScheme.secondary,
           modifier = Modifier.size(38.dp)
         ) {
           Box(contentAlignment = Alignment.Center) {
@@ -1295,7 +952,7 @@ private fun InconclusiveConfidenceWarningBanner(
       Text(
         text = "The leaf image does not exhibit distinct enough disease symptoms or visual clarity for a reliable diagnosis. Please try taking a clearer, better-lit photo of the affected leaf.",
         fontSize = 12.sp,
-        color = KisanCharcoal,
+        color = MaterialTheme.colorScheme.onBackground,
         lineHeight = 17.sp,
         fontWeight = FontWeight.Medium
       )
@@ -1352,11 +1009,11 @@ private fun InconclusiveConfidenceWarningBanner(
       Spacer(modifier = Modifier.height(14.dp))
 
       // Primary Action to Retake Photo
-      Button(
+      KisanPrimaryButton(
         onClick = onRetake,
         colors = ButtonDefaults.buttonColors(
-          containerColor = KisanHarvestGold,
-          contentColor = KisanCharcoal
+          containerColor = MaterialTheme.colorScheme.secondary,
+          contentColor = MaterialTheme.colorScheme.onBackground
         ),
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
@@ -1367,7 +1024,7 @@ private fun InconclusiveConfidenceWarningBanner(
         Icon(
           imageVector = Icons.Default.CameraAlt,
           contentDescription = null,
-          tint = KisanCharcoal,
+          tint = MaterialTheme.colorScheme.onBackground,
           modifier = Modifier.size(18.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -1375,7 +1032,7 @@ private fun InconclusiveConfidenceWarningBanner(
           text = "Try Taking Clearer, Better-Lit Photo",
           fontSize = 13.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
       }
     }

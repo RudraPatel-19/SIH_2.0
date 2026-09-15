@@ -1,5 +1,8 @@
 package com.example.ui.screens
 
+import androidx.compose.material3.MaterialTheme
+
+
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -57,8 +60,10 @@ import android.content.Intent
 import android.widget.Toast
 import com.example.util.FileUploadValidator
 import androidx.compose.material3.Button
+import com.example.presentation.components.KisanPrimaryButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import com.example.presentation.components.KisanCard
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -104,15 +109,6 @@ import com.example.data.model.CropDisease
 import com.example.data.model.SampleSpecimen
 import com.example.ui.ScanUiState
 import com.example.ui.components.KisanLogoIcon
-import com.example.ui.theme.KisanCardBorder
-import com.example.ui.theme.KisanCharcoal
-import com.example.ui.theme.KisanDeepForest
-import com.example.ui.theme.KisanEmerald
-import com.example.ui.theme.KisanEmeraldLight
-import com.example.ui.theme.KisanHarvestGold
-import com.example.ui.theme.KisanMutedSage
-import com.example.ui.theme.KisanWarmIvory
-import com.example.ui.theme.KisanWhite
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -312,8 +308,7 @@ private fun ScanCaptureScreen(
   Column(
     modifier = modifier
       .fillMaxSize()
-      .background(KisanWarmIvory)
-      .statusBarsPadding()
+      .background(MaterialTheme.colorScheme.background)
       .verticalScroll(rememberScrollState())
       .padding(horizontal = 20.dp, vertical = 12.dp)
   ) {
@@ -329,7 +324,7 @@ private fun ScanCaptureScreen(
         Icon(
           imageVector = Icons.AutoMirrored.Filled.ArrowBack,
           contentDescription = "Back",
-          tint = KisanCharcoal
+          tint = MaterialTheme.colorScheme.onBackground
         )
       }
       Spacer(modifier = Modifier.width(8.dp))
@@ -337,17 +332,17 @@ private fun ScanCaptureScreen(
         text = "AI Crop Scan",
         fontSize = 18.sp,
         fontWeight = FontWeight.Bold,
-        color = KisanCharcoal
+        color = MaterialTheme.colorScheme.onBackground
       )
     }
 
     Spacer(modifier = Modifier.height(12.dp))
 
     // Model Specs & Transparency Banner
-    Card(
+    KisanCard(
       shape = RoundedCornerShape(14.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanEmeraldLight.copy(alpha = 0.6f)),
-      border = BorderStroke(1.dp, KisanEmerald.copy(alpha = 0.25f)),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f)),
+      border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.25f)),
       modifier = Modifier
         .fillMaxWidth()
         .clickable { onNavigateToTransparency() }
@@ -364,7 +359,7 @@ private fun ScanCaptureScreen(
           Icon(
             imageVector = Icons.Default.Science,
             contentDescription = null,
-            tint = KisanDeepForest,
+            tint = MaterialTheme.colorScheme.onPrimaryContainer,
             modifier = Modifier.size(20.dp)
           )
           Spacer(modifier = Modifier.width(8.dp))
@@ -373,12 +368,12 @@ private fun ScanCaptureScreen(
               text = "Model Specs: MobileNetV3 • 94.2% Top-1",
               fontSize = 12.sp,
               fontWeight = FontWeight.Bold,
-              color = KisanDeepForest
+              color = MaterialTheme.colorScheme.onPrimaryContainer
             )
             Text(
               text = "PlantVillage + ICAR Dataset Provenance (Open-Source)",
               fontSize = 10.sp,
-              color = KisanMutedSage
+              color = MaterialTheme.colorScheme.onSurfaceVariant
             )
           }
         }
@@ -386,15 +381,10 @@ private fun ScanCaptureScreen(
           text = "Specs ➔",
           fontSize = 11.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanEmerald
+          color = MaterialTheme.colorScheme.primary
         )
       }
     }
-
-    Spacer(modifier = Modifier.height(16.dp))
-
-    // 4-Step Stepper: (1) Crop -> (2) Image -> (3) Analyse -> (4) Result
-    ScanStepperRow(currentStep = 2)
 
     Spacer(modifier = Modifier.height(20.dp))
 
@@ -408,7 +398,7 @@ private fun ScanCaptureScreen(
         text = "Step 1: Select Crop Species",
         fontSize = 14.sp,
         fontWeight = FontWeight.Bold,
-        color = KisanCharcoal
+        color = MaterialTheme.colorScheme.onBackground
       )
       Surface(
         shape = RoundedCornerShape(8.dp),
@@ -417,7 +407,7 @@ private fun ScanCaptureScreen(
         Text(
           text = "Mandatory Prior",
           fontSize = 10.sp,
-          color = KisanEmerald,
+          color = MaterialTheme.colorScheme.primary,
           fontWeight = FontWeight.Bold,
           modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
         )
@@ -428,7 +418,7 @@ private fun ScanCaptureScreen(
     Text(
       text = "Neural weights are conditioned on plant species to eliminate cross-crop misclassification.",
       fontSize = 11.sp,
-      color = KisanMutedSage,
+      color = MaterialTheme.colorScheme.onSurfaceVariant,
       lineHeight = 15.sp
     )
     Spacer(modifier = Modifier.height(8.dp))
@@ -442,8 +432,8 @@ private fun ScanCaptureScreen(
         val isSelected = selectedCrop == crop
         Surface(
           shape = RoundedCornerShape(10.dp),
-          color = if (isSelected) KisanEmerald else KisanWhite,
-          border = BorderStroke(1.dp, if (isSelected) KisanEmerald else KisanCardBorder),
+          color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+          border = BorderStroke(1.dp, if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline),
           modifier = Modifier
             .weight(1f)
             .clickable { onCropSelected(crop) }
@@ -453,7 +443,7 @@ private fun ScanCaptureScreen(
             text = crop.split("/")[0].trim(),
             fontSize = 11.sp,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-            color = if (isSelected) Color.White else KisanCharcoal,
+            color = if (isSelected) Color.White else MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(vertical = 8.dp)
           )
@@ -469,8 +459,8 @@ private fun ScanCaptureScreen(
         val isSelected = selectedCrop == crop
         Surface(
           shape = RoundedCornerShape(10.dp),
-          color = if (isSelected) KisanEmerald else KisanWhite,
-          border = BorderStroke(1.dp, if (isSelected) KisanEmerald else KisanCardBorder),
+          color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+          border = BorderStroke(1.dp, if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline),
           modifier = Modifier
             .weight(1f)
             .clickable { onCropSelected(crop) }
@@ -480,7 +470,7 @@ private fun ScanCaptureScreen(
             text = crop.split("/")[0].trim(),
             fontSize = 11.sp,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-            color = if (isSelected) Color.White else KisanCharcoal,
+            color = if (isSelected) Color.White else MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(vertical = 8.dp)
           )
@@ -502,15 +492,15 @@ private fun ScanCaptureScreen(
           Icon(
             imageVector = Icons.Default.KeyboardArrowDown,
             contentDescription = null,
-            tint = KisanCharcoal
+            tint = MaterialTheme.colorScheme.onBackground
           )
         },
         shape = RoundedCornerShape(14.dp),
         colors = OutlinedTextFieldDefaults.colors(
-          focusedContainerColor = KisanWhite,
-          unfocusedContainerColor = KisanWhite,
-          focusedBorderColor = KisanEmerald,
-          unfocusedBorderColor = KisanCardBorder
+          focusedContainerColor = MaterialTheme.colorScheme.surface,
+          unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+          focusedBorderColor = MaterialTheme.colorScheme.primary,
+          unfocusedBorderColor = MaterialTheme.colorScheme.outline
         ),
         modifier = Modifier
           .fillMaxWidth()
@@ -539,18 +529,19 @@ private fun ScanCaptureScreen(
         .fillMaxWidth()
         .height(240.dp)
         .clip(RoundedCornerShape(20.dp))
-        .background(KisanWhite)
+        .background(MaterialTheme.colorScheme.surface)
         .clickable { onCameraClick() }
         .testTag("scan_viewport_box")
     ) {
       // Dashed green border outline
+      val primary = MaterialTheme.colorScheme.primary
       Canvas(modifier = Modifier.fillMaxSize()) {
         val stroke = Stroke(
           width = 4f,
           pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 16f), 0f)
         )
         drawRoundRect(
-          color = KisanEmerald.copy(alpha = 0.55f),
+          color = primary.copy(alpha = 0.55f),
           size = size,
           cornerRadius = androidx.compose.ui.geometry.CornerRadius(20.dp.toPx()),
           style = stroke
@@ -566,14 +557,14 @@ private fun ScanCaptureScreen(
       ) {
         Surface(
           shape = CircleShape,
-          color = KisanEmeraldLight,
+          color = MaterialTheme.colorScheme.primaryContainer,
           modifier = Modifier.size(64.dp)
         ) {
           Box(contentAlignment = Alignment.Center) {
             Icon(
               imageVector = Icons.Default.CameraAlt,
               contentDescription = "Capture",
-              tint = KisanEmerald,
+              tint = MaterialTheme.colorScheme.primary,
               modifier = Modifier.size(32.dp)
             )
           }
@@ -585,7 +576,7 @@ private fun ScanCaptureScreen(
           text = "Tap to take a photo\nor upload from gallery",
           fontSize = 15.sp,
           fontWeight = FontWeight.Medium,
-          color = KisanCharcoal,
+          color = MaterialTheme.colorScheme.onBackground,
           textAlign = TextAlign.Center,
           lineHeight = 20.sp
         )
@@ -595,7 +586,7 @@ private fun ScanCaptureScreen(
         Text(
           text = "Supported: JPG, PNG (Max 10MB)",
           fontSize = 11.sp,
-          color = KisanMutedSage
+          color = MaterialTheme.colorScheme.onSurfaceVariant
         )
       }
     }
@@ -610,7 +601,7 @@ private fun ScanCaptureScreen(
       OutlinedButton(
         onClick = onGalleryClick,
         shape = RoundedCornerShape(26.dp),
-        border = BorderStroke(1.5.dp, KisanEmerald),
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary),
         modifier = Modifier
           .weight(1f)
           .height(52.dp)
@@ -619,7 +610,7 @@ private fun ScanCaptureScreen(
         Icon(
           imageVector = Icons.Default.Collections,
           contentDescription = null,
-          tint = KisanEmerald,
+          tint = MaterialTheme.colorScheme.primary,
           modifier = Modifier.size(18.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -627,14 +618,14 @@ private fun ScanCaptureScreen(
           text = "Gallery",
           fontSize = 15.sp,
           fontWeight = FontWeight.SemiBold,
-          color = KisanEmerald
+          color = MaterialTheme.colorScheme.primary
         )
       }
 
-      Button(
+      KisanPrimaryButton(
         onClick = onCameraClick,
         colors = ButtonDefaults.buttonColors(
-          containerColor = KisanEmerald,
+          containerColor = MaterialTheme.colorScheme.primary,
           contentColor = Color.White
         ),
         shape = RoundedCornerShape(26.dp),
@@ -665,14 +656,14 @@ private fun ScanCaptureScreen(
       text = "Demo Crop Samples (Quick Test)",
       fontSize = 14.sp,
       fontWeight = FontWeight.Bold,
-      color = KisanCharcoal
+      color = MaterialTheme.colorScheme.onBackground
     )
     Spacer(modifier = Modifier.height(10.dp))
 
     CropDiseaseDetector.SAMPLE_SPECIMENS.forEach { specimen ->
-      Card(
+      KisanCard(
         shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = KisanWhite),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
         modifier = Modifier
           .fillMaxWidth()
@@ -691,7 +682,7 @@ private fun ScanCaptureScreen(
             Surface(
               shape = CircleShape,
               color = if (specimen.diseaseName.contains("Healthy", ignoreCase = true)) {
-                KisanEmeraldLight
+                MaterialTheme.colorScheme.primaryContainer
               } else {
                 Color(0xFFFDECEB)
               },
@@ -702,7 +693,7 @@ private fun ScanCaptureScreen(
                   imageVector = Icons.Default.Eco,
                   contentDescription = null,
                   tint = if (specimen.diseaseName.contains("Healthy", ignoreCase = true)) {
-                    KisanEmerald
+                    MaterialTheme.colorScheme.primary
                   } else {
                     Color(0xFFC94C4C)
                   },
@@ -718,12 +709,12 @@ private fun ScanCaptureScreen(
                 text = specimen.diseaseName,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
-                color = KisanCharcoal
+                color = MaterialTheme.colorScheme.onBackground
               )
               Text(
                 text = "${specimen.cropName} • Tap to simulate",
                 fontSize = 11.sp,
-                color = KisanMutedSage
+                color = MaterialTheme.colorScheme.onSurfaceVariant
               )
             }
           }
@@ -732,7 +723,7 @@ private fun ScanCaptureScreen(
             text = "Test ➔",
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
-            color = KisanEmerald
+            color = MaterialTheme.colorScheme.primary
           )
         }
       }
@@ -765,8 +756,8 @@ private fun ScanStepperRow(currentStep: Int) {
         Surface(
           shape = CircleShape,
           color = when {
-            isPast -> KisanEmerald
-            isCurrent -> KisanEmerald
+            isPast -> MaterialTheme.colorScheme.primary
+            isCurrent -> MaterialTheme.colorScheme.primary
             else -> Color(0xFFE2E8E4)
           },
           modifier = Modifier.size(28.dp)
@@ -784,7 +775,7 @@ private fun ScanStepperRow(currentStep: Int) {
                 text = "$stepNum",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
-                color = if (isCurrent) Color.White else KisanMutedSage
+                color = if (isCurrent) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
               )
             }
           }
@@ -796,7 +787,7 @@ private fun ScanStepperRow(currentStep: Int) {
           text = stepName,
           fontSize = 11.sp,
           fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal,
-          color = if (isCurrent || isPast) KisanCharcoal else KisanMutedSage
+          color = if (isCurrent || isPast) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onSurfaceVariant
         )
       }
 
@@ -806,7 +797,7 @@ private fun ScanStepperRow(currentStep: Int) {
             .weight(1f)
             .height(2.dp)
             .padding(horizontal = 4.dp)
-            .background(if (stepNum < currentStep) KisanEmerald else Color(0xFFE2E8E4))
+            .background(if (stepNum < currentStep) MaterialTheme.colorScheme.primary else Color(0xFFE2E8E4))
         )
       }
     }
@@ -833,7 +824,7 @@ fun AnalysisLoadingView(cropHint: String) {
   Box(
     modifier = Modifier
       .fillMaxSize()
-      .background(KisanDeepForest)
+      .background(MaterialTheme.colorScheme.onPrimaryContainer)
       .testTag("analysis_loading_view"),
     contentAlignment = Alignment.Center
   ) {
@@ -850,21 +841,21 @@ fun AnalysisLoadingView(cropHint: String) {
           .scale(pulseScale)
           .size(110.dp)
           .clip(CircleShape)
-          .background(KisanEmerald.copy(alpha = 0.25f)),
+          .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.25f)),
         contentAlignment = Alignment.Center
       ) {
         Surface(
           shape = CircleShape,
-          color = KisanDeepForest,
-          border = BorderStroke(2.dp, KisanEmerald),
+          color = MaterialTheme.colorScheme.onPrimaryContainer,
+          border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
           modifier = Modifier.size(80.dp)
         ) {
           Box(contentAlignment = Alignment.Center) {
             KisanLogoIcon(
               size = 46.dp,
               primaryColor = Color.White,
-              secondaryColor = KisanEmerald,
-              accentGoldColor = KisanHarvestGold
+              secondaryColor = MaterialTheme.colorScheme.primary,
+              accentGoldColor = MaterialTheme.colorScheme.secondary
             )
           }
         }
@@ -897,7 +888,7 @@ fun AnalysisLoadingView(cropHint: String) {
           .fillMaxWidth(0.75f)
           .height(6.dp)
           .clip(RoundedCornerShape(3.dp)),
-        color = KisanEmerald,
+        color = MaterialTheme.colorScheme.primary,
         trackColor = Color.White.copy(alpha = 0.2f)
       )
 
@@ -930,9 +921,7 @@ fun DiagnosisResultView(
   Column(
     modifier = Modifier
       .fillMaxSize()
-      .background(KisanWarmIvory)
-      .statusBarsPadding()
-      .navigationBarsPadding()
+      .background(MaterialTheme.colorScheme.background)
       .verticalScroll(rememberScrollState())
       .padding(horizontal = 20.dp, vertical = 12.dp)
   ) {
@@ -950,7 +939,7 @@ fun DiagnosisResultView(
           Icon(
             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
             contentDescription = "Back",
-            tint = KisanCharcoal
+            tint = MaterialTheme.colorScheme.onBackground
           )
         }
         Spacer(modifier = Modifier.width(6.dp))
@@ -958,13 +947,13 @@ fun DiagnosisResultView(
           text = "Diagnosis Result",
           fontSize = 18.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
       }
 
       Surface(
         shape = RoundedCornerShape(16.dp),
-        color = KisanEmeraldLight,
+        color = MaterialTheme.colorScheme.primaryContainer,
         modifier = Modifier
           .clickable { onDemoToggle() }
           .testTag("diagnosis_demo_toggle")
@@ -973,7 +962,7 @@ fun DiagnosisResultView(
           text = "Demo Result",
           fontSize = 12.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanEmerald,
+          color = MaterialTheme.colorScheme.primary,
           modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
         )
       }
@@ -982,9 +971,9 @@ fun DiagnosisResultView(
     Spacer(modifier = Modifier.height(16.dp))
 
     // Leaf Preview Area with "96% Match" Pill Badge
-    Card(
+    KisanCard(
       shape = RoundedCornerShape(20.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanWhite),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
       elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
       modifier = Modifier
         .fillMaxWidth()
@@ -1007,7 +996,8 @@ fun DiagnosisResultView(
           )
         } else {
           // Handcrafted high-fidelity leaf illustration for the demo view
-          Canvas(modifier = Modifier.fillMaxSize()) {
+          val primary = MaterialTheme.colorScheme.primary
+      Canvas(modifier = Modifier.fillMaxSize()) {
             val w = size.width
             val h = size.height
 
@@ -1051,7 +1041,7 @@ fun DiagnosisResultView(
         // Bounding box / match pill tag on top right of image
         Surface(
           shape = RoundedCornerShape(14.dp),
-          color = KisanEmerald,
+          color = MaterialTheme.colorScheme.primary,
           shadowElevation = 4.dp,
           modifier = Modifier
             .align(Alignment.TopEnd)
@@ -1071,9 +1061,9 @@ fun DiagnosisResultView(
     Spacer(modifier = Modifier.height(16.dp))
 
     // Detailed Diagnosis Card
-    Card(
+    KisanCard(
       shape = RoundedCornerShape(20.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanWhite),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
       elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
       modifier = Modifier.fillMaxWidth()
     ) {
@@ -1089,14 +1079,14 @@ fun DiagnosisResultView(
         ) {
           Surface(
             shape = CircleShape,
-            color = if (disease.isHealthy) KisanEmeraldLight else Color(0xFFFDECEB),
+            color = if (disease.isHealthy) MaterialTheme.colorScheme.primaryContainer else Color(0xFFFDECEB),
             modifier = Modifier.size(46.dp)
           ) {
             Box(contentAlignment = Alignment.Center) {
               Icon(
                 imageVector = if (disease.isHealthy) Icons.Default.Eco else Icons.Default.Warning,
                 contentDescription = null,
-                tint = if (disease.isHealthy) KisanEmerald else Color(0xFFC94C4C),
+                tint = if (disease.isHealthy) MaterialTheme.colorScheme.primary else Color(0xFFC94C4C),
                 modifier = Modifier.size(24.dp)
               )
             }
@@ -1109,12 +1099,12 @@ fun DiagnosisResultView(
               text = disease.diseaseName.split("(")[0].trim(),
               fontSize = 18.sp,
               fontWeight = FontWeight.Bold,
-              color = KisanCharcoal
+              color = MaterialTheme.colorScheme.onBackground
             )
             Text(
               text = disease.cropName,
               fontSize = 13.sp,
-              color = KisanMutedSage
+              color = MaterialTheme.colorScheme.onSurfaceVariant
             )
           }
         }
@@ -1130,13 +1120,13 @@ fun DiagnosisResultView(
           Text(
             text = "Confidence",
             fontSize = 13.sp,
-            color = KisanMutedSage
+            color = MaterialTheme.colorScheme.onSurfaceVariant
           )
           Text(
             text = "${(disease.confidence * 100).toInt()}%",
             fontSize = 13.sp,
             fontWeight = FontWeight.Bold,
-            color = KisanCharcoal
+            color = MaterialTheme.colorScheme.onBackground
           )
         }
 
@@ -1148,7 +1138,7 @@ fun DiagnosisResultView(
             .fillMaxWidth()
             .height(6.dp)
             .clip(RoundedCornerShape(3.dp)),
-          color = KisanEmerald,
+          color = MaterialTheme.colorScheme.primary,
           trackColor = Color(0xFFE2E8E4)
         )
 
@@ -1159,7 +1149,7 @@ fun DiagnosisResultView(
           text = "Recommendation",
           fontSize = 14.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
@@ -1169,7 +1159,7 @@ fun DiagnosisResultView(
             disease.chemicalTreatment.ifEmpty { "Use recommended fungicide and remove affected leaves." }
           },
           fontSize = 13.sp,
-          color = KisanCharcoal,
+          color = MaterialTheme.colorScheme.onBackground,
           lineHeight = 18.sp
         )
 
@@ -1180,7 +1170,7 @@ fun DiagnosisResultView(
           text = "Prevention",
           fontSize = 14.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(6.dp))
 
@@ -1189,7 +1179,7 @@ fun DiagnosisResultView(
             Text(
               text = "• $measure",
               fontSize = 13.sp,
-              color = KisanMutedSage,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
               lineHeight = 18.sp,
               modifier = Modifier.padding(vertical = 2.dp)
             )
@@ -1198,7 +1188,7 @@ fun DiagnosisResultView(
           Text(
             text = "• Maintain proper spacing\n• Avoid overhead irrigation",
             fontSize = 13.sp,
-            color = KisanMutedSage,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             lineHeight = 18.sp
           )
         }
@@ -1208,7 +1198,7 @@ fun DiagnosisResultView(
         Text(
           text = "Scan Date: 12 Sep 2025, 10:24 AM",
           fontSize = 11.sp,
-          color = KisanMutedSage
+          color = MaterialTheme.colorScheme.onSurfaceVariant
         )
       }
     }
@@ -1223,7 +1213,7 @@ fun DiagnosisResultView(
       OutlinedButton(
         onClick = onSaveResult,
         shape = RoundedCornerShape(26.dp),
-        border = BorderStroke(1.5.dp, KisanEmerald),
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary),
         modifier = Modifier
           .weight(1f)
           .height(52.dp)
@@ -1232,7 +1222,7 @@ fun DiagnosisResultView(
         Icon(
           imageVector = if (isSaved) Icons.Default.BookmarkAdded else Icons.Default.BookmarkAdded,
           contentDescription = null,
-          tint = KisanEmerald,
+          tint = MaterialTheme.colorScheme.primary,
           modifier = Modifier.size(18.dp)
         )
         Spacer(modifier = Modifier.width(6.dp))
@@ -1240,14 +1230,14 @@ fun DiagnosisResultView(
           text = if (isSaved) "Saved" else "Save Result",
           fontSize = 14.sp,
           fontWeight = FontWeight.SemiBold,
-          color = KisanEmerald
+          color = MaterialTheme.colorScheme.primary
         )
       }
 
-      Button(
+      KisanPrimaryButton(
         onClick = onScanAnother,
         colors = ButtonDefaults.buttonColors(
-          containerColor = KisanDeepForest,
+          containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
           contentColor = Color.White
         ),
         shape = RoundedCornerShape(26.dp),
@@ -1299,9 +1289,7 @@ fun InconclusiveResultView(
   Column(
     modifier = modifier
       .fillMaxSize()
-      .background(KisanWarmIvory)
-      .statusBarsPadding()
-      .navigationBarsPadding()
+      .background(MaterialTheme.colorScheme.background)
       .verticalScroll(scrollState)
       .padding(horizontal = 20.dp, vertical = 12.dp)
       .testTag("inconclusive_result_view")
@@ -1320,7 +1308,7 @@ fun InconclusiveResultView(
           Icon(
             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
             contentDescription = "Back",
-            tint = KisanCharcoal
+            tint = MaterialTheme.colorScheme.onBackground
           )
         }
         Spacer(modifier = Modifier.width(6.dp))
@@ -1328,7 +1316,7 @@ fun InconclusiveResultView(
           text = "Scan Inconclusive",
           fontSize = 18.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
       }
 
@@ -1350,9 +1338,9 @@ fun InconclusiveResultView(
     Spacer(modifier = Modifier.height(16.dp))
 
     // Leaf Image Preview with Confidence Badge
-    Card(
+    KisanCard(
       shape = RoundedCornerShape(20.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanWhite),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
       elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
       modifier = Modifier
         .fillMaxWidth()
@@ -1383,7 +1371,7 @@ fun InconclusiveResultView(
             Icon(
               imageVector = Icons.Default.Eco,
               contentDescription = null,
-              tint = KisanMutedSage,
+              tint = MaterialTheme.colorScheme.onSurfaceVariant,
               modifier = Modifier.size(56.dp)
             )
           }
@@ -1422,9 +1410,9 @@ fun InconclusiveResultView(
     Spacer(modifier = Modifier.height(16.dp))
 
     // Threshold Safety Card
-    Card(
+    KisanCard(
       shape = RoundedCornerShape(18.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanWhite),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
       border = BorderStroke(1.dp, Color(0xFFFFCC80)),
       modifier = Modifier.fillMaxWidth()
     ) {
@@ -1449,7 +1437,7 @@ fun InconclusiveResultView(
             text = "Diagnosis Withheld for Safety",
             fontSize = 15.sp,
             fontWeight = FontWeight.Bold,
-            color = KisanCharcoal
+            color = MaterialTheme.colorScheme.onBackground
           )
         }
 
@@ -1458,7 +1446,7 @@ fun InconclusiveResultView(
         Text(
           text = "To protect your $cropHint crop from accidental exposure to unneeded or harmful chemicals, KisanAI requires at least 65% diagnostic confidence before recommending chemical or organic treatments.",
           fontSize = 13.sp,
-          color = KisanCharcoal.copy(alpha = 0.85f),
+          color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.85f),
           lineHeight = 18.sp
         )
       }
@@ -1467,9 +1455,9 @@ fun InconclusiveResultView(
     Spacer(modifier = Modifier.height(12.dp))
 
     // Analysis Reasons
-    Card(
+    KisanCard(
       shape = RoundedCornerShape(18.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanWhite),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
       modifier = Modifier.fillMaxWidth()
     ) {
       Column(modifier = Modifier.padding(16.dp)) {
@@ -1477,7 +1465,7 @@ fun InconclusiveResultView(
           text = "Why is confidence low?",
           fontSize = 14.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -1490,7 +1478,7 @@ fun InconclusiveResultView(
             Text(
               text = reason,
               fontSize = 13.sp,
-              color = KisanCharcoal.copy(alpha = 0.85f),
+              color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.85f),
               lineHeight = 18.sp
             )
           }
@@ -1501,9 +1489,9 @@ fun InconclusiveResultView(
     Spacer(modifier = Modifier.height(12.dp))
 
     // Photography Suggestions
-    Card(
+    KisanCard(
       shape = RoundedCornerShape(18.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanWhite),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
       modifier = Modifier.fillMaxWidth()
     ) {
       Column(modifier = Modifier.padding(16.dp)) {
@@ -1511,7 +1499,7 @@ fun InconclusiveResultView(
           text = "Tips for a clear scan:",
           fontSize = 14.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -1523,7 +1511,7 @@ fun InconclusiveResultView(
             Icon(
               imageVector = Icons.Default.CheckCircle,
               contentDescription = null,
-              tint = KisanEmerald,
+              tint = MaterialTheme.colorScheme.primary,
               modifier = Modifier
                 .size(16.dp)
                 .padding(top = 2.dp)
@@ -1532,7 +1520,7 @@ fun InconclusiveResultView(
             Text(
               text = tip,
               fontSize = 13.sp,
-              color = KisanCharcoal.copy(alpha = 0.85f),
+              color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.85f),
               lineHeight = 18.sp
             )
           }
@@ -1543,10 +1531,10 @@ fun InconclusiveResultView(
     Spacer(modifier = Modifier.height(12.dp))
 
     // Helpline Card
-    Card(
+    KisanCard(
       shape = RoundedCornerShape(18.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanEmeraldLight.copy(alpha = 0.4f)),
-      border = BorderStroke(1.dp, KisanEmerald.copy(alpha = 0.2f)),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)),
+      border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
       modifier = Modifier.fillMaxWidth()
     ) {
       Column(modifier = Modifier.padding(16.dp)) {
@@ -1559,7 +1547,7 @@ fun InconclusiveResultView(
             Icon(
               imageVector = Icons.Default.Call,
               contentDescription = null,
-              tint = KisanEmerald,
+              tint = MaterialTheme.colorScheme.primary,
               modifier = Modifier.size(20.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -1567,14 +1555,14 @@ fun InconclusiveResultView(
               text = "Kisan Call Centre (Govt. of India)",
               fontSize = 13.sp,
               fontWeight = FontWeight.Bold,
-              color = KisanDeepForest
+              color = MaterialTheme.colorScheme.onPrimaryContainer
             )
           }
           Text(
             text = "Toll-Free",
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
-            color = KisanEmerald
+            color = MaterialTheme.colorScheme.primary
           )
         }
 
@@ -1582,12 +1570,12 @@ fun InconclusiveResultView(
         Text(
           text = "Speak directly to a government agricultural scientist for personalized crop advice.",
           fontSize = 12.sp,
-          color = KisanCharcoal,
+          color = MaterialTheme.colorScheme.onBackground,
           lineHeight = 16.sp
         )
         Spacer(modifier = Modifier.height(10.dp))
 
-        Button(
+        KisanPrimaryButton(
           onClick = {
             try {
               val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:18001801551"))
@@ -1595,7 +1583,7 @@ fun InconclusiveResultView(
             } catch (_: Exception) {
             }
           },
-          colors = ButtonDefaults.buttonColors(containerColor = KisanEmerald),
+          colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
           shape = RoundedCornerShape(12.dp),
           modifier = Modifier
             .fillMaxWidth()
@@ -1629,7 +1617,7 @@ fun InconclusiveResultView(
       OutlinedButton(
         onClick = onTryDifferentCrop,
         shape = RoundedCornerShape(26.dp),
-        border = BorderStroke(1.5.dp, KisanEmerald),
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary),
         modifier = Modifier
           .weight(1f)
           .height(50.dp)
@@ -1639,13 +1627,13 @@ fun InconclusiveResultView(
           text = "Change Crop",
           fontSize = 14.sp,
           fontWeight = FontWeight.SemiBold,
-          color = KisanEmerald
+          color = MaterialTheme.colorScheme.primary
         )
       }
 
-      Button(
+      KisanPrimaryButton(
         onClick = onRetake,
-        colors = ButtonDefaults.buttonColors(containerColor = KisanEmerald),
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         shape = RoundedCornerShape(26.dp),
         modifier = Modifier
           .weight(1.2f)

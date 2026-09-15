@@ -1,5 +1,8 @@
 package com.example
 
+import androidx.compose.material3.MaterialTheme
+
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -27,7 +30,6 @@ import com.example.ui.KisanViewModel
 import com.example.ui.components.KisanBottomBar
 import com.example.ui.components.KisanTab
 import com.example.ui.components.OfflineBanner
-import com.example.ui.screens.BiometricApprovalScreen
 import com.example.ui.screens.CropSelectionScreen
 import com.example.ui.screens.DashboardScreen
 import com.example.ui.screens.FarmScreen
@@ -41,19 +43,12 @@ import com.example.ui.screens.MyAccountScreen
 import com.example.ui.screens.OnboardingScreen
 import com.example.ui.screens.OverviewScreen
 import com.example.ui.screens.ProfileDialog
-import com.example.ui.screens.ProfileScreen
 import com.example.ui.screens.ScanScreen
 import com.example.ui.screens.SplashScreen
 import com.example.ui.screens.WeatherIrrigationScreen
 import com.example.ui.screens.CropScannerScreen
 import com.example.presentation.theme.KisanAITheme
 import com.example.presentation.theme.MyApplicationTheme
-import com.example.presentation.theme.KisanCharcoal
-import com.example.presentation.theme.KisanDeepForest
-import com.example.presentation.theme.KisanEmerald
-import com.example.presentation.theme.KisanHarvestGold
-import com.example.presentation.theme.KisanMutedSage
-import com.example.presentation.theme.KisanWarmIvory
 import android.Manifest
 import android.app.Activity
 import android.content.Context
@@ -74,6 +69,7 @@ import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import com.example.presentation.components.KisanPrimaryButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -98,7 +94,6 @@ enum class AppFlowScreen {
   SPLASH,
   ONBOARDING,
   LOGIN,
-  BIOMETRIC_APPROVAL,
   MAIN
 }
 
@@ -126,11 +121,22 @@ fun KisanApp(viewModel: KisanViewModel = viewModel()) {
   val snackbarMessage by viewModel.snackbarMessage.collectAsStateWithLifecycle()
   val isFetchingLocation by viewModel.isFetchingLocation.collectAsStateWithLifecycle()
   val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()
+  val weatherAlerts by viewModel.weatherAlerts.collectAsStateWithLifecycle()
+  val unreadAlertsCount by viewModel.unreadAlertsCount.collectAsStateWithLifecycle()
+  val alertPreferences by viewModel.alertPreferences.collectAsStateWithLifecycle()
 
   val strings = viewModel.getStrings(currentLanguage)
 
-  var appFlowScreen by remember { mutableStateOf(AppFlowScreen.MAIN) }
+  var appFlowScreen by remember { mutableStateOf(AppFlowScreen.SPLASH) }
   var currentTab by remember { mutableStateOf(KisanTab.HOME) }
+
+  // Handle launch from system weather alert notification
+  val currentActivity = androidx.activity.compose.LocalActivity.current
+  LaunchedEffect(Unit) {
+    if (currentActivity?.intent?.getStringExtra(com.example.core.notification.WeatherNotificationManager.EXTRA_TARGET_TAB) == "ALERTS") {
+      currentTab = KisanTab.ALERTS
+    }
+  }
   var showCropSelectionBeforeScan by remember { mutableStateOf(true) }
   var showCropScanner by remember { mutableStateOf(false) }
   var showProfileDialog by remember { mutableStateOf(false) }
@@ -140,7 +146,7 @@ fun KisanApp(viewModel: KisanViewModel = viewModel()) {
 
   // Runtime Camera Permission handling
   val context = LocalContext.current
-  val activity = context as? Activity
+  val activity = androidx.activity.compose.LocalActivity.current
   val lifecycleOwner = LocalLifecycleOwner.current
 
   var showPermissionDeniedDialog by remember { mutableStateOf(false) }
@@ -225,15 +231,24 @@ fun KisanApp(viewModel: KisanViewModel = viewModel()) {
 
   when (appFlowScreen) {
     AppFlowScreen.SPLASH -> {
-      SplashScreen(
-        onGetStarted = { appFlowScreen = AppFlowScreen.LOGIN }
+      com.example.ui.navigation.AppStartupNavigator(
+        viewModel = viewModel,
+        onNavigate = { destination ->
+          appFlowScreen = destination
+        }
       )
     }
 
     AppFlowScreen.ONBOARDING -> {
       OnboardingScreen(
-        onGetStarted = { appFlowScreen = AppFlowScreen.MAIN },
-        onSignInClick = { appFlowScreen = AppFlowScreen.LOGIN }
+        onGetStarted = {
+          viewModel.completeOnboarding()
+          appFlowScreen = AppFlowScreen.LOGIN
+        },
+        onSignInClick = {
+          viewModel.completeOnboarding()
+          appFlowScreen = AppFlowScreen.LOGIN
+        }
       )
     }
 
@@ -242,25 +257,10 @@ fun KisanApp(viewModel: KisanViewModel = viewModel()) {
         onLoginSuccess = {
           viewModel.loginUser("rudra.patel@kisan.ai")
           appFlowScreen = AppFlowScreen.MAIN
-        },
-        onNavigateToRegister = {
-          viewModel.loginUser("rudra.patel@kisan.ai")
-          appFlowScreen = AppFlowScreen.MAIN
-        },
-        onNavigateToBiometric = { appFlowScreen = AppFlowScreen.BIOMETRIC_APPROVAL }
+        }
       )
     }
 
-    AppFlowScreen.BIOMETRIC_APPROVAL -> {
-      BiometricApprovalScreen(
-        farmerProfile = farmerProfile,
-        onApprovalSuccess = {
-          viewModel.loginUser("rudra.patel@kisan.ai")
-          appFlowScreen = AppFlowScreen.MAIN
-        },
-        onUsePassword = { appFlowScreen = AppFlowScreen.LOGIN }
-      )
-    }
 
     AppFlowScreen.MAIN -> {
       Box(modifier = Modifier.fillMaxSize()) {
@@ -270,7 +270,8 @@ fun KisanApp(viewModel: KisanViewModel = viewModel()) {
             KisanBottomBar(
               currentTab = currentTab,
               onTabSelected = { currentTab = it },
-              strings = strings
+              strings = strings,
+              unreadAlertsCount = unreadAlertsCount
             )
           },
           snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -297,6 +298,7 @@ fun KisanApp(viewModel: KisanViewModel = viewModel()) {
                   farmerProfile = farmerProfile,
                   weather = weather,
                   crops = crops,
+                  alerts = weatherAlerts,
                   onNavigateToScan = {
                     showCropSelectionBeforeScan = true
                     currentTab = KisanTab.SCAN
@@ -310,19 +312,7 @@ fun KisanApp(viewModel: KisanViewModel = viewModel()) {
               }
 
               KisanTab.SCAN -> {
-                if (showCropScanner) {
-                  CropScannerScreen(
-                    cropHint = selectedCropContext,
-                    onImageCaptured = { bitmap ->
-                      showCropScanner = false
-                      showCropSelectionBeforeScan = false
-                      viewModel.scanLeaf(bitmap, selectedCropContext, null, null)
-                    },
-                    onClose = {
-                      showCropScanner = false
-                    }
-                  )
-                } else if (showCropSelectionBeforeScan) {
+                if (showCropSelectionBeforeScan) {
                   CropSelectionScreen(
                     viewModel = viewModel,
                     onProceedToScan = { crop ->
@@ -368,7 +358,8 @@ fun KisanApp(viewModel: KisanViewModel = viewModel()) {
                   onAddCrop = { crop -> viewModel.addFarmCrop(crop) },
                   onDeleteCrop = { crop -> viewModel.deleteCrop(crop.id) },
                   strings = strings,
-                  onOpenFilter = { showFilterScreen = true }
+                  onOpenFilter = { showFilterScreen = true },
+                  onBackClick = { currentTab = KisanTab.HOME }
                 )
               }
 
@@ -376,6 +367,18 @@ fun KisanApp(viewModel: KisanViewModel = viewModel()) {
                 OverviewScreen(
                   weather = weather,
                   farmerProfile = farmerProfile,
+                  alerts = weatherAlerts,
+                  unreadCount = unreadAlertsCount,
+                  preferences = alertPreferences,
+                  onEvaluateRisks = { notifySystem -> viewModel.evaluateWeatherRisks(notifySystem) },
+                  onSimulateAlert = { type, notifySystem -> viewModel.simulateWeatherAlert(type, notifySystem) },
+                  onMarkAlertRead = { id -> viewModel.markAlertAsRead(id) },
+                  onMarkAllRead = { viewModel.markAllAlertsAsRead() },
+                  onDismissAlert = { id -> viewModel.dismissAlert(id) },
+                  onDeleteAlert = { id -> viewModel.deleteAlert(id) },
+                  onUpdatePreferences = { updated -> viewModel.updateAlertPreferences(updated) },
+                  onSendSystemNotification = { alert -> viewModel.sendSystemNotification(alert) },
+                  canPostNotifications = viewModel.weatherNotificationManager.canPostNotifications(),
                   onRefreshLocation = { viewModel.refreshLocation() },
                   onSelectManualLocation = { city, state, lat, lon ->
                     viewModel.setManualLocation(city, state, lat, lon)
@@ -399,7 +402,6 @@ fun KisanApp(viewModel: KisanViewModel = viewModel()) {
                   farmerProfile = farmerProfile,
                   currentLanguage = currentLanguage,
                   onLanguageSelected = { viewModel.switchLanguage(it) },
-                  onNavigateToBiometric = { appFlowScreen = AppFlowScreen.BIOMETRIC_APPROVAL },
                   onNavigateToHistory = { currentTab = KisanTab.HISTORY },
                   onNavigateToWeather = { currentTab = KisanTab.ALERTS },
                   onNavigateToTransparency = { showModelTransparency = true },
@@ -425,6 +427,21 @@ fun KisanApp(viewModel: KisanViewModel = viewModel()) {
               }
             )
           }
+        }
+
+        // Fullscreen Camera Viewfinder Overlay
+        if (showCropScanner) {
+          CropScannerScreen(
+            cropHint = selectedCropContext,
+            onImageCaptured = { bitmap ->
+              showCropScanner = false
+              showCropSelectionBeforeScan = false
+              viewModel.scanLeaf(bitmap, selectedCropContext, null, null)
+            },
+            onClose = {
+              showCropScanner = false
+            }
+          )
         }
 
         // Overlay Filter Screen when triggered from Home or Dashboard
@@ -518,7 +535,7 @@ fun CameraPermissionDeniedDialog(
       Icon(
         imageVector = Icons.Default.CameraAlt,
         contentDescription = "Camera Permission Required",
-        tint = KisanEmerald,
+        tint = MaterialTheme.colorScheme.primary,
         modifier = Modifier.size(36.dp)
       )
     },
@@ -527,7 +544,7 @@ fun CameraPermissionDeniedDialog(
         text = "Camera Access Required",
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp,
-        color = KisanCharcoal,
+        color = MaterialTheme.colorScheme.onBackground,
         textAlign = TextAlign.Center
       )
     },
@@ -536,21 +553,21 @@ fun CameraPermissionDeniedDialog(
         Text(
           text = "KisanAI requires camera access to scan crop leaves, diagnose diseases, and recommend immediate agricultural remedies in real time.",
           fontSize = 14.sp,
-          color = KisanCharcoal,
+          color = MaterialTheme.colorScheme.onBackground,
           lineHeight = 20.sp
         )
         Text(
           text = "Without camera permission, live leaf scanning is unavailable. However, you can still select sample specimens or pick photos from your device gallery.",
           fontSize = 12.sp,
-          color = KisanMutedSage,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
           lineHeight = 16.sp
         )
       }
     },
     confirmButton = {
-      Button(
+      KisanPrimaryButton(
         onClick = onGrantPermission,
-        colors = ButtonDefaults.buttonColors(containerColor = KisanEmerald),
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier.testTag("grant_camera_permission_button")
       ) {
@@ -562,7 +579,7 @@ fun CameraPermissionDeniedDialog(
         onClick = onDismiss,
         modifier = Modifier.testTag("dismiss_permission_dialog_button")
       ) {
-        Text("Not Now", color = KisanMutedSage)
+        Text("Not Now", color = MaterialTheme.colorScheme.onSurfaceVariant)
       }
     },
     modifier = Modifier.testTag("camera_permission_denied_dialog")
@@ -586,7 +603,7 @@ fun CameraPermissionPermanentlyDeniedDialog(
       Icon(
         imageVector = Icons.Default.Settings,
         contentDescription = "Camera Permission Disabled",
-        tint = KisanHarvestGold,
+        tint = MaterialTheme.colorScheme.secondary,
         modifier = Modifier.size(36.dp)
       )
     },
@@ -595,7 +612,7 @@ fun CameraPermissionPermanentlyDeniedDialog(
         text = "Camera Permission Disabled",
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp,
-        color = KisanCharcoal,
+        color = MaterialTheme.colorScheme.onBackground,
         textAlign = TextAlign.Center
       )
     },
@@ -604,12 +621,12 @@ fun CameraPermissionPermanentlyDeniedDialog(
         Text(
           text = "Camera permission has been disabled for KisanAI. To scan crops in real time, please grant camera access in system settings.",
           fontSize = 14.sp,
-          color = KisanCharcoal,
+          color = MaterialTheme.colorScheme.onBackground,
           lineHeight = 20.sp
         )
         Surface(
           shape = RoundedCornerShape(10.dp),
-          color = KisanWarmIvory,
+          color = MaterialTheme.colorScheme.background,
           modifier = Modifier.fillMaxWidth()
         ) {
           Column(
@@ -620,12 +637,12 @@ fun CameraPermissionPermanentlyDeniedDialog(
               text = "How to enable:",
               fontSize = 12.sp,
               fontWeight = FontWeight.SemiBold,
-              color = KisanDeepForest
+              color = MaterialTheme.colorScheme.onPrimaryContainer
             )
             Text(
               text = "1. Tap 'Open Settings' below\n2. Select 'Permissions'\n3. Turn on 'Camera'",
               fontSize = 12.sp,
-              color = KisanCharcoal,
+              color = MaterialTheme.colorScheme.onBackground,
               lineHeight = 18.sp
             )
           }
@@ -633,9 +650,9 @@ fun CameraPermissionPermanentlyDeniedDialog(
       }
     },
     confirmButton = {
-      Button(
+      KisanPrimaryButton(
         onClick = onOpenSettings,
-        colors = ButtonDefaults.buttonColors(containerColor = KisanEmerald),
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier.testTag("open_settings_button")
       ) {
@@ -653,7 +670,7 @@ fun CameraPermissionPermanentlyDeniedDialog(
         onClick = onDismiss,
         modifier = Modifier.testTag("dismiss_permanently_denied_dialog_button")
       ) {
-        Text("Cancel", color = KisanMutedSage)
+        Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
       }
     },
     modifier = Modifier.testTag("camera_permission_permanently_denied_dialog")

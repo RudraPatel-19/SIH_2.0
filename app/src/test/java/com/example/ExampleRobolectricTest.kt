@@ -369,27 +369,6 @@ class ExampleRobolectricTest {
   }
 
   @Test
-  fun `login screen provides Google and GitHub social login options`() {
-    var socialProvider: String? = null
-    composeTestRule.setContent {
-      KisanAITheme {
-        LoginScreen(
-          onLoginSuccess = {},
-          onNavigateToRegister = {},
-          onGoogleSignIn = { socialProvider = "google" },
-          onGitHubSignIn = { socialProvider = "github" }
-        )
-      }
-    }
-
-    composeTestRule.onNodeWithTag("google_login_button").performScrollTo().assertExists().performClick()
-    assertEquals("google", socialProvider)
-
-    composeTestRule.onNodeWithTag("github_login_button").performScrollTo().assertExists().performClick()
-    assertEquals("github", socialProvider)
-  }
-
-  @Test
   fun `camera permission denied dialog renders explanation and grant button`() {
     var grantClicked = false
     var dismissClicked = false

@@ -5,6 +5,8 @@ import androidx.test.core.app.ApplicationProvider
 import com.example.core.error.AppError
 import com.example.core.network.NetworkResult
 import com.example.core.session.SessionManager
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -50,23 +52,23 @@ class CoreArchitectureTest {
   }
 
   @Test
-  fun sessionManager_savesAndClearsSessionCorrectly() {
+  fun sessionManager_savesAndClearsSessionCorrectly() = runTest {
     val app = ApplicationProvider.getApplicationContext<Application>()
     val sessionManager = SessionManager(app)
 
     sessionManager.clearSession()
-    assertFalse(sessionManager.isLoggedIn.value)
-    assertEquals("", sessionManager.currentUserEmail.value)
+    assertFalse(sessionManager.isLoggedIn.first())
+    assertEquals("", sessionManager.currentUserEmail.first())
     assertNull(sessionManager.getAuthToken())
 
     sessionManager.saveSession("rudra.patel@kisan.ai", "token_12345")
-    assertTrue(sessionManager.isLoggedIn.value)
-    assertEquals("rudra.patel@kisan.ai", sessionManager.currentUserEmail.value)
+    assertTrue(sessionManager.isLoggedIn.first())
+    assertEquals("rudra.patel@kisan.ai", sessionManager.currentUserEmail.first())
     assertEquals("token_12345", sessionManager.getAuthToken())
 
     sessionManager.clearSession()
-    assertFalse(sessionManager.isLoggedIn.value)
-    assertEquals("", sessionManager.currentUserEmail.value)
+    assertFalse(sessionManager.isLoggedIn.first())
+    assertEquals("", sessionManager.currentUserEmail.first())
     assertNull(sessionManager.getAuthToken())
   }
 }

@@ -19,6 +19,7 @@ fun DashboardScreen(
   onDeleteCrop: (FarmCropEntity) -> Unit,
   strings: AppStrings,
   onOpenFilter: () -> Unit = {},
+  onBackClick: () -> Unit = {},
   modifier: Modifier = Modifier
 ) {
   FarmScreen(
@@ -28,6 +29,7 @@ fun DashboardScreen(
     onDeleteCrop = onDeleteCrop,
     strings = strings,
     onOpenFilter = onOpenFilter,
+    onBackClick = onBackClick,
     modifier = modifier.fillMaxSize()
   )
 }

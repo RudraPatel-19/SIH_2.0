@@ -84,4 +84,35 @@ interface KisanDao {
       deleteScansChunk(chunk)
     }
   }
+
+  // Weather Risk Alerts
+  @Query("SELECT * FROM weather_alerts WHERE isDismissed = 0 ORDER BY timestamp DESC")
+  fun getActiveWeatherAlerts(): Flow<List<WeatherAlertEntity>>
+
+  @Query("SELECT * FROM weather_alerts ORDER BY timestamp DESC")
+  fun getAllWeatherAlerts(): Flow<List<WeatherAlertEntity>>
+
+  @Query("SELECT COUNT(*) FROM weather_alerts WHERE isRead = 0 AND isDismissed = 0")
+  fun getUnreadAlertsCount(): Flow<Int>
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  suspend fun insertWeatherAlert(alert: WeatherAlertEntity)
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  suspend fun insertWeatherAlerts(alerts: List<WeatherAlertEntity>)
+
+  @Query("UPDATE weather_alerts SET isRead = 1 WHERE id = :id")
+  suspend fun markAlertAsRead(id: String)
+
+  @Query("UPDATE weather_alerts SET isRead = 1 WHERE isDismissed = 0")
+  suspend fun markAllAlertsAsRead()
+
+  @Query("UPDATE weather_alerts SET isDismissed = 1 WHERE id = :id")
+  suspend fun dismissAlert(id: String)
+
+  @Query("DELETE FROM weather_alerts WHERE id = :id")
+  suspend fun deleteAlertById(id: String)
+
+  @Query("DELETE FROM weather_alerts")
+  suspend fun clearAllAlerts()
 }

@@ -1,5 +1,8 @@
 package com.example.ui.screens
 
+import androidx.compose.material3.MaterialTheme
+
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -42,8 +45,10 @@ import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.Science
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import com.example.presentation.components.KisanPrimaryButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import com.example.presentation.components.KisanCard
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -70,15 +75,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ai.CropDiseaseDetector
 import com.example.data.model.SampleSpecimen
-import com.example.ui.theme.KisanCardBorder
-import com.example.ui.theme.KisanCharcoal
-import com.example.ui.theme.KisanDeepForest
-import com.example.ui.theme.KisanEmerald
-import com.example.ui.theme.KisanEmeraldLight
-import com.example.ui.theme.KisanHarvestGold
-import com.example.ui.theme.KisanMutedSage
-import com.example.ui.theme.KisanWarmIvory
-import com.example.ui.theme.KisanWhite
 
 /**
  * Pre-scan crop context data model for agricultural disease classification.
@@ -235,8 +231,7 @@ fun PreScanCropSelectionScreen(
   Column(
     modifier = modifier
       .fillMaxSize()
-      .background(KisanWarmIvory)
-      .statusBarsPadding()
+      .background(MaterialTheme.colorScheme.background)
       .testTag("pre_scan_crop_selection_screen")
   ) {
     // Top Bar
@@ -254,23 +249,18 @@ fun PreScanCropSelectionScreen(
     ) {
       Spacer(modifier = Modifier.height(12.dp))
 
-      // 4-Step Stepper (Highlighting Step 1: Crop Prior)
-      PreScanStepperRow(currentStep = 1)
-
-      Spacer(modifier = Modifier.height(16.dp))
-
       // Header Title & Context Description
       Text(
         text = "Select Crop to Scan",
         fontSize = 22.sp,
         fontWeight = FontWeight.Bold,
-        color = KisanCharcoal
+        color = MaterialTheme.colorScheme.onBackground
       )
       Spacer(modifier = Modifier.height(4.dp))
       Text(
         text = "Condition on-device vision model weights on your plant species for verified diagnostic accuracy.",
         fontSize = 13.sp,
-        color = KisanMutedSage,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         lineHeight = 18.sp
       )
 
@@ -291,24 +281,24 @@ fun PreScanCropSelectionScreen(
           Text(
             text = "Search crop (e.g. Tomato, Rice, Blight...)",
             fontSize = 13.sp,
-            color = KisanMutedSage
+            color = MaterialTheme.colorScheme.onSurfaceVariant
           )
         },
         leadingIcon = {
           Icon(
             imageVector = Icons.Default.Search,
             contentDescription = null,
-            tint = KisanMutedSage,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(20.dp)
           )
         },
         singleLine = true,
         shape = RoundedCornerShape(14.dp),
         colors = OutlinedTextFieldDefaults.colors(
-          focusedContainerColor = KisanWhite,
-          unfocusedContainerColor = KisanWhite,
-          focusedBorderColor = KisanEmerald,
-          unfocusedBorderColor = KisanCardBorder
+          focusedContainerColor = MaterialTheme.colorScheme.surface,
+          unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+          focusedBorderColor = MaterialTheme.colorScheme.primary,
+          unfocusedBorderColor = MaterialTheme.colorScheme.outline
         ),
         modifier = Modifier
           .fillMaxWidth()
@@ -328,8 +318,8 @@ fun PreScanCropSelectionScreen(
           val isSelected = selectedCategory == category
           Surface(
             shape = RoundedCornerShape(20.dp),
-            color = if (isSelected) KisanEmerald else KisanWhite,
-            border = BorderStroke(1.dp, if (isSelected) KisanEmerald else KisanCardBorder),
+            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+            border = BorderStroke(1.dp, if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline),
             modifier = Modifier
               .clickable { selectedCategory = category }
               .testTag("category_chip_${category.replace(" ", "_")}")
@@ -338,7 +328,7 @@ fun PreScanCropSelectionScreen(
               text = category,
               fontSize = 12.sp,
               fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-              color = if (isSelected) Color.White else KisanCharcoal,
+              color = if (isSelected) Color.White else MaterialTheme.colorScheme.onBackground,
               modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp)
             )
           }
@@ -357,12 +347,12 @@ fun PreScanCropSelectionScreen(
           text = "Supported Plant Species (${filteredCrops.size})",
           fontSize = 14.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
         Text(
           text = "Tap to select prior",
           fontSize = 11.sp,
-          color = KisanMutedSage
+          color = MaterialTheme.colorScheme.onSurfaceVariant
         )
       }
 
@@ -390,10 +380,10 @@ fun PreScanCropSelectionScreen(
       }
 
       if (matchingSpecimens.isNotEmpty()) {
-        Card(
+        KisanCard(
           shape = RoundedCornerShape(16.dp),
-          colors = CardDefaults.cardColors(containerColor = KisanWhite),
-          border = BorderStroke(1.dp, KisanCardBorder),
+          colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+          border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
           modifier = Modifier.fillMaxWidth()
         ) {
           Column(modifier = Modifier.padding(14.dp)) {
@@ -406,7 +396,7 @@ fun PreScanCropSelectionScreen(
                 Icon(
                   imageVector = Icons.Default.Science,
                   contentDescription = null,
-                  tint = KisanEmerald,
+                  tint = MaterialTheme.colorScheme.primary,
                   modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
@@ -414,7 +404,7 @@ fun PreScanCropSelectionScreen(
                   text = "No leaf nearby? Test ${activeCropItem.displayName} Specimen",
                   fontSize = 13.sp,
                   fontWeight = FontWeight.Bold,
-                  color = KisanDeepForest
+                  color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
               }
             }
@@ -424,8 +414,8 @@ fun PreScanCropSelectionScreen(
             matchingSpecimens.forEach { specimen ->
               Surface(
                 shape = RoundedCornerShape(10.dp),
-                color = KisanWarmIvory,
-                border = BorderStroke(1.dp, KisanCardBorder),
+                color = MaterialTheme.colorScheme.background,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 modifier = Modifier
                   .fillMaxWidth()
                   .padding(vertical = 4.dp)
@@ -444,12 +434,12 @@ fun PreScanCropSelectionScreen(
                       text = specimen.diseaseName,
                       fontSize = 12.sp,
                       fontWeight = FontWeight.Bold,
-                      color = KisanCharcoal
+                      color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
                       text = specimen.description,
                       fontSize = 10.sp,
-                      color = KisanMutedSage,
+                      color = MaterialTheme.colorScheme.onSurfaceVariant,
                       maxLines = 1,
                       overflow = TextOverflow.Ellipsis
                     )
@@ -458,7 +448,7 @@ fun PreScanCropSelectionScreen(
                     text = "Simulate ➔",
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
-                    color = KisanEmerald
+                    color = MaterialTheme.colorScheme.primary
                   )
                 }
               }
@@ -467,7 +457,7 @@ fun PreScanCropSelectionScreen(
         }
       }
 
-      Spacer(modifier = Modifier.height(100.dp)) // Padding for bottom launch bar
+      Spacer(modifier = Modifier.height(24.dp))
     }
 
     // Sticky Bottom Launch Bar
@@ -502,7 +492,7 @@ private fun PreScanTopBar(
         Icon(
           imageVector = Icons.AutoMirrored.Filled.ArrowBack,
           contentDescription = "Back",
-          tint = KisanCharcoal
+          tint = MaterialTheme.colorScheme.onBackground
         )
       }
       Spacer(modifier = Modifier.width(6.dp))
@@ -510,14 +500,14 @@ private fun PreScanTopBar(
         text = "Crop Context Prior",
         fontSize = 17.sp,
         fontWeight = FontWeight.Bold,
-        color = KisanCharcoal
+        color = MaterialTheme.colorScheme.onBackground
       )
     }
 
     Surface(
       shape = RoundedCornerShape(14.dp),
-      color = KisanEmeraldLight,
-      border = BorderStroke(1.dp, KisanEmerald.copy(alpha = 0.3f)),
+      color = MaterialTheme.colorScheme.primaryContainer,
+      border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)),
       modifier = Modifier
         .clickable { onNavigateToTransparency() }
         .testTag("model_transparency_pre_scan_btn")
@@ -529,7 +519,7 @@ private fun PreScanTopBar(
         Icon(
           imageVector = Icons.Default.Science,
           contentDescription = null,
-          tint = KisanDeepForest,
+          tint = MaterialTheme.colorScheme.onPrimaryContainer,
           modifier = Modifier.size(15.dp)
         )
         Spacer(modifier = Modifier.width(4.dp))
@@ -537,7 +527,7 @@ private fun PreScanTopBar(
           text = "Model Specs",
           fontSize = 11.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanDeepForest
+          color = MaterialTheme.colorScheme.onPrimaryContainer
         )
       }
     }
@@ -551,10 +541,10 @@ private fun PreScanTopBar(
 private fun WhyCropPriorMattersCard(
   onNavigateToTransparency: () -> Unit
 ) {
-  Card(
+  KisanCard(
     shape = RoundedCornerShape(16.dp),
-    colors = CardDefaults.cardColors(containerColor = KisanEmeraldLight.copy(alpha = 0.5f)),
-    border = BorderStroke(1.dp, KisanEmerald.copy(alpha = 0.2f)),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)),
+    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
     modifier = Modifier.fillMaxWidth()
   ) {
     Row(
@@ -565,7 +555,7 @@ private fun WhyCropPriorMattersCard(
     ) {
       Surface(
         shape = CircleShape,
-        color = KisanEmerald,
+        color = MaterialTheme.colorScheme.primary,
         modifier = Modifier.size(36.dp)
       ) {
         Box(contentAlignment = Alignment.Center) {
@@ -585,13 +575,13 @@ private fun WhyCropPriorMattersCard(
           text = "Why select your crop first?",
           fontSize = 13.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanDeepForest
+          color = MaterialTheme.colorScheme.onPrimaryContainer
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
           text = "Plant diseases exhibit cross-species symptom overlap (e.g. leaf spots and yellowing). Conditioning our on-device MobileNetV3 model on your specific crop restricts classification to verified pathogen candidates, preventing false alarms and elevating Top-1 diagnostic precision to 94.2%+.",
           fontSize = 11.sp,
-          color = KisanCharcoal.copy(alpha = 0.85f),
+          color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.85f),
           lineHeight = 16.sp
         )
       }
@@ -609,15 +599,15 @@ private fun CropSelectionCard(
   onSelect: () -> Unit
 ) {
   val borderColor by animateColorAsState(
-    targetValue = if (isSelected) KisanEmerald else KisanCardBorder,
+    targetValue = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
     label = "borderColor"
   )
   val backgroundColor by animateColorAsState(
-    targetValue = if (isSelected) KisanWhite else KisanWhite,
+    targetValue = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surface,
     label = "backgroundColor"
   )
 
-  Card(
+  KisanCard(
     shape = RoundedCornerShape(16.dp),
     colors = CardDefaults.cardColors(containerColor = backgroundColor),
     border = BorderStroke(if (isSelected) 2.dp else 1.dp, borderColor),
@@ -635,7 +625,7 @@ private fun CropSelectionCard(
         // Crop Icon Avatar
         Surface(
           shape = RoundedCornerShape(12.dp),
-          color = if (isSelected) KisanEmeraldLight else KisanWarmIvory,
+          color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.background,
           modifier = Modifier.size(46.dp)
         ) {
           Box(contentAlignment = Alignment.Center) {
@@ -655,18 +645,18 @@ private fun CropSelectionCard(
               text = crop.displayName,
               fontSize = 15.sp,
               fontWeight = FontWeight.Bold,
-              color = if (isSelected) KisanDeepForest else KisanCharcoal
+              color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.width(6.dp))
             Surface(
               shape = RoundedCornerShape(6.dp),
-              color = if (isSelected) KisanEmerald else Color(0xFFECEFF1)
+              color = if (isSelected) MaterialTheme.colorScheme.primary else Color(0xFFECEFF1)
             ) {
               Text(
                 text = crop.accuracyBenchmark,
                 fontSize = 9.sp,
                 fontWeight = FontWeight.Bold,
-                color = if (isSelected) Color.White else KisanCharcoal,
+                color = if (isSelected) Color.White else MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
               )
             }
@@ -675,13 +665,13 @@ private fun CropSelectionCard(
           Text(
             text = crop.vernacularName,
             fontSize = 12.sp,
-            color = KisanMutedSage
+            color = MaterialTheme.colorScheme.onSurfaceVariant
           )
           Text(
             text = crop.scientificName,
             fontSize = 10.sp,
             fontStyle = FontStyle.Italic,
-            color = KisanMutedSage.copy(alpha = 0.8f)
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
           )
         }
 
@@ -689,7 +679,7 @@ private fun CropSelectionCard(
         Icon(
           imageVector = if (isSelected) Icons.Default.RadioButtonChecked else Icons.Default.RadioButtonUnchecked,
           contentDescription = if (isSelected) "Selected" else "Select",
-          tint = if (isSelected) KisanEmerald else Color(0xFFB0BEC5),
+          tint = if (isSelected) MaterialTheme.colorScheme.primary else Color(0xFFB0BEC5),
           modifier = Modifier.size(24.dp)
         )
       }
@@ -707,7 +697,7 @@ private fun CropSelectionCard(
         ) {
           Surface(
             shape = RoundedCornerShape(10.dp),
-            color = KisanEmeraldLight.copy(alpha = 0.6f),
+            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
             modifier = Modifier.fillMaxWidth()
           ) {
             Column(modifier = Modifier.padding(10.dp)) {
@@ -715,7 +705,7 @@ private fun CropSelectionCard(
                 Icon(
                   imageVector = Icons.Default.CheckCircle,
                   contentDescription = null,
-                  tint = KisanEmerald,
+                  tint = MaterialTheme.colorScheme.primary,
                   modifier = Modifier.size(14.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
@@ -723,7 +713,7 @@ private fun CropSelectionCard(
                   text = "Active Prior: Dedicated ${crop.displayName} Weights Loaded",
                   fontSize = 11.sp,
                   fontWeight = FontWeight.Bold,
-                  color = KisanDeepForest
+                  color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
               }
 
@@ -733,7 +723,7 @@ private fun CropSelectionCard(
                 text = "Detectable Pathogens:",
                 fontSize = 10.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = KisanMutedSage
+                color = MaterialTheme.colorScheme.onSurfaceVariant
               )
               Spacer(modifier = Modifier.height(4.dp))
 
@@ -747,13 +737,13 @@ private fun CropSelectionCard(
                 crop.detectableDiseases.forEach { disease ->
                   Surface(
                     shape = RoundedCornerShape(6.dp),
-                    color = KisanWhite,
-                    border = BorderStroke(0.8.dp, KisanCardBorder)
+                    color = MaterialTheme.colorScheme.surface,
+                    border = BorderStroke(0.8.dp, MaterialTheme.colorScheme.outline)
                   ) {
                     Text(
                       text = disease,
                       fontSize = 10.sp,
-                      color = KisanCharcoal,
+                      color = MaterialTheme.colorScheme.onBackground,
                       modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                     )
                   }
@@ -765,7 +755,7 @@ private fun CropSelectionCard(
               Text(
                 text = "📷 Tip: ${crop.photographyTip}",
                 fontSize = 11.sp,
-                color = KisanCharcoal,
+                color = MaterialTheme.colorScheme.onBackground,
                 lineHeight = 15.sp
               )
             }
@@ -788,11 +778,9 @@ private fun PreScanBottomLaunchBar(
 ) {
   Surface(
     shadowElevation = 12.dp,
-    color = KisanWhite,
-    border = BorderStroke(1.dp, KisanCardBorder),
-    modifier = Modifier
-      .fillMaxWidth()
-      .navigationBarsPadding()
+    color = MaterialTheme.colorScheme.surface,
+    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+    modifier = Modifier.fillMaxWidth()
   ) {
     Column(
       modifier = Modifier
@@ -811,7 +799,7 @@ private fun PreScanBottomLaunchBar(
             text = "Model Context: ${activeCrop.displayName}",
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
-            color = KisanDeepForest
+            color = MaterialTheme.colorScheme.onPrimaryContainer
           )
         }
         Surface(
@@ -822,7 +810,7 @@ private fun PreScanBottomLaunchBar(
             text = "Prior Calibrated",
             fontSize = 10.sp,
             fontWeight = FontWeight.Bold,
-            color = KisanEmerald,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
           )
         }
@@ -838,7 +826,7 @@ private fun PreScanBottomLaunchBar(
         OutlinedButton(
           onClick = onGalleryClick,
           shape = RoundedCornerShape(26.dp),
-          border = BorderStroke(1.5.dp, KisanEmerald),
+          border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary),
           modifier = Modifier
             .weight(1f)
             .height(52.dp)
@@ -847,7 +835,7 @@ private fun PreScanBottomLaunchBar(
           Icon(
             imageVector = Icons.Default.Collections,
             contentDescription = null,
-            tint = KisanEmerald,
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(18.dp)
           )
           Spacer(modifier = Modifier.width(6.dp))
@@ -855,15 +843,15 @@ private fun PreScanBottomLaunchBar(
             text = "Gallery",
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
-            color = KisanEmerald
+            color = MaterialTheme.colorScheme.primary
           )
         }
 
         // Primary Launch Camera Button
-        Button(
+        KisanPrimaryButton(
           onClick = onLaunchCamera,
           colors = ButtonDefaults.buttonColors(
-            containerColor = KisanEmerald,
+            containerColor = MaterialTheme.colorScheme.primary,
             contentColor = Color.White
           ),
           shape = RoundedCornerShape(26.dp),
@@ -897,7 +885,7 @@ private fun PreScanBottomLaunchBar(
  */
 @Composable
 private fun PreScanStepperRow(currentStep: Int) {
-  val steps = listOf("Crop Prior", "Camera", "Vision AI", "Remedy")
+  val steps = listOf("Crop", "Image", "Analyse", "Result")
 
   Row(
     modifier = Modifier.fillMaxWidth(),
@@ -915,8 +903,8 @@ private fun PreScanStepperRow(currentStep: Int) {
         Surface(
           shape = CircleShape,
           color = when {
-            isPast -> KisanEmerald
-            isCurrent -> KisanEmerald
+            isPast -> MaterialTheme.colorScheme.primary
+            isCurrent -> MaterialTheme.colorScheme.primary
             else -> Color(0xFFCFD8DC)
           },
           modifier = Modifier.size(26.dp)
@@ -934,7 +922,7 @@ private fun PreScanStepperRow(currentStep: Int) {
                 text = "$stepNum",
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
-                color = if (isCurrent) Color.White else KisanCharcoal
+                color = if (isCurrent) Color.White else MaterialTheme.colorScheme.onBackground
               )
             }
           }
@@ -944,7 +932,7 @@ private fun PreScanStepperRow(currentStep: Int) {
           text = stepName,
           fontSize = 10.sp,
           fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal,
-          color = if (isCurrent) KisanEmerald else KisanMutedSage
+          color = if (isCurrent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
         )
       }
 
@@ -954,7 +942,7 @@ private fun PreScanStepperRow(currentStep: Int) {
             .weight(1f)
             .height(2.dp)
             .padding(horizontal = 6.dp)
-            .background(if (index < currentStep - 1) KisanEmerald else Color(0xFFE0E0E0))
+            .background(if (index < currentStep - 1) MaterialTheme.colorScheme.primary else Color(0xFFE0E0E0))
         )
       }
     }

@@ -1,5 +1,8 @@
 package com.example.ui.screens
 
+import androidx.compose.material3.MaterialTheme
+
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,8 +38,10 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import com.example.presentation.components.KisanPrimaryButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import com.example.presentation.components.KisanCard
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
@@ -66,14 +71,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.components.KisanLogoHeader
-import com.example.ui.theme.KisanCardBorder
-import com.example.ui.theme.KisanCharcoal
-import com.example.ui.theme.KisanDeepForest
-import com.example.ui.theme.KisanEmerald
-import com.example.ui.theme.KisanEmeraldLight
-import com.example.ui.theme.KisanMutedSage
-import com.example.ui.theme.KisanWarmIvory
-import com.example.ui.theme.KisanWhite
 
 /**
  * Safe Authentication Error Messages
@@ -102,10 +99,7 @@ object AuthErrorMessages {
 @Composable
 fun LoginScreen(
   onLoginSuccess: () -> Unit,
-  onNavigateToRegister: () -> Unit,
-  onNavigateToBiometric: () -> Unit = {},
-  onGoogleSignIn: () -> Unit = onLoginSuccess,
-  onGitHubSignIn: () -> Unit = onLoginSuccess,
+  onNavigateToRegister: () -> Unit = {},
   modifier: Modifier = Modifier
 ) {
   var isSignUpMode by remember { mutableStateOf(false) }
@@ -125,7 +119,7 @@ fun LoginScreen(
   Column(
     modifier = modifier
       .fillMaxSize()
-      .background(KisanWarmIvory)
+      .background(MaterialTheme.colorScheme.background)
       .statusBarsPadding()
       .navigationBarsPadding()
       .verticalScroll(rememberScrollState())
@@ -153,7 +147,7 @@ fun LoginScreen(
         text = if (isSignUpMode) "Create Farm Account" else "Welcome Back",
         fontSize = 24.sp,
         fontWeight = FontWeight.Bold,
-        color = KisanCharcoal,
+        color = MaterialTheme.colorScheme.onBackground,
         textAlign = TextAlign.Center
       )
 
@@ -162,16 +156,16 @@ fun LoginScreen(
       Text(
         text = if (isSignUpMode) "Join KisanAI to protect your crops with AI" else "Sign in to continue to your farm",
         fontSize = 14.sp,
-        color = KisanMutedSage,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         textAlign = TextAlign.Center
       )
 
       Spacer(modifier = Modifier.height(24.dp))
 
       // Card enclosing credentials form
-      Card(
+      KisanCard(
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = KisanWhite),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         modifier = Modifier.fillMaxWidth()
       ) {
@@ -252,7 +246,7 @@ fun LoginScreen(
               text = "Full Name",
               fontSize = 13.sp,
               fontWeight = FontWeight.SemiBold,
-              color = KisanCharcoal
+              color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
@@ -262,20 +256,20 @@ fun LoginScreen(
                 authErrorMessage = null
                 signupSuccessMessage = null
               },
-              placeholder = { Text("Enter your full name", fontSize = 14.sp, color = KisanMutedSage) },
+              placeholder = { Text("Enter your full name", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) },
               leadingIcon = {
                 Icon(
                   imageVector = Icons.Default.Person,
                   contentDescription = null,
-                  tint = KisanEmerald,
+                  tint = MaterialTheme.colorScheme.primary,
                   modifier = Modifier.size(20.dp)
                 )
               },
               singleLine = true,
               shape = RoundedCornerShape(12.dp),
               colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = KisanEmerald,
-                unfocusedBorderColor = KisanCardBorder
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline
               ),
               modifier = Modifier
                 .fillMaxWidth()
@@ -289,7 +283,7 @@ fun LoginScreen(
               text = "Farm Location / Village",
               fontSize = 13.sp,
               fontWeight = FontWeight.SemiBold,
-              color = KisanCharcoal
+              color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
@@ -299,20 +293,20 @@ fun LoginScreen(
                 authErrorMessage = null
                 signupSuccessMessage = null
               },
-              placeholder = { Text("e.g. Surat, Gujarat", fontSize = 14.sp, color = KisanMutedSage) },
+              placeholder = { Text("e.g. Surat, Gujarat", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) },
               leadingIcon = {
                 Icon(
                   imageVector = Icons.Default.LocationOn,
                   contentDescription = null,
-                  tint = KisanEmerald,
+                  tint = MaterialTheme.colorScheme.primary,
                   modifier = Modifier.size(20.dp)
                 )
               },
               singleLine = true,
               shape = RoundedCornerShape(12.dp),
               colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = KisanEmerald,
-                unfocusedBorderColor = KisanCardBorder
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline
               ),
               modifier = Modifier
                 .fillMaxWidth()
@@ -327,7 +321,7 @@ fun LoginScreen(
             text = if (isSignUpMode) "Email or Mobile" else "Email or Mobile Number",
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
-            color = KisanCharcoal
+            color = MaterialTheme.colorScheme.onBackground
           )
           Spacer(modifier = Modifier.height(6.dp))
           OutlinedTextField(
@@ -337,12 +331,12 @@ fun LoginScreen(
               authErrorMessage = null
               signupSuccessMessage = null
             },
-            placeholder = { Text("name@example.com or mobile", fontSize = 14.sp, color = KisanMutedSage) },
+            placeholder = { Text("name@example.com or mobile", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) },
             leadingIcon = {
               Icon(
                 imageVector = Icons.Default.Email,
                 contentDescription = null,
-                tint = KisanEmerald,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(20.dp)
               )
             },
@@ -350,8 +344,8 @@ fun LoginScreen(
             singleLine = true,
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
-              focusedBorderColor = KisanEmerald,
-              unfocusedBorderColor = KisanCardBorder
+              focusedBorderColor = MaterialTheme.colorScheme.primary,
+              unfocusedBorderColor = MaterialTheme.colorScheme.outline
             ),
             modifier = Modifier
               .fillMaxWidth()
@@ -365,7 +359,7 @@ fun LoginScreen(
             text = if (isSignUpMode) "Create Password" else "Password",
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
-            color = KisanCharcoal
+            color = MaterialTheme.colorScheme.onBackground
           )
           Spacer(modifier = Modifier.height(6.dp))
           OutlinedTextField(
@@ -375,12 +369,12 @@ fun LoginScreen(
               authErrorMessage = null
               signupSuccessMessage = null
             },
-            placeholder = { Text("Enter your password", fontSize = 14.sp, color = KisanMutedSage) },
+            placeholder = { Text("Enter your password", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) },
             leadingIcon = {
               Icon(
                 imageVector = Icons.Default.Lock,
                 contentDescription = null,
-                tint = KisanEmerald,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(20.dp)
               )
             },
@@ -389,7 +383,7 @@ fun LoginScreen(
                 Icon(
                   imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                   contentDescription = if (passwordVisible) "Hide password" else "Show password",
-                  tint = KisanMutedSage,
+                  tint = MaterialTheme.colorScheme.onSurfaceVariant,
                   modifier = Modifier.size(20.dp)
                 )
               }
@@ -399,8 +393,8 @@ fun LoginScreen(
             singleLine = true,
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
-              focusedBorderColor = KisanEmerald,
-              unfocusedBorderColor = KisanCardBorder
+              focusedBorderColor = MaterialTheme.colorScheme.primary,
+              unfocusedBorderColor = MaterialTheme.colorScheme.outline
             ),
             modifier = Modifier
               .fillMaxWidth()
@@ -420,14 +414,14 @@ fun LoginScreen(
                 Checkbox(
                   checked = rememberMe,
                   onCheckedChange = { rememberMe = it },
-                  colors = CheckboxDefaults.colors(checkedColor = KisanEmerald),
+                  colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary),
                   modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
                   text = "Remember me",
                   fontSize = 13.sp,
-                  color = KisanCharcoal
+                  color = MaterialTheme.colorScheme.onBackground
                 )
               }
 
@@ -443,7 +437,7 @@ fun LoginScreen(
                 Text(
                   text = "Forgot password?",
                   fontSize = 12.sp,
-                  color = KisanEmerald,
+                  color = MaterialTheme.colorScheme.primary,
                   fontWeight = FontWeight.Medium
                 )
               }
@@ -453,7 +447,7 @@ fun LoginScreen(
           Spacer(modifier = Modifier.height(20.dp))
 
           // Primary Action Button
-          Button(
+          KisanPrimaryButton(
             onClick = {
               if (isSignUpMode) {
                 if (emailOrMobile.isBlank() || password.isBlank() || fullName.isBlank()) {
@@ -474,7 +468,7 @@ fun LoginScreen(
               }
             },
             colors = ButtonDefaults.buttonColors(
-              containerColor = KisanDeepForest,
+              containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
               contentColor = Color.White
             ),
             shape = RoundedCornerShape(26.dp),
@@ -492,83 +486,19 @@ fun LoginScreen(
 
           Spacer(modifier = Modifier.height(16.dp))
 
-          // "or" Divider
-          Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-          ) {
-            HorizontalDivider(modifier = Modifier.weight(1f), color = KisanCardBorder)
-            Text(
-              text = "  or continue with  ",
-              fontSize = 12.sp,
-              color = KisanMutedSage
-            )
-            HorizontalDivider(modifier = Modifier.weight(1f), color = KisanCardBorder)
-          }
-
-          Spacer(modifier = Modifier.height(16.dp))
-
-          // Social Login Buttons (Google & GitHub)
-          Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-          ) {
-            // Google Social Login
-            OutlinedButton(
-              onClick = onGoogleSignIn,
-              shape = RoundedCornerShape(14.dp),
-              border = BorderStroke(1.dp, KisanCardBorder),
-              colors = ButtonDefaults.outlinedButtonColors(
-                containerColor = KisanWhite,
-                contentColor = KisanCharcoal
-              ),
-              modifier = Modifier
-                .weight(1f)
-                .height(48.dp)
-                .testTag("google_login_button")
-            ) {
-              Text(
-                text = "Google",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = KisanCharcoal
-              )
-            }
-
-            // GitHub Social Login
-            OutlinedButton(
-              onClick = onGitHubSignIn,
-              shape = RoundedCornerShape(14.dp),
-              border = BorderStroke(1.dp, KisanCardBorder),
-              colors = ButtonDefaults.outlinedButtonColors(
-                containerColor = KisanWhite,
-                contentColor = KisanCharcoal
-              ),
-              modifier = Modifier
-                .weight(1f)
-                .height(48.dp)
-                .testTag("github_login_button")
-            ) {
-              Text(
-                text = "GitHub",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = KisanCharcoal
-              )
-            }
-          }
-
-          Spacer(modifier = Modifier.height(16.dp))
 
           // Create New Account / Already Have Account Toggle Button
           OutlinedButton(
             onClick = {
+              if (!isSignUpMode) {
+                onNavigateToRegister()
+              }
               isSignUpMode = !isSignUpMode
               authErrorMessage = null
               signupSuccessMessage = null
             },
             shape = RoundedCornerShape(26.dp),
-            border = androidx.compose.foundation.BorderStroke(1.dp, KisanEmerald),
+            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
             modifier = Modifier
               .fillMaxWidth()
               .height(50.dp)
@@ -578,41 +508,12 @@ fun LoginScreen(
               text = if (isSignUpMode) "Already Have an Account? Sign In" else "Create New Account",
               fontSize = 15.sp,
               fontWeight = FontWeight.SemiBold,
-              color = KisanEmerald
+              color = MaterialTheme.colorScheme.primary
             )
           }
 
-          Spacer(modifier = Modifier.height(16.dp))
 
-          // Biometric Quick Access Button
-          Surface(
-            shape = RoundedCornerShape(20.dp),
-            color = KisanEmeraldLight,
-            modifier = Modifier
-              .fillMaxWidth()
-              .clickable { onNavigateToBiometric() }
-              .testTag("login_biometric_button")
-          ) {
-            Row(
-              modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
-              horizontalArrangement = Arrangement.Center,
-              verticalAlignment = Alignment.CenterVertically
-            ) {
-              Icon(
-                imageVector = Icons.Default.Fingerprint,
-                contentDescription = "Biometric Login",
-                tint = KisanEmerald,
-                modifier = Modifier.size(20.dp)
-              )
-              Spacer(modifier = Modifier.width(8.dp))
-              Text(
-                text = "Fast Biometric Approval",
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
-                color = KisanEmerald
-              )
-            }
-          }
+
         }
       }
     }
@@ -626,7 +527,7 @@ fun LoginScreen(
             text = "Reset Password",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            color = KisanCharcoal
+            color = MaterialTheme.colorScheme.onBackground
           )
         },
         text = {
@@ -634,18 +535,18 @@ fun LoginScreen(
             Text(
               text = "Enter your account email to receive password recovery instructions.",
               fontSize = 13.sp,
-              color = KisanMutedSage
+              color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(14.dp))
             OutlinedTextField(
               value = forgotPasswordEmail,
               onValueChange = { forgotPasswordEmail = it },
-              placeholder = { Text("name@example.com", fontSize = 13.sp, color = KisanMutedSage) },
+              placeholder = { Text("name@example.com", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) },
               leadingIcon = {
                 Icon(
                   imageVector = Icons.Default.Email,
                   contentDescription = null,
-                  tint = KisanEmerald,
+                  tint = MaterialTheme.colorScheme.primary,
                   modifier = Modifier.size(18.dp)
                 )
               },
@@ -678,11 +579,11 @@ fun LoginScreen(
           }
         },
         confirmButton = {
-          Button(
+          KisanPrimaryButton(
             onClick = {
               forgotPasswordSubmitted = true
             },
-            colors = ButtonDefaults.buttonColors(containerColor = KisanDeepForest),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onPrimaryContainer),
             modifier = Modifier.testTag("forgot_password_submit_button")
           ) {
             Text("Send Reset Link")
@@ -693,7 +594,7 @@ fun LoginScreen(
             onClick = { showForgotPasswordDialog = false },
             modifier = Modifier.testTag("forgot_password_close_button")
           ) {
-            Text("Close", color = KisanCharcoal)
+            Text("Close", color = MaterialTheme.colorScheme.onBackground)
           }
         },
         modifier = Modifier.testTag("forgot_password_dialog")
@@ -714,14 +615,14 @@ fun LoginScreen(
         Icon(
           imageVector = Icons.Default.Security,
           contentDescription = "Secure",
-          tint = KisanMutedSage,
+          tint = MaterialTheme.colorScheme.onSurfaceVariant,
           modifier = Modifier.size(16.dp)
         )
         Spacer(modifier = Modifier.width(6.dp))
         Text(
           text = "Secure & trusted",
           fontSize = 12.sp,
-          color = KisanMutedSage
+          color = MaterialTheme.colorScheme.onSurfaceVariant
         )
       }
     }

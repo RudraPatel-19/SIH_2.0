@@ -1,5 +1,8 @@
 package com.example.ui.components
 
+import androidx.compose.material3.MaterialTheme
+
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -30,8 +33,10 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import com.example.presentation.components.KisanPrimaryButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import com.example.presentation.components.KisanCard
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -61,20 +66,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ui.theme.Dimens
-import com.example.ui.theme.KisanCardBorder
-import com.example.ui.theme.KisanCharcoal
-import com.example.ui.theme.KisanDeepForest
-import com.example.ui.theme.KisanEarthRed
-import com.example.ui.theme.KisanEmerald
-import com.example.ui.theme.KisanEmeraldLight
-import com.example.ui.theme.KisanGoldLight
-import com.example.ui.theme.KisanHarvestGold
-import com.example.ui.theme.KisanMutedSage
-import com.example.ui.theme.KisanRedLight
-import com.example.ui.theme.KisanSageLight
-import com.example.ui.theme.KisanWarmIvory
-import com.example.ui.theme.KisanWhite
+import com.example.presentation.theme.Dimens
+import com.example.presentation.theme.KisanSurfaceVariant
 
 /**
  * Reusable Primary Button with built-in loading indicator, minimum 48dp touch target, and test tag.
@@ -87,23 +80,23 @@ fun AppButton(
   enabled: Boolean = true,
   isLoading: Boolean = false,
   icon: ImageVector? = null,
-  containerColor: Color = KisanEmerald,
-  contentColor: Color = KisanWhite,
+  containerColor: Color = MaterialTheme.colorScheme.primary,
+  contentColor: Color = MaterialTheme.colorScheme.surface,
   testTag: String = "app_button"
 ) {
-  Button(
+  KisanPrimaryButton(
     onClick = onClick,
     enabled = enabled && !isLoading,
-    shape = RoundedCornerShape(Dimens.CornerRadiusLarge),
+    shape = RoundedCornerShape(Dimens.cornerLarge),
     colors = ButtonDefaults.buttonColors(
       containerColor = containerColor,
       contentColor = contentColor,
-      disabledContainerColor = KisanMutedSage.copy(alpha = 0.3f),
-      disabledContentColor = KisanWhite.copy(alpha = 0.7f)
+      disabledContainerColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
+      disabledContentColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
     ),
     modifier = modifier
       .fillMaxWidth()
-      .height(Dimens.ButtonHeight)
+      .height(Dimens.buttonHeight)
       .testTag(testTag)
   ) {
     if (isLoading) {
@@ -112,7 +105,7 @@ fun AppButton(
         color = contentColor,
         strokeWidth = 2.5.dp
       )
-      Spacer(modifier = Modifier.width(Dimens.SpacingSmall))
+      Spacer(modifier = Modifier.width(Dimens.spaceSmall))
       Text(
         text = "Please wait...",
         fontSize = 15.sp,
@@ -127,9 +120,9 @@ fun AppButton(
           Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = Modifier.size(Dimens.IconSizeMedium)
+            modifier = Modifier.size(Dimens.iconMedium)
           )
-          Spacer(modifier = Modifier.width(Dimens.SpacingSmall))
+          Spacer(modifier = Modifier.width(Dimens.spaceSmall))
         }
         Text(
           text = text,
@@ -151,18 +144,18 @@ fun AppOutlinedButton(
   modifier: Modifier = Modifier,
   enabled: Boolean = true,
   icon: ImageVector? = null,
-  borderColor: Color = KisanEmerald,
-  contentColor: Color = KisanEmerald,
+  borderColor: Color = MaterialTheme.colorScheme.primary,
+  contentColor: Color = MaterialTheme.colorScheme.primary,
   testTag: String = "app_outlined_button"
 ) {
   OutlinedButton(
     onClick = onClick,
     enabled = enabled,
-    shape = RoundedCornerShape(Dimens.CornerRadiusLarge),
+    shape = RoundedCornerShape(Dimens.cornerLarge),
     border = BorderStroke(1.5.dp, borderColor),
     modifier = modifier
       .fillMaxWidth()
-      .height(Dimens.ButtonHeight)
+      .height(Dimens.buttonHeight)
       .testTag(testTag)
   ) {
     Row(
@@ -174,9 +167,9 @@ fun AppOutlinedButton(
           imageVector = icon,
           contentDescription = null,
           tint = contentColor,
-          modifier = Modifier.size(Dimens.IconSizeMedium)
+          modifier = Modifier.size(Dimens.iconMedium)
         )
-        Spacer(modifier = Modifier.width(Dimens.SpacingSmall))
+        Spacer(modifier = Modifier.width(Dimens.spaceSmall))
       }
       Text(
         text = text,
@@ -215,14 +208,14 @@ fun AppTextField(
       onValueChange = onValueChange,
       label = { Text(label) },
       placeholder = if (placeholder.isNotBlank()) {
-        { Text(placeholder, color = KisanMutedSage.copy(alpha = 0.6f)) }
+        { Text(placeholder, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) }
       } else null,
       leadingIcon = if (leadingIcon != null) {
         {
           Icon(
             imageVector = leadingIcon,
             contentDescription = null,
-            tint = if (isError) KisanEarthRed else KisanEmerald
+            tint = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
           )
         }
       } else null,
@@ -233,15 +226,15 @@ fun AppTextField(
       maxLines = maxLines,
       keyboardOptions = keyboardOptions,
       keyboardActions = keyboardActions,
-      shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
+      shape = RoundedCornerShape(Dimens.cornerMedium),
       colors = OutlinedTextFieldDefaults.colors(
-        focusedBorderColor = KisanEmerald,
-        unfocusedBorderColor = KisanCardBorder,
-        errorBorderColor = KisanEarthRed,
-        focusedContainerColor = KisanWhite,
-        unfocusedContainerColor = KisanWhite,
-        focusedLabelColor = KisanEmerald,
-        unfocusedLabelColor = KisanMutedSage
+        focusedBorderColor = MaterialTheme.colorScheme.primary,
+        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+        errorBorderColor = MaterialTheme.colorScheme.error,
+        focusedContainerColor = MaterialTheme.colorScheme.surface,
+        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+        focusedLabelColor = MaterialTheme.colorScheme.primary,
+        unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
       ),
       modifier = Modifier
         .fillMaxWidth()
@@ -249,22 +242,22 @@ fun AppTextField(
     )
 
     if (isError && !errorMessage.isNullOrBlank()) {
-      Spacer(modifier = Modifier.height(Dimens.SpacingExtraSmall))
+      Spacer(modifier = Modifier.height(Dimens.spaceExtraSmall))
       Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = Modifier.padding(start = Dimens.SpacingSmall)
+        modifier = Modifier.padding(start = Dimens.spaceSmall)
       ) {
         Icon(
           imageVector = Icons.Default.ErrorOutline,
           contentDescription = null,
-          tint = KisanEarthRed,
+          tint = MaterialTheme.colorScheme.error,
           modifier = Modifier.size(14.dp)
         )
         Text(
           text = errorMessage,
           fontSize = 12.sp,
-          color = KisanEarthRed
+          color = MaterialTheme.colorScheme.error
         )
       }
     }
@@ -299,7 +292,7 @@ fun AppPasswordField(
         Icon(
           imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
           contentDescription = if (passwordVisible) "Hide password" else "Show password",
-          tint = KisanMutedSage
+          tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
       }
     },
@@ -317,8 +310,8 @@ fun AppPasswordField(
 fun AppCard(
   modifier: Modifier = Modifier,
   onClick: (() -> Unit)? = null,
-  containerColor: Color = KisanWhite,
-  borderColor: Color = KisanCardBorder,
+  containerColor: Color = MaterialTheme.colorScheme.surface,
+  borderColor: Color = MaterialTheme.colorScheme.outline,
   content: @Composable () -> Unit
 ) {
   val baseModifier = if (onClick != null) {
@@ -329,10 +322,10 @@ fun AppCard(
     modifier.fillMaxWidth()
   }
 
-  Card(
-    shape = RoundedCornerShape(Dimens.CornerRadiusLarge),
+  KisanCard(
+    shape = RoundedCornerShape(Dimens.cornerLarge),
     colors = CardDefaults.cardColors(containerColor = containerColor),
-    border = BorderStroke(Dimens.CardBorderWidth, borderColor),
+    border = BorderStroke(1.dp, borderColor),
     modifier = baseModifier
   ) {
     content()
@@ -350,22 +343,22 @@ fun LoadingView(
   Box(
     modifier = modifier
       .fillMaxWidth()
-      .padding(Dimens.SpacingLarge),
+      .padding(Dimens.spaceLarge),
     contentAlignment = Alignment.Center
   ) {
     Column(
       horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
+      verticalArrangement = Arrangement.spacedBy(Dimens.spaceMedium)
     ) {
       CircularProgressIndicator(
-        color = KisanEmerald,
+        color = MaterialTheme.colorScheme.primary,
         strokeWidth = 3.dp,
         modifier = Modifier.size(36.dp)
       )
       Text(
         text = message,
         fontSize = 14.sp,
-        color = KisanMutedSage,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         fontWeight = FontWeight.Medium
       )
     }
@@ -377,57 +370,57 @@ fun LoadingView(
  */
 @Composable
 fun ErrorView(
-  title: String = "Something went wrong",
+  title: String = "Unable to load data.",
   message: String,
   onRetry: (() -> Unit)? = null,
   modifier: Modifier = Modifier
 ) {
-  Card(
-    shape = RoundedCornerShape(Dimens.CornerRadiusLarge),
-    colors = CardDefaults.cardColors(containerColor = KisanRedLight),
-    border = BorderStroke(1.dp, KisanEarthRed.copy(alpha = 0.3f)),
+  KisanCard(
+    shape = RoundedCornerShape(Dimens.cornerLarge),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
+    border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.3f)),
     modifier = modifier
       .fillMaxWidth()
-      .padding(Dimens.SpacingNormal)
+      .padding(Dimens.spaceStandard)
   ) {
     Column(
-      modifier = Modifier.padding(Dimens.SpacingNormal),
+      modifier = Modifier.padding(Dimens.spaceStandard),
       horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
+      verticalArrangement = Arrangement.spacedBy(Dimens.spaceSmall)
     ) {
       Icon(
         imageVector = Icons.Default.ErrorOutline,
         contentDescription = null,
-        tint = KisanEarthRed,
+        tint = MaterialTheme.colorScheme.error,
         modifier = Modifier.size(32.dp)
       )
       Text(
         text = title,
         fontSize = 16.sp,
         fontWeight = FontWeight.Bold,
-        color = KisanCharcoal,
+        color = MaterialTheme.colorScheme.onBackground,
         textAlign = TextAlign.Center
       )
       Text(
         text = message,
         fontSize = 13.sp,
-        color = KisanMutedSage,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         textAlign = TextAlign.Center,
         lineHeight = 18.sp
       )
       if (onRetry != null) {
-        Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
-        Button(
+        Spacer(modifier = Modifier.height(Dimens.spaceSmall))
+        KisanPrimaryButton(
           onClick = onRetry,
-          shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
-          colors = ButtonDefaults.buttonColors(containerColor = KisanEarthRed)
+          shape = RoundedCornerShape(Dimens.cornerMedium),
+          colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
         ) {
           Icon(
             imageVector = Icons.Default.Refresh,
             contentDescription = null,
             modifier = Modifier.size(16.dp)
           )
-          Spacer(modifier = Modifier.width(Dimens.SpacingSmall))
+          Spacer(modifier = Modifier.width(Dimens.spaceSmall))
           Text("Try Again", fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
         }
       }
@@ -450,49 +443,49 @@ fun EmptyStateView(
   Box(
     modifier = modifier
       .fillMaxWidth()
-      .padding(Dimens.SpacingLarge),
+      .padding(Dimens.spaceLarge),
     contentAlignment = Alignment.Center
   ) {
     Column(
       horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall),
-      modifier = Modifier.padding(Dimens.SpacingNormal)
+      verticalArrangement = Arrangement.spacedBy(Dimens.spaceSmall),
+      modifier = Modifier.padding(Dimens.spaceStandard)
     ) {
       Box(
         modifier = Modifier
           .size(64.dp)
           .clip(CircleShape)
-          .background(KisanEmeraldLight),
+          .background(MaterialTheme.colorScheme.primaryContainer),
         contentAlignment = Alignment.Center
       ) {
         Icon(
           imageVector = icon,
           contentDescription = null,
-          tint = KisanEmerald,
+          tint = MaterialTheme.colorScheme.primary,
           modifier = Modifier.size(32.dp)
         )
       }
 
-      Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
+      Spacer(modifier = Modifier.height(Dimens.spaceSmall))
 
       Text(
         text = title,
         fontSize = 17.sp,
         fontWeight = FontWeight.Bold,
-        color = KisanCharcoal,
+        color = MaterialTheme.colorScheme.onBackground,
         textAlign = TextAlign.Center
       )
 
       Text(
         text = description,
         fontSize = 13.sp,
-        color = KisanMutedSage,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         textAlign = TextAlign.Center,
         lineHeight = 18.sp
       )
 
       if (actionText != null && onActionClick != null) {
-        Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
+        Spacer(modifier = Modifier.height(Dimens.spaceMedium))
         AppButton(
           text = actionText,
           onClick = onActionClick,
@@ -518,30 +511,30 @@ fun ConfirmDialog(
 ) {
   AlertDialog(
     onDismissRequest = onDismiss,
-    shape = RoundedCornerShape(Dimens.CornerRadiusLarge),
-    containerColor = KisanWhite,
+    shape = RoundedCornerShape(Dimens.cornerLarge),
+    containerColor = MaterialTheme.colorScheme.surface,
     title = {
       Text(
         text = title,
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp,
-        color = KisanCharcoal
+        color = MaterialTheme.colorScheme.onBackground
       )
     },
     text = {
       Text(
         text = message,
         fontSize = 14.sp,
-        color = KisanMutedSage,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         lineHeight = 20.sp
       )
     },
     confirmButton = {
-      Button(
+      KisanPrimaryButton(
         onClick = onConfirm,
-        shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
+        shape = RoundedCornerShape(Dimens.cornerMedium),
         colors = ButtonDefaults.buttonColors(
-          containerColor = if (isDestructive) KisanEarthRed else KisanEmerald
+          containerColor = if (isDestructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
         )
       ) {
         Text(confirmText, fontWeight = FontWeight.Bold)
@@ -549,7 +542,7 @@ fun ConfirmDialog(
     },
     dismissButton = {
       TextButton(onClick = onDismiss) {
-        Text(cancelText, color = KisanMutedSage)
+        Text(cancelText, color = MaterialTheme.colorScheme.onSurfaceVariant)
       }
     }
   )
@@ -574,14 +567,14 @@ fun SectionHeader(
       text = title,
       fontSize = 18.sp,
       fontWeight = FontWeight.Bold,
-      color = KisanCharcoal
+      color = MaterialTheme.colorScheme.onBackground
     )
     if (actionText != null && onActionClick != null) {
       Text(
         text = actionText,
         fontSize = 13.sp,
         fontWeight = FontWeight.SemiBold,
-        color = KisanEmerald,
+        color = MaterialTheme.colorScheme.primary,
         modifier = Modifier
           .clickable(onClick = onActionClick)
           .padding(4.dp)
@@ -604,11 +597,11 @@ fun StatusBadge(
   modifier: Modifier = Modifier
 ) {
   val (bgColor, textColor) = when (tone) {
-    BadgeTone.SUCCESS -> KisanEmeraldLight to KisanEmerald
-    BadgeTone.WARNING -> KisanGoldLight to KisanHarvestGold
-    BadgeTone.DANGER -> KisanRedLight to KisanEarthRed
-    BadgeTone.INFO -> KisanEmeraldLight to KisanDeepForest
-    BadgeTone.NEUTRAL -> KisanSageLight to KisanMutedSage
+    BadgeTone.SUCCESS -> MaterialTheme.colorScheme.primaryContainer to MaterialTheme.colorScheme.primary
+    BadgeTone.WARNING -> MaterialTheme.colorScheme.secondaryContainer to MaterialTheme.colorScheme.secondary
+    BadgeTone.DANGER -> MaterialTheme.colorScheme.errorContainer to MaterialTheme.colorScheme.error
+    BadgeTone.INFO -> MaterialTheme.colorScheme.primaryContainer to MaterialTheme.colorScheme.onPrimaryContainer
+    BadgeTone.NEUTRAL -> KisanSurfaceVariant to MaterialTheme.colorScheme.onSurfaceVariant
   }
 
   Surface(
@@ -641,13 +634,13 @@ fun SearchBar(
     value = query,
     onValueChange = onQueryChange,
     placeholder = {
-      Text(placeholder, fontSize = 13.sp, color = KisanMutedSage)
+      Text(placeholder, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
     },
     leadingIcon = {
       Icon(
         imageVector = Icons.Default.Search,
         contentDescription = "Search",
-        tint = KisanMutedSage,
+        tint = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.size(20.dp)
       )
     },
@@ -657,19 +650,19 @@ fun SearchBar(
           Icon(
             imageVector = Icons.Default.Clear,
             contentDescription = "Clear",
-            tint = KisanMutedSage,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(18.dp)
           )
         }
       }
     },
     singleLine = true,
-    shape = RoundedCornerShape(Dimens.CornerRadiusLarge),
+    shape = RoundedCornerShape(Dimens.cornerLarge),
     colors = OutlinedTextFieldDefaults.colors(
-      focusedBorderColor = KisanEmerald,
-      unfocusedBorderColor = KisanCardBorder,
-      focusedContainerColor = KisanWhite,
-      unfocusedContainerColor = KisanWhite
+      focusedBorderColor = MaterialTheme.colorScheme.primary,
+      unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+      focusedContainerColor = MaterialTheme.colorScheme.surface,
+      unfocusedContainerColor = MaterialTheme.colorScheme.surface
     ),
     modifier = modifier
       .fillMaxWidth()
@@ -685,7 +678,7 @@ fun SearchBar(
 fun ProfileAvatar(
   name: String,
   modifier: Modifier = Modifier,
-  size: Dp = Dimens.AvatarSizeNormal
+  size: Dp = Dimens.avatarMedium
 ) {
   val initials = name.split(" ")
     .take(2)
@@ -697,14 +690,14 @@ fun ProfileAvatar(
     modifier = modifier
       .size(size)
       .clip(CircleShape)
-      .background(KisanEmeraldLight),
+      .background(MaterialTheme.colorScheme.primaryContainer),
     contentAlignment = Alignment.Center
   ) {
     Text(
       text = initials,
       fontSize = (size.value * 0.4f).sp,
       fontWeight = FontWeight.Bold,
-      color = KisanEmerald
+      color = MaterialTheme.colorScheme.primary
     )
   }
 }
@@ -718,26 +711,26 @@ fun OfflineBanner(
   modifier: Modifier = Modifier
 ) {
   Surface(
-    color = KisanHarvestGold.copy(alpha = 0.15f),
-    shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
-    border = BorderStroke(1.dp, KisanHarvestGold.copy(alpha = 0.4f)),
+    color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.15f),
+    shape = RoundedCornerShape(Dimens.cornerMedium),
+    border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f)),
     modifier = modifier.fillMaxWidth()
   ) {
     Row(
-      modifier = Modifier.padding(Dimens.SpacingSmall + 4.dp),
+      modifier = Modifier.padding(Dimens.spaceSmall + 4.dp),
       verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
+      horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSmall)
     ) {
       Icon(
         imageVector = Icons.Default.WifiOff,
         contentDescription = null,
-        tint = KisanHarvestGold,
+        tint = MaterialTheme.colorScheme.secondary,
         modifier = Modifier.size(18.dp)
       )
       Text(
         text = message,
         fontSize = 12.sp,
-        color = KisanCharcoal,
+        color = MaterialTheme.colorScheme.onBackground,
         lineHeight = 16.sp
       )
     }

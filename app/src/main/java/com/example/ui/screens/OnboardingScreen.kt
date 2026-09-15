@@ -1,5 +1,8 @@
 package com.example.ui.screens
 
+import androidx.compose.material3.MaterialTheme
+
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Button
+import com.example.presentation.components.KisanPrimaryButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -42,13 +46,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ui.theme.KisanCharcoal
-import com.example.ui.theme.KisanDeepForest
-import com.example.ui.theme.KisanEmerald
-import com.example.ui.theme.KisanHarvestGold
-import com.example.ui.theme.KisanMutedSage
-import com.example.ui.theme.KisanWarmIvory
-import com.example.ui.theme.KisanWhite
 
 @Composable
 fun OnboardingScreen(
@@ -62,17 +59,17 @@ fun OnboardingScreen(
     Triple(
       "Smart farming starts with better insights.",
       "KisanAI uses AI and weather data to help you protect your crops, improve yields, and make informed decisions.",
-      listOf(KisanEmerald, KisanHarvestGold)
+      listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary)
     ),
     Triple(
       "Instant AI crop disease diagnosis.",
       "Snap a photo of any damaged leaf to identify blight, rust, and pests with precision treatments and dosage.",
-      listOf(Color(0xFF2E7D32), KisanEmerald)
+      listOf(Color(0xFF2E7D32), MaterialTheme.colorScheme.primary)
     ),
     Triple(
       "Precision weather & irrigation advisory.",
       "Save water and avoid foliar risk with real-time temperature, humidity, rainfall, and spray conditions.",
-      listOf(KisanDeepForest, Color(0xFF00796B))
+      listOf(MaterialTheme.colorScheme.onPrimaryContainer, Color(0xFF00796B))
     )
   )
 
@@ -81,7 +78,7 @@ fun OnboardingScreen(
   Column(
     modifier = modifier
       .fillMaxSize()
-      .background(KisanWarmIvory)
+      .background(MaterialTheme.colorScheme.background)
       .statusBarsPadding()
       .navigationBarsPadding()
   ) {
@@ -101,6 +98,9 @@ fun OnboardingScreen(
           )
         )
     ) {
+                        val canvasSecondary = MaterialTheme.colorScheme.secondary
+      val canvasPrimary = MaterialTheme.colorScheme.primary
+      val canvasOnPrimaryContainer = MaterialTheme.colorScheme.onPrimaryContainer
       Canvas(modifier = Modifier.fillMaxSize()) {
         val w = size.width
         val h = size.height
@@ -108,7 +108,7 @@ fun OnboardingScreen(
         // Sun & Glow
         drawCircle(
           brush = Brush.radialGradient(
-            colors = listOf(KisanHarvestGold, KisanHarvestGold.copy(alpha = 0.2f), Color.Transparent),
+            colors = listOf(canvasSecondary, canvasSecondary.copy(alpha = 0.2f), Color.Transparent),
             center = Offset(w * 0.5f, h * 0.35f),
             radius = w * 0.45f
           ),
@@ -130,7 +130,7 @@ fun OnboardingScreen(
           lineTo(0f, h)
           close()
         }
-        drawPath(hillPath1, color = KisanEmerald.copy(alpha = 0.7f))
+        drawPath(hillPath1, color = canvasPrimary.copy(alpha = 0.7f))
 
         val hillPath2 = Path().apply {
           moveTo(0f, h * 0.72f)
@@ -139,7 +139,7 @@ fun OnboardingScreen(
           lineTo(0f, h)
           close()
         }
-        drawPath(hillPath2, color = KisanDeepForest)
+        drawPath(hillPath2, color = canvasOnPrimaryContainer)
 
         // Neat perspective crop rows
         for (i in 0..10) {
@@ -163,7 +163,7 @@ fun OnboardingScreen(
       ) {
         Text(
           text = "Skip",
-          color = KisanDeepForest,
+          color = MaterialTheme.colorScheme.onPrimaryContainer,
           fontWeight = FontWeight.SemiBold,
           fontSize = 14.sp
         )
@@ -184,7 +184,7 @@ fun OnboardingScreen(
           text = currentPage.first,
           fontSize = 26.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal,
+          color = MaterialTheme.colorScheme.onBackground,
           textAlign = TextAlign.Center,
           lineHeight = 32.sp
         )
@@ -194,7 +194,7 @@ fun OnboardingScreen(
         Text(
           text = currentPage.second,
           fontSize = 14.sp,
-          color = KisanMutedSage,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
           textAlign = TextAlign.Center,
           lineHeight = 21.sp
         )
@@ -212,7 +212,7 @@ fun OnboardingScreen(
                 .padding(horizontal = 4.dp)
                 .size(if (i == activePage) 22.dp else 8.dp, 8.dp)
                 .clip(CircleShape)
-                .background(if (i == activePage) KisanEmerald else Color(0xFFD0D7D2))
+                .background(if (i == activePage) MaterialTheme.colorScheme.primary else Color(0xFFD0D7D2))
                 .clickable { activePage = i }
             )
           }
@@ -224,7 +224,7 @@ fun OnboardingScreen(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
       ) {
-        Button(
+        KisanPrimaryButton(
           onClick = {
             if (activePage < 2) {
               activePage++
@@ -233,7 +233,7 @@ fun OnboardingScreen(
             }
           },
           colors = ButtonDefaults.buttonColors(
-            containerColor = KisanEmerald,
+            containerColor = MaterialTheme.colorScheme.primary,
             contentColor = Color.White
           ),
           shape = RoundedCornerShape(28.dp),
@@ -243,7 +243,7 @@ fun OnboardingScreen(
             .testTag("onboarding_get_started_button")
         ) {
           Text(
-            text = if (activePage == 2) "Get Started" else "Get Started",
+            text = if (activePage == 2) "Get Started" else "Next",
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
           )
@@ -263,7 +263,7 @@ fun OnboardingScreen(
         ) {
           Text(
             text = "Have an account? Sign In",
-            color = KisanDeepForest,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold
           )

@@ -95,8 +95,6 @@ object CropDiseaseDetector {
         "Maintain wide plant spacing (60x45 cm) for adequate air circulation",
         "Ensure field has good drainage to prevent waterlogging"
       ),
-      adviceHindi = "यूरिया का प्रयोग तुरंत रोकें। मैंकोजेब (Mancozeb 75% WP) 2 ग्राम प्रति लीटर पानी में मिलाकर तुरंत छिड़काव करें।",
-      adviceGujarati = "તરત જ વધુ પડતું યુરિયા બંધ કરો. મેન્કોઝેબ ૨ ગ્રામ પ્રતિ લિટર પાણીમાં મેળવી સવારે અથવા સાંજે છંટકાવ કરવો."
     ),
 
     "tomato_early_blight" to CropDisease(
@@ -121,8 +119,6 @@ object CropDiseaseDetector {
         "Apply organic straw mulch to prevent soil spores from splashing onto foliage",
         "Prune bottom 12 inches of leaves touching soil"
       ),
-      adviceHindi = "निचली पीली पत्तियों को तोड़कर नष्ट करें। एजोक्सिस्ट्रोबिन 1.5 मिली/लीटर का छिड़काव करें।",
-      adviceGujarati = "નીચેના પીળા પાન દૂર કરી નાશ કરો. એઝોક્સિસ્ટ્રોબિન ૧.૫ મિલી પ્રતિ લિટર છંટકાવ કરો."
     ),
 
     "rice_bacterial_blight" to CropDisease(
@@ -147,8 +143,6 @@ object CropDiseaseDetector {
         "Keep field drained and maintain only 2-3 cm shallow water level",
         "Use BLB-resistant varieties (e.g., Improved Samba Mahsuri, PR 126)"
       ),
-      adviceHindi = "यूरिया तुरंत बंद करें। स्ट्रेप्टोसाइक्लिन 15 ग्राम + कॉपर ऑक्सीक्लोराइड 500 ग्राम प्रति एकड़ का छिड़काव करें।",
-      adviceGujarati = "નાઇટ્રોજન ખાતર બંધ કરો. સ્ટ્રેપ્ટોસાયક્લિન ૧૫ ગ્રામ + કોપર ઓક્સીક્લોરાઇડ ૫૦૦ ગ્રામ પ્રતિ એકર છંટકાવ કરો."
     ),
 
     "rice_blast" to CropDisease(
@@ -173,8 +167,6 @@ object CropDiseaseDetector {
         "Maintain uniform flooding during tillering and panicle emergence",
         "Destroy infected stubble after harvest"
       ),
-      adviceHindi = "ट्राईसाइक्लाजोल 75% WP 120 ग्राम प्रति एकड़ का 200 लीटर पानी में घोल बनाकर छिड़कें।",
-      adviceGujarati = "ટ્રાયસાયક્લાઝોલ ૭૫% ડબલ્યુપી ૧૨૦ ગ્રામ ૨૦૦ લિટર પાણીમાં ભેળવી છંટકાવ કરવો."
     ),
 
     "cotton_leaf_curl" to CropDisease(
@@ -199,8 +191,6 @@ object CropDiseaseDetector {
         "Avoid growing susceptible varieties in endemic zones",
         "Apply balanced N-P-K with extra potassium to induce systemic tolerance"
       ),
-      adviceHindi = "सफेद मक्खी की रोकथाम हेतु पीले चिपचिपे कार्ड लगाएं और थायमेथोक्सम 25% WG 80 ग्राम प्रति एकड़ छिड़कें।",
-      adviceGujarati = "સફેદ માખી નિયંત્રણ માટે પીળા સ્ટીકી ટ્રેપ લગાવો અને થાયમેથોક્ઝામ ૨૫% ડબલ્યુજી ૮૦ ગ્રામ પ્રતિ એકર છાંટો."
     ),
 
     "wheat_leaf_rust" to CropDisease(
@@ -225,8 +215,6 @@ object CropDiseaseDetector {
         "Timely sowing in November to escape late season temperature rise",
         "Do not over-irrigate during grain filling stage"
       ),
-      adviceHindi = "प्रोपिकोनाजोल 25% EC 200 मिली प्रति एकड़ 200 लीटर पानी में मिलाकर छिड़काव करें।",
-      adviceGujarati = "પ્રોપીકોનાઝોલ ૨૫% ઈસી ૨૦૦ મિલી ૨૦૦ લિટર પાણીમાં મેળવી છંટકાવ કરવો."
     ),
 
     "tomato_healthy" to CropDisease(
@@ -251,8 +239,6 @@ object CropDiseaseDetector {
         "Maintain regular irrigation schedule based on soil moisture",
         "Keep field weed-free"
       ),
-      adviceHindi = "फसल पूरी तरह स्वस्थ है! किसी कीटनाशक या फफूंदनाशक के छिड़काव की जरूरत नहीं है।",
-      adviceGujarati = "પાક તદ્દન તંદુરસ્ત છે! કોઈ દવા છાંટવાની જરૂર નથી. નિયમિત પોષણ ચાલુ રાખો."
     )
   )
 

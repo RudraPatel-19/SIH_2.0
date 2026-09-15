@@ -1,5 +1,8 @@
 package com.example.ui.components
 
+import androidx.compose.material3.MaterialTheme
+
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,16 +22,15 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
+import com.example.presentation.components.KisanCard
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
@@ -36,10 +38,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.AppStrings
-import com.example.ui.theme.KisanCharcoal
-import com.example.ui.theme.KisanEmerald
-import com.example.ui.theme.KisanMutedSage
-import com.example.ui.theme.KisanWhite
 
 enum class KisanTab(val icon: ImageVector, val tag: String) {
   HOME(Icons.Default.Home, "tab_home"),
@@ -55,11 +53,12 @@ fun KisanBottomBar(
   currentTab: KisanTab,
   onTabSelected: (KisanTab) -> Unit,
   strings: AppStrings,
+  unreadAlertsCount: Int = 0,
   modifier: Modifier = Modifier
 ) {
-  Card(
+  KisanCard(
     shape = androidx.compose.foundation.shape.RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-    colors = CardDefaults.cardColors(containerColor = KisanWhite),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
     modifier = modifier
       .fillMaxWidth()
@@ -95,8 +94,37 @@ fun KisanBottomBar(
           onClick = { onTabSelected(KisanTab.FARM) }
         )
 
-        // Center Gap for the elevated Scan button
-        Box(modifier = Modifier.size(54.dp))
+        // Center: AI Scan Button (Prominent but NOT overlapping)
+        Column(
+          horizontalAlignment = Alignment.CenterHorizontally,
+          verticalArrangement = Arrangement.Center,
+          modifier = Modifier
+            .clickable { onTabSelected(KisanTab.SCAN) }
+            .padding(horizontal = 4.dp, vertical = 2.dp)
+            .testTag("tab_scan")
+        ) {
+          Surface(
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(42.dp)
+          ) {
+            Box(contentAlignment = Alignment.Center) {
+              Icon(
+                imageVector = Icons.Default.CameraAlt,
+                contentDescription = "AI Scan",
+                tint = Color.White,
+                modifier = Modifier.size(24.dp)
+              )
+            }
+          }
+          Text(
+            text = "AI Scan",
+            fontSize = 11.sp,
+            fontWeight = if (currentTab == KisanTab.SCAN) FontWeight.Bold else FontWeight.Normal,
+            color = if (currentTab == KisanTab.SCAN) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 4.dp)
+          )
+        }
 
         // Tab 4: Alerts
         BottomNavItem(
@@ -104,6 +132,7 @@ fun KisanBottomBar(
           label = "Alerts",
           selected = currentTab == KisanTab.ALERTS || currentTab == KisanTab.HISTORY,
           testTag = "tab_alerts",
+          badgeCount = unreadAlertsCount,
           onClick = { onTabSelected(KisanTab.ALERTS) }
         )
 
@@ -116,36 +145,6 @@ fun KisanBottomBar(
           onClick = { onTabSelected(KisanTab.PROFILE) }
         )
       }
-
-      // Center Elevated Scan FAB Button
-      Box(
-        modifier = Modifier
-          .align(Alignment.TopCenter)
-          .offset(y = (-14).dp)
-      ) {
-        Surface(
-          shape = CircleShape,
-          color = KisanEmerald,
-          shadowElevation = 8.dp,
-          modifier = Modifier
-            .size(56.dp)
-            .clip(CircleShape)
-            .clickable { onTabSelected(KisanTab.SCAN) }
-            .testTag("center_scan_fab_button")
-        ) {
-          Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxWidth()
-          ) {
-            Icon(
-              imageVector = Icons.Default.CameraAlt,
-              contentDescription = "Start AI Scan",
-              tint = Color.White,
-              modifier = Modifier.size(28.dp)
-            )
-          }
-        }
-      }
     }
   }
 }
@@ -156,6 +155,7 @@ private fun BottomNavItem(
   label: String,
   selected: Boolean,
   testTag: String,
+  badgeCount: Int = 0,
   onClick: () -> Unit
 ) {
   Column(
@@ -167,17 +167,37 @@ private fun BottomNavItem(
       .padding(horizontal = 12.dp, vertical = 6.dp)
       .testTag(testTag)
   ) {
-    Icon(
-      imageVector = icon,
-      contentDescription = label,
-      tint = if (selected) KisanEmerald else KisanMutedSage,
-      modifier = Modifier.size(24.dp)
-    )
+    Box(contentAlignment = Alignment.TopEnd) {
+      Icon(
+        imageVector = icon,
+        contentDescription = label,
+        tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.size(24.dp)
+      )
+      if (badgeCount > 0) {
+        Surface(
+          shape = CircleShape,
+          color = Color(0xFFD32F2F),
+          modifier = Modifier
+            .offset(x = 6.dp, y = (-4).dp)
+            .size(16.dp)
+        ) {
+          Box(contentAlignment = Alignment.Center) {
+            Text(
+              text = if (badgeCount > 9) "9+" else "$badgeCount",
+              color = Color.White,
+              fontSize = 9.sp,
+              fontWeight = FontWeight.Bold
+            )
+          }
+        }
+      }
+    }
     Text(
       text = label,
       fontSize = 11.sp,
       fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-      color = if (selected) KisanEmerald else KisanMutedSage
+      color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
     )
   }
 }

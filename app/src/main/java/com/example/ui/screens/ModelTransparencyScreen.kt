@@ -1,5 +1,8 @@
 package com.example.ui.screens
 
+import androidx.compose.material3.MaterialTheme
+
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +30,7 @@ import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.Card
+import com.example.presentation.components.KisanCard
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,14 +47,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ui.theme.KisanCharcoal
-import com.example.ui.theme.KisanDeepForest
-import com.example.ui.theme.KisanEmerald
-import com.example.ui.theme.KisanEmeraldLight
-import com.example.ui.theme.KisanHarvestGold
-import com.example.ui.theme.KisanMutedSage
-import com.example.ui.theme.KisanWarmIvory
-import com.example.ui.theme.KisanWhite
 
 @Composable
 fun ModelTransparencyScreen(
@@ -60,7 +56,7 @@ fun ModelTransparencyScreen(
   Column(
     modifier = modifier
       .fillMaxSize()
-      .background(KisanWarmIvory)
+      .background(MaterialTheme.colorScheme.background)
       .statusBarsPadding()
       .navigationBarsPadding()
       .verticalScroll(rememberScrollState())
@@ -79,7 +75,7 @@ fun ModelTransparencyScreen(
         Icon(
           imageVector = Icons.AutoMirrored.Filled.ArrowBack,
           contentDescription = "Back",
-          tint = KisanCharcoal
+          tint = MaterialTheme.colorScheme.onBackground
         )
       }
       Spacer(modifier = Modifier.width(6.dp))
@@ -87,16 +83,16 @@ fun ModelTransparencyScreen(
         text = "Model & Dataset Transparency",
         fontSize = 18.sp,
         fontWeight = FontWeight.Bold,
-        color = KisanCharcoal
+        color = MaterialTheme.colorScheme.onBackground
       )
     }
 
     Spacer(modifier = Modifier.height(16.dp))
 
     // Top Banner Card
-    Card(
+    KisanCard(
       shape = RoundedCornerShape(20.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanDeepForest),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onPrimaryContainer),
       elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
       modifier = Modifier.fillMaxWidth()
     ) {
@@ -104,7 +100,7 @@ fun ModelTransparencyScreen(
         Row(verticalAlignment = Alignment.CenterVertically) {
           Surface(
             shape = CircleShape,
-            color = KisanEmerald,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(36.dp)
           ) {
             Box(contentAlignment = Alignment.Center) {
@@ -127,7 +123,7 @@ fun ModelTransparencyScreen(
             Text(
               text = "Crop-Conditioned Edge Architecture",
               fontSize = 12.sp,
-              color = KisanEmeraldLight
+              color = MaterialTheme.colorScheme.primaryContainer
             )
           }
         }
@@ -161,9 +157,9 @@ fun ModelTransparencyScreen(
     TransparencySectionTitle(icon = Icons.Default.Memory, title = "Model Architecture")
     Spacer(modifier = Modifier.height(10.dp))
 
-    Card(
+    KisanCard(
       shape = RoundedCornerShape(16.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanWhite),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
       modifier = Modifier.fillMaxWidth()
     ) {
       Column(modifier = Modifier.padding(16.dp)) {
@@ -182,9 +178,9 @@ fun ModelTransparencyScreen(
     TransparencySectionTitle(icon = Icons.Default.Dataset, title = "Training Data & Provenance")
     Spacer(modifier = Modifier.height(10.dp))
 
-    Card(
+    KisanCard(
       shape = RoundedCornerShape(16.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanWhite),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
       modifier = Modifier.fillMaxWidth()
     ) {
       Column(modifier = Modifier.padding(16.dp)) {
@@ -192,13 +188,13 @@ fun ModelTransparencyScreen(
           text = "Training Dataset Composition",
           fontSize = 14.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(6.dp))
         Text(
           text = "• PlantVillage Open Dataset: 54,306 curated expert-labeled leaf images.\n• ICAR & State Agri University Field Library: 12,400 field-captured Indian crop specimens across varied sunlight, soil types, and moisture conditions.\n• Data Augmentations: Random rotations, color jitter, solar glare simulation, and rain droplet occlusions to prevent field overfitting.",
           fontSize = 13.sp,
-          color = KisanMutedSage,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
           lineHeight = 19.sp
         )
 
@@ -208,7 +204,7 @@ fun ModelTransparencyScreen(
           text = "Tested Crop & Disease Coverage",
           fontSize = 14.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -227,9 +223,9 @@ fun ModelTransparencyScreen(
     TransparencySectionTitle(icon = Icons.Default.Speed, title = "Why Crop Tagging is Required")
     Spacer(modifier = Modifier.height(10.dp))
 
-    Card(
+    KisanCard(
       shape = RoundedCornerShape(16.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanWhite),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
       modifier = Modifier.fillMaxWidth()
     ) {
       Column(modifier = Modifier.padding(16.dp)) {
@@ -237,13 +233,13 @@ fun ModelTransparencyScreen(
           text = "Crop-Specific Disease Classifiers",
           fontSize = 14.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(6.dp))
         Text(
           text = "Fungal and bacterial lesions often manifest similarly to general computer vision models (e.g., tomato septoria vs. wheat brown rust). By selecting your crop first, KisanAI conditions the classification output on biological disease priors for that specific crop species, completely eliminating cross-crop false positives.",
           fontSize = 13.sp,
-          color = KisanMutedSage,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
           lineHeight = 19.sp
         )
       }
@@ -255,9 +251,9 @@ fun ModelTransparencyScreen(
     TransparencySectionTitle(icon = Icons.Default.Security, title = "Farmer Privacy & Guarantees")
     Spacer(modifier = Modifier.height(10.dp))
 
-    Card(
+    KisanCard(
       shape = RoundedCornerShape(16.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanWhite),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
       modifier = Modifier.fillMaxWidth()
     ) {
       Column(modifier = Modifier.padding(16.dp)) {
@@ -287,7 +283,7 @@ private fun MetricPill(title: String, value: String) {
         text = value,
         fontSize = 16.sp,
         fontWeight = FontWeight.Bold,
-        color = KisanHarvestGold
+        color = MaterialTheme.colorScheme.secondary
       )
       Text(
         text = title,
@@ -304,7 +300,7 @@ private fun TransparencySectionTitle(icon: ImageVector, title: String) {
     Icon(
       imageVector = icon,
       contentDescription = null,
-      tint = KisanEmerald,
+      tint = MaterialTheme.colorScheme.primary,
       modifier = Modifier.size(20.dp)
     )
     Spacer(modifier = Modifier.width(8.dp))
@@ -312,7 +308,7 @@ private fun TransparencySectionTitle(icon: ImageVector, title: String) {
       text = title,
       fontSize = 15.sp,
       fontWeight = FontWeight.Bold,
-      color = KisanCharcoal
+      color = MaterialTheme.colorScheme.onBackground
     )
   }
 }
@@ -329,14 +325,14 @@ private fun SpecRow(label: String, value: String) {
     Text(
       text = label,
       fontSize = 13.sp,
-      color = KisanMutedSage,
+      color = MaterialTheme.colorScheme.onSurfaceVariant,
       modifier = Modifier.weight(1f)
     )
     Text(
       text = value,
       fontSize = 13.sp,
       fontWeight = FontWeight.SemiBold,
-      color = KisanCharcoal
+      color = MaterialTheme.colorScheme.onBackground
     )
   }
 }
@@ -351,13 +347,13 @@ private fun CropAccuracyRow(crop: String, accuracy: Float) {
       Text(
         text = crop,
         fontSize = 12.sp,
-        color = KisanCharcoal
+        color = MaterialTheme.colorScheme.onBackground
       )
       Text(
         text = "${accuracy}%",
         fontSize = 12.sp,
         fontWeight = FontWeight.Bold,
-        color = KisanEmerald
+        color = MaterialTheme.colorScheme.primary
       )
     }
     Spacer(modifier = Modifier.height(3.dp))
@@ -367,7 +363,7 @@ private fun CropAccuracyRow(crop: String, accuracy: Float) {
         .fillMaxWidth()
         .height(4.dp)
         .clip(RoundedCornerShape(2.dp)),
-      color = KisanEmerald,
+      color = MaterialTheme.colorScheme.primary,
       trackColor = Color(0xFFE2E8E4)
     )
   }
@@ -382,7 +378,7 @@ private fun PrivacyBullet(text: String) {
     Icon(
       imageVector = Icons.Default.CheckCircle,
       contentDescription = null,
-      tint = KisanEmerald,
+      tint = MaterialTheme.colorScheme.primary,
       modifier = Modifier
         .size(16.dp)
         .padding(top = 2.dp)
@@ -391,7 +387,7 @@ private fun PrivacyBullet(text: String) {
     Text(
       text = text,
       fontSize = 13.sp,
-      color = KisanCharcoal,
+      color = MaterialTheme.colorScheme.onBackground,
       lineHeight = 18.sp
     )
   }

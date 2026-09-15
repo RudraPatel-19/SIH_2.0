@@ -6,8 +6,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-  entities = [ScanRecordEntity::class, FarmCropEntity::class],
-  version = 2,
+  entities = [ScanRecordEntity::class, FarmCropEntity::class, WeatherAlertEntity::class],
+  version = 3,
   exportSchema = false
 )
 abstract class KisanDatabase : RoomDatabase() {

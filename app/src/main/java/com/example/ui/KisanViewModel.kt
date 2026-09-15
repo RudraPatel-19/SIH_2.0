@@ -15,13 +15,17 @@ import com.example.data.model.AppStrings
 import com.example.data.model.CropDisease
 import com.example.data.model.FarmerProfile
 import com.example.data.model.LocalizedStrings
+import com.example.data.model.WeatherAlertPreferences
 import com.example.data.model.WeatherInfo
+import com.example.data.model.WeatherRiskAlert
+import com.example.data.model.WeatherRiskType
 import com.example.data.repository.KisanRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -53,8 +57,11 @@ class KisanViewModel(application: Application) : AndroidViewModel(application) {
   val currentLanguage: StateFlow<AppLanguage> = repository.currentLanguage
   val farmerProfile: StateFlow<FarmerProfile> = repository.farmerProfile
   val weather: StateFlow<WeatherInfo> = repository.weather
-  val isLoggedIn: StateFlow<Boolean> = repository.isLoggedIn
-  val currentUserEmail: StateFlow<String> = repository.currentUserEmail
+  val isLoggedIn: StateFlow<Boolean?> = repository.isLoggedIn.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+  val currentUserEmail: StateFlow<String> = repository.currentUserEmail.stateIn(viewModelScope, SharingStarted.Eagerly, "")
+  val isOnboardingCompleted: StateFlow<Boolean?> = repository.isOnboardingCompleted.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+  fun completeOnboarding() { viewModelScope.launch { repository.completeOnboarding() } }
   val isOnline: StateFlow<Boolean> = repository.isOnline
     .stateIn(
       scope = viewModelScope,
@@ -109,11 +116,11 @@ class KisanViewModel(application: Application) : AndroidViewModel(application) {
   )
 
   fun loginUser(email: String, token: String = "kisan_auth_${System.currentTimeMillis()}") {
-    repository.loginUser(email, token)
+    viewModelScope.launch { repository.loginUser(email, token) }
   }
 
   fun logoutUser() {
-    repository.logoutUser()
+    viewModelScope.launch { repository.logoutUser() }
     _snackbarMessage.value = "You have been logged out safely."
   }
 
@@ -460,5 +467,93 @@ class KisanViewModel(application: Application) : AndroidViewModel(application) {
         _isFetchingLocation.value = false
       }
     }
+  }
+
+  // Weather Risk Alerts State & Operations
+  val weatherAlerts: StateFlow<List<WeatherRiskAlert>> = repository.activeAlerts
+    .map { list -> list.map { it.toModel() } }
+    .stateIn(
+      scope = viewModelScope,
+      started = SharingStarted.Eagerly,
+      initialValue = emptyList()
+    )
+
+  val allWeatherAlerts: StateFlow<List<WeatherRiskAlert>> = repository.allAlerts
+    .map { list -> list.map { it.toModel() } }
+    .stateIn(
+      scope = viewModelScope,
+      started = SharingStarted.Eagerly,
+      initialValue = emptyList()
+    )
+
+  val unreadAlertsCount: StateFlow<Int> = repository.unreadAlertsCount
+    .stateIn(
+      scope = viewModelScope,
+      started = SharingStarted.Eagerly,
+      initialValue = 0
+    )
+
+  val alertPreferences: StateFlow<WeatherAlertPreferences> = repository.alertPreferences
+  val weatherNotificationManager: com.example.core.notification.WeatherNotificationManager = repository.weatherNotificationManager
+
+  fun evaluateWeatherRisks(notifySystem: Boolean = false) {
+    viewModelScope.launch {
+      val evaluated = repository.evaluateWeatherRisks(notifySystem)
+      if (evaluated.isEmpty()) {
+        _snackbarMessage.value = "Weather risk check complete: All clear for current farm location."
+      } else {
+        _snackbarMessage.value = "Evaluated ${evaluated.size} active weather risk alert(s) for farm."
+      }
+    }
+  }
+
+  fun simulateWeatherAlert(type: WeatherRiskType, notifySystem: Boolean = true) {
+    viewModelScope.launch {
+      val simulated = repository.simulateWeatherAlert(type, notifySystem)
+      _snackbarMessage.value = "Simulated alert created: ${simulated.title}"
+    }
+  }
+
+  fun markAlertAsRead(id: String) {
+    viewModelScope.launch {
+      repository.markAlertAsRead(id)
+    }
+  }
+
+  fun markAllAlertsAsRead() {
+    viewModelScope.launch {
+      repository.markAllAlertsAsRead()
+      _snackbarMessage.value = "All alerts marked as read."
+    }
+  }
+
+  fun dismissAlert(id: String) {
+    viewModelScope.launch {
+      repository.dismissAlert(id)
+      _snackbarMessage.value = "Alert dismissed."
+    }
+  }
+
+  fun deleteAlert(id: String) {
+    viewModelScope.launch {
+      repository.deleteAlert(id)
+      _snackbarMessage.value = "Alert removed."
+    }
+  }
+
+  fun clearAllAlerts() {
+    viewModelScope.launch {
+      repository.clearAllAlerts()
+      _snackbarMessage.value = "All alerts cleared."
+    }
+  }
+
+  fun updateAlertPreferences(preferences: WeatherAlertPreferences) {
+    repository.updateAlertPreferences(preferences)
+    _snackbarMessage.value = "Weather alert preferences saved."
+  }
+
+  fun sendSystemNotification(alert: WeatherRiskAlert): Boolean {
+    return repository.weatherNotificationManager.sendWeatherAlertNotification(alert)
   }
 }

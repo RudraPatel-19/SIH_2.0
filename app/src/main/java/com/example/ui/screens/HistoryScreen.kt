@@ -1,5 +1,14 @@
 package com.example.ui.screens
 
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import com.example.presentation.theme.KisanEmerald
+import com.example.presentation.theme.KisanEarthRed
+import com.example.presentation.theme.KisanHarvestGold
+
+
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,14 +33,13 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import com.example.presentation.components.KisanPrimaryButton
 import androidx.compose.material3.Card
+import com.example.presentation.components.KisanCard
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,9 +54,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.local.ScanRecordEntity
 import com.example.data.model.AppStrings
-import com.example.ui.theme.AlertRed
-import com.example.ui.theme.AlertYellow
-import com.example.ui.theme.HealthyGreen
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -85,7 +90,7 @@ fun HistoryScreen(
 
     if (scans.isEmpty()) {
       item {
-        Card(
+        KisanCard(
           shape = RoundedCornerShape(16.dp),
           colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
           modifier = Modifier.fillMaxWidth()
@@ -115,7 +120,7 @@ fun HistoryScreen(
               color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Button(
+            KisanPrimaryButton(
               onClick = onNavigateToScan,
               shape = RoundedCornerShape(10.dp)
             ) {
@@ -156,13 +161,13 @@ fun HistoryScanCard(
   onCardClick: () -> Unit,
   onDeleteClick: () -> Unit
 ) {
-  val statusColor = if (scan.isHealthy) HealthyGreen else AlertRed
+  val statusColor = if (scan.isHealthy) KisanEmerald else KisanEarthRed
   val formattedDate = remember(scan.timestamp) {
     val sdf = SimpleDateFormat("dd MMM, hh:mm a", Locale.getDefault())
     sdf.format(Date(scan.timestamp))
   }
 
-  Card(
+  KisanCard(
     shape = RoundedCornerShape(16.dp),
     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),

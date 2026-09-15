@@ -2,21 +2,29 @@ package com.example.data.repository
 
 import android.content.Context
 import com.example.core.network.NetworkMonitor
+import com.example.core.notification.WeatherNotificationManager
 import com.example.core.session.SessionManager
+import com.example.core.weather.WeatherRiskEngine
 import com.example.data.local.FarmCropEntity
 import com.example.data.local.KisanDatabase
 import com.example.data.local.ScanRecordEntity
+import com.example.data.local.WeatherAlertEntity
 import com.example.data.location.Coordinates
 import com.example.data.location.LocationResult
 import com.example.data.location.LocationService
 import com.example.data.model.AppLanguage
 import com.example.data.model.FarmerProfile
+import com.example.data.model.RiskSeverity
+import com.example.data.model.WeatherAlertPreferences
 import com.example.data.model.WeatherInfo
+import com.example.data.model.WeatherRiskAlert
+import com.example.data.model.WeatherRiskType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
 class KisanRepository(context: Context) {
@@ -25,12 +33,25 @@ class KisanRepository(context: Context) {
   val locationService = LocationService(context)
   val sessionManager = SessionManager(context)
   val networkMonitor = NetworkMonitor(context)
+  val weatherNotificationManager = WeatherNotificationManager(context)
 
   val allScans: Flow<List<ScanRecordEntity>> = dao.getAllScans()
   val allCrops: Flow<List<FarmCropEntity>> = dao.getAllCrops()
-  val isLoggedIn: StateFlow<Boolean> = sessionManager.isLoggedIn
-  val currentUserEmail: StateFlow<String> = sessionManager.currentUserEmail
+  val allAlerts: Flow<List<WeatherAlertEntity>> = dao.getAllWeatherAlerts()
+  val activeAlerts: Flow<List<WeatherAlertEntity>> = dao.getActiveWeatherAlerts()
+  val unreadAlertsCount: Flow<Int> = dao.getUnreadAlertsCount()
+
+  val isLoggedIn: Flow<Boolean> = sessionManager.isLoggedIn
+  val currentUserEmail: Flow<String> = sessionManager.currentUserEmail
+  val isOnboardingCompleted: Flow<Boolean> = sessionManager.isOnboardingCompleted
+
+  suspend fun completeOnboarding() {
+    sessionManager.setOnboardingCompleted()
+  }
   val isOnline: Flow<Boolean> = networkMonitor.isOnline
+
+  private val _alertPreferences = MutableStateFlow(WeatherAlertPreferences())
+  val alertPreferences: StateFlow<WeatherAlertPreferences> = _alertPreferences.asStateFlow()
 
   private val _currentCoordinates = MutableStateFlow<Coordinates?>(
     Coordinates(latitude = 21.1702, longitude = 72.8311)
@@ -132,6 +153,47 @@ class KisanRepository(context: Context) {
           notes = "First scouted on Plot B boundary"
         )
       )
+
+      // Seed initial weather risk alerts based on farm location data
+      val defaultAlerts = listOf(
+        WeatherAlertEntity(
+          id = "seed_frost_surat",
+          riskType = WeatherRiskType.FROST.name,
+          severity = RiskSeverity.HIGH.name,
+          title = "Frost Risk Warning: Surat Farm (3.5°C)",
+          summary = "Cold front inversion predicted tonight with temperatures plunging to 3.5°C. Threatens flowering Tomato plots.",
+          detailedDescription = "Nocturnal radiative drop will dip temperatures below the 4°C safety threshold for Green Valley Farm. Ice crystal formation inside plant cells will cause foliar blackening and flower drop on Hybrid Roma Tomato crops.",
+          actionableSteps = "• Activate night micro-sprinklers from 3:30 AM to 6:00 AM to harness latent heat of fusion.\n• Drape agricultural fleece or spread dry straw mulch over sensitive tomato beds.\n• Burn controlled smoky bio-smudge pots on northern field borders to trap infrared heat.\n• Halt nitrogen fertilization until ambient temperatures stabilize.",
+          triggerMetric = "Expected Low: 3.5°C (Threshold: ≤ 4.0°C)",
+          locationName = "Surat, Gujarat",
+          latitude = 21.1702,
+          longitude = 72.8311,
+          affectedCrops = "Tomato",
+          timestamp = System.currentTimeMillis() - 3600000,
+          isRead = false,
+          isDismissed = false,
+          source = "Hyperlocal Farm Agro-Meteo Engine"
+        ),
+        WeatherAlertEntity(
+          id = "seed_heavy_rain_surat",
+          riskType = WeatherRiskType.HEAVY_RAIN.name,
+          severity = RiskSeverity.CRITICAL.name,
+          title = "Heavy Rain & Waterlogging Alert: Surat Farm (42 mm)",
+          summary = "Torrential precipitation expected in 24 hrs. Risk of root asphyxiation and standing water in low-lying plots.",
+          detailedDescription = "Severe convective rain cloud cluster detected approaching Surat. Precipitation influx of 42 mm will rapidly saturate root zones, posing acute pythium rot danger to tomato and sweet corn crops.",
+          actionableSteps = "• Clear and deepen main perimeter drainage trenches to evacuate excess water.\n• Immediately cut power to all automated irrigation pumps.\n• Suspend foliar chemical sprays; immediate wash-off guaranteed.\n• Elevate harvested produce and seed bags onto pallets.",
+          triggerMetric = "Precipitation: 42 mm, Prob: 85% (Threshold: ≥ 20 mm)",
+          locationName = "Surat, Gujarat",
+          latitude = 21.1702,
+          longitude = 72.8311,
+          affectedCrops = "Tomato, Maize",
+          timestamp = System.currentTimeMillis() - 7200000,
+          isRead = false,
+          isDismissed = false,
+          source = "Doppler Radar & Open-Meteo Engine"
+        )
+      )
+      dao.insertWeatherAlerts(defaultAlerts)
     }
   }
 
@@ -171,11 +233,11 @@ class KisanRepository(context: Context) {
     dao.updateScanFeedback(id, rating, reason)
   }
 
-  fun loginUser(email: String, token: String = "kisan_auth_${System.currentTimeMillis()}") {
+  suspend fun loginUser(email: String, token: String = "kisan_auth_${System.currentTimeMillis()}") {
     sessionManager.saveSession(email, token)
   }
 
-  fun logoutUser() {
+  suspend fun logoutUser() {
     sessionManager.clearSession()
   }
 
@@ -210,6 +272,7 @@ class KisanRepository(context: Context) {
       village = cityName,
       state = stateName
     )
+    evaluateWeatherRisks(notifySystem = false)
   }
 
   suspend fun fetchCurrentLocation(): LocationResult {
@@ -233,7 +296,72 @@ class KisanRepository(context: Context) {
         village = locality,
         state = state
       )
+      evaluateWeatherRisks(notifySystem = false)
     }
     return result
+  }
+
+  suspend fun evaluateWeatherRisks(notifySystem: Boolean = false): List<WeatherRiskAlert> = withContext(Dispatchers.IO) {
+    val crops = dao.getAllCrops().first()
+    val evaluated = WeatherRiskEngine.evaluateRisks(
+      weather = _weather.value,
+      farmCrops = crops,
+      preferences = _alertPreferences.value
+    )
+    if (evaluated.isNotEmpty()) {
+      dao.insertWeatherAlerts(evaluated.map { WeatherAlertEntity.fromModel(it) })
+      if (notifySystem && _alertPreferences.value.notificationsEnabled) {
+        evaluated.filter { it.severity == RiskSeverity.CRITICAL || it.severity == RiskSeverity.HIGH }.forEach { alert ->
+          weatherNotificationManager.sendWeatherAlertNotification(alert)
+        }
+      }
+    }
+    evaluated
+  }
+
+  suspend fun simulateWeatherAlert(type: WeatherRiskType, notifySystem: Boolean = true): WeatherRiskAlert = withContext(Dispatchers.IO) {
+    val crops = dao.getAllCrops().first()
+    val cropNames = crops.map { it.cropName }.distinct().ifEmpty { listOf("Tomato", "Wheat") }
+    val lat = _currentCoordinates.value?.latitude ?: 21.1702
+    val lon = _currentCoordinates.value?.longitude ?: 72.8311
+    val loc = "${_weather.value.locationName}, ${_weather.value.state}"
+
+    val simulated = WeatherRiskEngine.generateSimulatedAlert(
+      type = type,
+      locationName = loc,
+      latitude = lat,
+      longitude = lon,
+      cropNames = cropNames
+    )
+
+    dao.insertWeatherAlert(WeatherAlertEntity.fromModel(simulated))
+    if (notifySystem && _alertPreferences.value.notificationsEnabled) {
+      weatherNotificationManager.sendWeatherAlertNotification(simulated)
+    }
+    simulated
+  }
+
+  suspend fun markAlertAsRead(id: String) = withContext(Dispatchers.IO) {
+    dao.markAlertAsRead(id)
+  }
+
+  suspend fun markAllAlertsAsRead() = withContext(Dispatchers.IO) {
+    dao.markAllAlertsAsRead()
+  }
+
+  suspend fun dismissAlert(id: String) = withContext(Dispatchers.IO) {
+    dao.dismissAlert(id)
+  }
+
+  suspend fun deleteAlert(id: String) = withContext(Dispatchers.IO) {
+    dao.deleteAlertById(id)
+  }
+
+  suspend fun clearAllAlerts() = withContext(Dispatchers.IO) {
+    dao.clearAllAlerts()
+  }
+
+  fun updateAlertPreferences(preferences: WeatherAlertPreferences) {
+    _alertPreferences.value = preferences
   }
 }

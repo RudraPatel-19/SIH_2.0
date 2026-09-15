@@ -1,5 +1,8 @@
 package com.example.ui.screens
 
+import androidx.compose.material3.MaterialTheme
+
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,8 +31,10 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material3.Button
+import com.example.presentation.components.KisanPrimaryButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import com.example.presentation.components.KisanCard
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,15 +55,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ui.theme.KisanCardBorder
-import com.example.ui.theme.KisanCharcoal
-import com.example.ui.theme.KisanDeepForest
-import com.example.ui.theme.KisanEmerald
-import com.example.ui.theme.KisanEmeraldLight
-import com.example.ui.theme.KisanHarvestGold
-import com.example.ui.theme.KisanMutedSage
-import com.example.ui.theme.KisanWarmIvory
-import com.example.ui.theme.KisanWhite
 
 data class FilterCriteria(
   val selectedCrop: String = "All Crops",
@@ -99,7 +95,7 @@ fun FilterScreen(
   Column(
     modifier = modifier
       .fillMaxSize()
-      .background(KisanWarmIvory)
+      .background(MaterialTheme.colorScheme.background)
       .statusBarsPadding()
       .navigationBarsPadding()
       .testTag("filter_screen")
@@ -120,7 +116,7 @@ fun FilterScreen(
           Icon(
             imageVector = Icons.Default.Close,
             contentDescription = "Close",
-            tint = KisanCharcoal
+            tint = MaterialTheme.colorScheme.onBackground
           )
         }
         Spacer(modifier = Modifier.width(6.dp))
@@ -128,7 +124,7 @@ fun FilterScreen(
           text = "Filter Farm Records",
           fontSize = 18.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
       }
 
@@ -140,7 +136,7 @@ fun FilterScreen(
           Icon(
             imageVector = Icons.Default.RestartAlt,
             contentDescription = null,
-            tint = KisanEmerald,
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(16.dp)
           )
           Spacer(modifier = Modifier.width(4.dp))
@@ -148,7 +144,7 @@ fun FilterScreen(
             text = "Reset",
             fontSize = 13.sp,
             fontWeight = FontWeight.Bold,
-            color = KisanEmerald
+            color = MaterialTheme.colorScheme.primary
           )
         }
       }
@@ -163,9 +159,9 @@ fun FilterScreen(
       verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
       // 1. Crops Section
-      Card(
+      KisanCard(
         shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = KisanWhite),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.5.dp),
         modifier = Modifier.fillMaxWidth()
       ) {
@@ -174,7 +170,7 @@ fun FilterScreen(
             text = "Crops",
             fontSize = 15.sp,
             fontWeight = FontWeight.Bold,
-            color = KisanCharcoal
+            color = MaterialTheme.colorScheme.onBackground
           )
           Spacer(modifier = Modifier.height(10.dp))
           FlowRow(
@@ -193,9 +189,9 @@ fun FilterScreen(
       }
 
       // 2. Health Status Section
-      Card(
+      KisanCard(
         shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = KisanWhite),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.5.dp),
         modifier = Modifier.fillMaxWidth()
       ) {
@@ -204,7 +200,7 @@ fun FilterScreen(
             text = "Crop Health Status",
             fontSize = 15.sp,
             fontWeight = FontWeight.Bold,
-            color = KisanCharcoal
+            color = MaterialTheme.colorScheme.onBackground
           )
           Spacer(modifier = Modifier.height(10.dp))
           FlowRow(
@@ -213,8 +209,8 @@ fun FilterScreen(
           ) {
             healthOptions.forEach { status ->
               val dotColor = when (status) {
-                "Healthy" -> KisanEmerald
-                "Needs Attention" -> KisanHarvestGold
+                "Healthy" -> MaterialTheme.colorScheme.primary
+                "Needs Attention" -> MaterialTheme.colorScheme.secondary
                 "Critical" -> Color(0xFFC94C4C)
                 else -> null
               }
@@ -230,9 +226,9 @@ fun FilterScreen(
       }
 
       // 3. Issue Category Section
-      Card(
+      KisanCard(
         shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = KisanWhite),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.5.dp),
         modifier = Modifier.fillMaxWidth()
       ) {
@@ -241,7 +237,7 @@ fun FilterScreen(
             text = "Diagnosis & Issue Type",
             fontSize = 15.sp,
             fontWeight = FontWeight.Bold,
-            color = KisanCharcoal
+            color = MaterialTheme.colorScheme.onBackground
           )
           Spacer(modifier = Modifier.height(10.dp))
           FlowRow(
@@ -260,9 +256,9 @@ fun FilterScreen(
       }
 
       // 4. Timeframe Section
-      Card(
+      KisanCard(
         shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = KisanWhite),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.5.dp),
         modifier = Modifier.fillMaxWidth()
       ) {
@@ -271,7 +267,7 @@ fun FilterScreen(
             text = "Timeframe",
             fontSize = 15.sp,
             fontWeight = FontWeight.Bold,
-            color = KisanCharcoal
+            color = MaterialTheme.colorScheme.onBackground
           )
           Spacer(modifier = Modifier.height(10.dp))
           FlowRow(
@@ -290,9 +286,9 @@ fun FilterScreen(
       }
 
       // 5. Sort By Section
-      Card(
+      KisanCard(
         shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = KisanWhite),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.5.dp),
         modifier = Modifier.fillMaxWidth()
       ) {
@@ -301,7 +297,7 @@ fun FilterScreen(
             text = "Sort By",
             fontSize = 15.sp,
             fontWeight = FontWeight.Bold,
-            color = KisanCharcoal
+            color = MaterialTheme.colorScheme.onBackground
           )
           Spacer(modifier = Modifier.height(10.dp))
           FlowRow(
@@ -322,7 +318,7 @@ fun FilterScreen(
 
     // Sticky Bottom Action Bar
     Surface(
-      color = KisanWhite,
+      color = MaterialTheme.colorScheme.surface,
       shadowElevation = 8.dp,
       modifier = Modifier.fillMaxWidth()
     ) {
@@ -336,7 +332,7 @@ fun FilterScreen(
         OutlinedButton(
           onClick = { resetAll() },
           shape = RoundedCornerShape(24.dp),
-          border = androidx.compose.foundation.BorderStroke(1.dp, KisanCardBorder),
+          border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
           modifier = Modifier
             .weight(1f)
             .height(48.dp)
@@ -345,11 +341,11 @@ fun FilterScreen(
             text = "Reset All",
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
-            color = KisanCharcoal
+            color = MaterialTheme.colorScheme.onBackground
           )
         }
 
-        Button(
+        KisanPrimaryButton(
           onClick = {
             onApplyFilters(
               FilterCriteria(
@@ -362,7 +358,7 @@ fun FilterScreen(
             )
           },
           colors = ButtonDefaults.buttonColors(
-            containerColor = KisanDeepForest,
+            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
             contentColor = Color.White
           ),
           shape = RoundedCornerShape(24.dp),
@@ -399,10 +395,10 @@ private fun FilterChipItem(
 ) {
   Surface(
     shape = RoundedCornerShape(20.dp),
-    color = if (isSelected) KisanDeepForest else KisanWarmIvory,
+    color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.background,
     border = androidx.compose.foundation.BorderStroke(
       width = 1.dp,
-      color = if (isSelected) KisanDeepForest else KisanCardBorder
+      color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.outline
     ),
     modifier = Modifier
       .clickable(onClick = onClick)
@@ -425,7 +421,7 @@ private fun FilterChipItem(
         text = label,
         fontSize = 13.sp,
         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-        color = if (isSelected) Color.White else KisanCharcoal
+        color = if (isSelected) Color.White else MaterialTheme.colorScheme.onBackground
       )
     }
   }

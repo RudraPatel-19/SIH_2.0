@@ -1,52 +1,69 @@
 package com.example.core.session
 
 import android.content.Context
-import android.content.SharedPreferences
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "kisan_session_prefs")
 
 /**
- * Manages user session state, authentication tokens, and credentials securely.
+ * Manages user session state, authentication tokens, and credentials securely using DataStore.
  */
-class SessionManager(context: Context) {
-  private val prefs: SharedPreferences =
-    context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+class SessionManager(private val context: Context) {
 
-  private val _isLoggedIn = MutableStateFlow(prefs.getBoolean(KEY_IS_LOGGED_IN, false))
-  val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
-
-  private val _currentUserEmail = MutableStateFlow(prefs.getString(KEY_USER_EMAIL, "") ?: "")
-  val currentUserEmail: StateFlow<String> = _currentUserEmail.asStateFlow()
-
-  fun saveSession(email: String, token: String) {
-    prefs.edit()
-      .putBoolean(KEY_IS_LOGGED_IN, true)
-      .putString(KEY_USER_EMAIL, email)
-      .putString(KEY_AUTH_TOKEN, token)
-      .apply()
-    _isLoggedIn.value = true
-    _currentUserEmail.value = email
+  val isLoggedIn: Flow<Boolean> = context.dataStore.data.map { preferences ->
+    preferences[KEY_IS_LOGGED_IN] ?: false
   }
 
-  fun clearSession() {
-    prefs.edit()
-      .remove(KEY_IS_LOGGED_IN)
-      .remove(KEY_USER_EMAIL)
-      .remove(KEY_AUTH_TOKEN)
-      .apply()
-    _isLoggedIn.value = false
-    _currentUserEmail.value = ""
+  val currentUserEmail: Flow<String> = context.dataStore.data.map { preferences ->
+    preferences[KEY_USER_EMAIL] ?: ""
   }
 
-  fun getAuthToken(): String? {
-    return prefs.getString(KEY_AUTH_TOKEN, null)
+  val isOnboardingCompleted: Flow<Boolean> = context.dataStore.data.map { preferences ->
+    preferences[KEY_ONBOARDING_COMPLETED] ?: false
+  }
+
+  val authToken: Flow<String?> = context.dataStore.data.map { preferences ->
+    preferences[KEY_AUTH_TOKEN]
+  }
+
+  suspend fun getAuthToken(): String? {
+    return context.dataStore.data.map { preferences -> preferences[KEY_AUTH_TOKEN] }.firstOrNull()
+  }
+
+  suspend fun setOnboardingCompleted() {
+    context.dataStore.edit { preferences ->
+      preferences[KEY_ONBOARDING_COMPLETED] = true
+    }
+  }
+
+  suspend fun saveSession(email: String, token: String) {
+    context.dataStore.edit { preferences ->
+      preferences[KEY_IS_LOGGED_IN] = true
+      preferences[KEY_USER_EMAIL] = email
+      preferences[KEY_AUTH_TOKEN] = token
+    }
+  }
+
+  suspend fun clearSession() {
+    context.dataStore.edit { preferences ->
+      preferences.remove(KEY_IS_LOGGED_IN)
+      preferences.remove(KEY_USER_EMAIL)
+      preferences.remove(KEY_AUTH_TOKEN)
+    }
   }
 
   companion object {
-    private const val PREFS_NAME = "kisan_session_prefs"
-    private const val KEY_IS_LOGGED_IN = "is_logged_in"
-    private const val KEY_USER_EMAIL = "user_email"
-    private const val KEY_AUTH_TOKEN = "auth_token"
+    private val KEY_IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
+    private val KEY_USER_EMAIL = stringPreferencesKey("user_email")
+    private val KEY_AUTH_TOKEN = stringPreferencesKey("auth_token")
+    private val KEY_ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
   }
 }

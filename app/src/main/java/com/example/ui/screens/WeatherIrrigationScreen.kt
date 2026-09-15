@@ -1,5 +1,8 @@
 package com.example.ui.screens
 
+import androidx.compose.material3.MaterialTheme
+
+
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -37,8 +40,10 @@ import androidx.compose.material.icons.filled.EditLocation
 import androidx.compose.material.icons.filled.Science
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import com.example.presentation.components.KisanPrimaryButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import com.example.presentation.components.KisanCard
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
@@ -65,15 +70,6 @@ import androidx.compose.ui.unit.sp
 import com.example.data.model.DailyForecast
 import com.example.data.model.FarmerProfile
 import com.example.data.model.WeatherInfo
-import com.example.ui.theme.KisanCardBorder
-import com.example.ui.theme.KisanCharcoal
-import com.example.ui.theme.KisanDeepForest
-import com.example.ui.theme.KisanEmerald
-import com.example.ui.theme.KisanEmeraldLight
-import com.example.ui.theme.KisanHarvestGold
-import com.example.ui.theme.KisanMutedSage
-import com.example.ui.theme.KisanWarmIvory
-import com.example.ui.theme.KisanWhite
 
 @Composable
 fun WeatherIrrigationScreen(
@@ -101,8 +97,7 @@ fun WeatherIrrigationScreen(
   Column(
     modifier = modifier
       .fillMaxSize()
-      .background(KisanWarmIvory)
-      .statusBarsPadding()
+      .background(MaterialTheme.colorScheme.background)
       .verticalScroll(rememberScrollState())
       .padding(horizontal = 16.dp, vertical = 12.dp)
   ) {
@@ -118,7 +113,7 @@ fun WeatherIrrigationScreen(
         Icon(
           imageVector = Icons.AutoMirrored.Filled.ArrowBack,
           contentDescription = "Back",
-          tint = KisanCharcoal
+          tint = MaterialTheme.colorScheme.onBackground
         )
       }
       Spacer(modifier = Modifier.width(6.dp))
@@ -126,7 +121,7 @@ fun WeatherIrrigationScreen(
         text = "Weather & Irrigation",
         fontSize = 18.sp,
         fontWeight = FontWeight.Bold,
-        color = KisanCharcoal
+        color = MaterialTheme.colorScheme.onBackground
       )
     }
 
@@ -145,19 +140,19 @@ fun WeatherIrrigationScreen(
           text = "${weather.locationName}, ${weather.state}",
           fontSize = 14.sp,
           fontWeight = FontWeight.SemiBold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
         Text(
           text = "Coordinates: ${weather.coordinatesFormatted ?: "21.1702° N, 72.8311° E"}",
           fontSize = 11.sp,
-          color = KisanMutedSage
+          color = MaterialTheme.colorScheme.onSurfaceVariant
         )
       }
 
       Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         Surface(
           shape = RoundedCornerShape(12.dp),
-          color = KisanEmeraldLight,
+          color = MaterialTheme.colorScheme.primaryContainer,
           modifier = Modifier
             .clickable {
               locationPermissionLauncher.launch(
@@ -177,13 +172,13 @@ fun WeatherIrrigationScreen(
               CircularProgressIndicator(
                 modifier = Modifier.size(14.dp),
                 strokeWidth = 2.dp,
-                color = KisanEmerald
+                color = MaterialTheme.colorScheme.primary
               )
             } else {
               Icon(
                 imageVector = Icons.Default.MyLocation,
                 contentDescription = "Update GPS Location",
-                tint = KisanEmerald,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(14.dp)
               )
             }
@@ -192,14 +187,14 @@ fun WeatherIrrigationScreen(
               text = if (isRefreshingLocation) "Locating..." else "GPS",
               fontSize = 11.sp,
               fontWeight = FontWeight.Bold,
-              color = KisanEmerald
+              color = MaterialTheme.colorScheme.primary
             )
           }
         }
 
         Surface(
           shape = RoundedCornerShape(12.dp),
-          color = KisanEmeraldLight,
+          color = MaterialTheme.colorScheme.primaryContainer,
           modifier = Modifier
             .clickable { showManualLocationDialog = true }
             .testTag("weather_manual_location_button")
@@ -211,7 +206,7 @@ fun WeatherIrrigationScreen(
             Icon(
               imageVector = Icons.Default.EditLocation,
               contentDescription = "Manual District Selection",
-              tint = KisanEmerald,
+              tint = MaterialTheme.colorScheme.primary,
               modifier = Modifier.size(14.dp)
             )
             Spacer(modifier = Modifier.width(4.dp))
@@ -219,7 +214,7 @@ fun WeatherIrrigationScreen(
               text = "Manual",
               fontSize = 11.sp,
               fontWeight = FontWeight.Bold,
-              color = KisanEmerald
+              color = MaterialTheme.colorScheme.primary
             )
           }
         }
@@ -229,9 +224,9 @@ fun WeatherIrrigationScreen(
     Spacer(modifier = Modifier.height(16.dp))
 
     // Main Current Weather Card
-    Card(
+    KisanCard(
       shape = RoundedCornerShape(20.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanWhite),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
       elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
       modifier = Modifier.fillMaxWidth()
     ) {
@@ -250,26 +245,26 @@ fun WeatherIrrigationScreen(
               text = "${weather.temperatureC}°C",
               fontSize = 38.sp,
               fontWeight = FontWeight.Bold,
-              color = KisanCharcoal
+              color = MaterialTheme.colorScheme.onBackground
             )
             Text(
               text = weather.condition,
               fontSize = 15.sp,
               fontWeight = FontWeight.Medium,
-              color = KisanMutedSage
+              color = MaterialTheme.colorScheme.onSurfaceVariant
             )
           }
 
           Surface(
             shape = CircleShape,
-            color = KisanHarvestGold.copy(alpha = 0.18f),
+            color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.18f),
             modifier = Modifier.size(64.dp)
           ) {
             Box(contentAlignment = Alignment.Center) {
               Icon(
                 imageVector = Icons.Default.WbSunny,
                 contentDescription = null,
-                tint = KisanHarvestGold,
+                tint = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.size(36.dp)
               )
             }
@@ -305,9 +300,9 @@ fun WeatherIrrigationScreen(
     Spacer(modifier = Modifier.height(16.dp))
 
     // 5-Day Forecast Card
-    Card(
+    KisanCard(
       shape = RoundedCornerShape(20.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanWhite),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
       elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
       modifier = Modifier.fillMaxWidth()
     ) {
@@ -320,7 +315,7 @@ fun WeatherIrrigationScreen(
           text = "5-Day Forecast",
           fontSize = 15.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(14.dp))
@@ -339,9 +334,9 @@ fun WeatherIrrigationScreen(
     Spacer(modifier = Modifier.height(16.dp))
 
     // Irrigation Advisory Card
-    Card(
+    KisanCard(
       shape = RoundedCornerShape(20.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanWhite),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
       elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
       modifier = Modifier.fillMaxWidth()
     ) {
@@ -352,14 +347,14 @@ fun WeatherIrrigationScreen(
         ) {
           Surface(
             shape = CircleShape,
-            color = if (weather.isIrrigationNeeded) KisanEmeraldLight else Color(0xFFF0F4F2),
+            color = if (weather.isIrrigationNeeded) MaterialTheme.colorScheme.primaryContainer else Color(0xFFF0F4F2),
             modifier = Modifier.size(46.dp)
           ) {
             Box(contentAlignment = Alignment.Center) {
               Icon(
                 imageVector = Icons.Default.WaterDrop,
                 contentDescription = null,
-                tint = if (weather.isIrrigationNeeded) KisanEmerald else KisanMutedSage,
+                tint = if (weather.isIrrigationNeeded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(24.dp)
               )
             }
@@ -372,13 +367,13 @@ fun WeatherIrrigationScreen(
               text = if (weather.isIrrigationNeeded) "Irrigation Recommended" else "Irrigation Not Needed",
               fontSize = 15.sp,
               fontWeight = FontWeight.Bold,
-              color = KisanCharcoal
+              color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
               text = "Crop: ${farmerProfile.primaryCrop.ifEmpty { "Tomato" }}",
               fontSize = 12.sp,
-              color = KisanMutedSage
+              color = MaterialTheme.colorScheme.onSurfaceVariant
             )
           }
         }
@@ -388,7 +383,7 @@ fun WeatherIrrigationScreen(
         Text(
           text = weather.irrigationAdvice,
           fontSize = 13.sp,
-          color = KisanDeepForest,
+          color = MaterialTheme.colorScheme.onPrimaryContainer,
           lineHeight = 18.sp
         )
 
@@ -396,7 +391,7 @@ fun WeatherIrrigationScreen(
 
         Surface(
           shape = RoundedCornerShape(8.dp),
-          color = KisanWarmIvory,
+          color = MaterialTheme.colorScheme.background,
           modifier = Modifier.fillMaxWidth()
         ) {
           Row(
@@ -406,14 +401,14 @@ fun WeatherIrrigationScreen(
             Icon(
               imageVector = Icons.Default.Science,
               contentDescription = null,
-              tint = KisanEmerald,
+              tint = MaterialTheme.colorScheme.primary,
               modifier = Modifier.size(16.dp)
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
               text = "Calculated via FAO-56 Penman-Monteith Evapotranspiration Model",
               fontSize = 11.sp,
-              color = KisanMutedSage,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
               fontWeight = FontWeight.Medium
             )
           }
@@ -423,10 +418,11 @@ fun WeatherIrrigationScreen(
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    // Pesticide Spray Window & Climate Alert Card
-    Card(
+
+    // Climate Risk Card
+    KisanCard(
       shape = RoundedCornerShape(20.dp),
-      colors = CardDefaults.cardColors(containerColor = KisanWhite),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
       elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
       modifier = Modifier.fillMaxWidth()
     ) {
@@ -436,48 +432,43 @@ fun WeatherIrrigationScreen(
           .padding(18.dp)
       ) {
         Text(
-          text = "Foliar Spray Advisory",
-          fontSize = 14.sp,
+          text = "Climate Risk",
+          fontSize = 15.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-          text = weather.sprayCondition,
-          fontSize = 13.sp,
-          color = KisanDeepForest,
-          fontWeight = FontWeight.Medium
-        )
-
-        if (weather.riskAlertMessage != null) {
-          Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(14.dp))
+        
+        val riskLevel = if (weather.riskAlertMessage != null) "MEDIUM" else "LOW"
+        val riskColor = if (riskLevel == "MEDIUM") Color(0xFFF57C00) else MaterialTheme.colorScheme.primary
+        val riskBgColor = if (riskLevel == "MEDIUM") Color(0xFFFFF3E0) else MaterialTheme.colorScheme.primaryContainer
+        
+        Row(
+          modifier = Modifier.fillMaxWidth(),
+          verticalAlignment = Alignment.CenterVertically
+        ) {
           Surface(
-            shape = RoundedCornerShape(12.dp),
-            color = Color(0xFFFFF3E0),
-            modifier = Modifier.fillMaxWidth()
+            shape = RoundedCornerShape(8.dp),
+            color = riskBgColor,
+            modifier = Modifier.padding(end = 12.dp)
           ) {
-            Row(
-              modifier = Modifier.padding(12.dp),
-              verticalAlignment = Alignment.CenterVertically
-            ) {
-              Icon(
-                imageVector = Icons.Default.Warning,
-                contentDescription = null,
-                tint = Color(0xFFE65100),
-                modifier = Modifier.size(20.dp)
-              )
-              Spacer(modifier = Modifier.width(8.dp))
-              Text(
-                text = weather.riskAlertMessage,
-                fontSize = 12.sp,
-                color = Color(0xFFB26A00)
-              )
-            }
+            Text(
+              text = riskLevel,
+              fontWeight = FontWeight.Bold,
+              fontSize = 12.sp,
+              color = riskColor,
+              modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+            )
           }
+          
+          Text(
+            text = if (riskLevel == "LOW") "Normal conditions." else weather.riskAlertMessage ?: "Monitor for sudden changes.",
+            fontSize = 13.sp,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+          )
         }
       }
     }
-
     Spacer(modifier = Modifier.height(24.dp))
   }
 
@@ -529,7 +520,7 @@ fun ManualLocationDialog(
         Icon(
           imageVector = Icons.Default.EditLocation,
           contentDescription = null,
-          tint = KisanEmerald,
+          tint = MaterialTheme.colorScheme.primary,
           modifier = Modifier.size(24.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -537,7 +528,7 @@ fun ManualLocationDialog(
           text = "Select Farm Location",
           fontSize = 17.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
       }
     },
@@ -550,7 +541,7 @@ fun ManualLocationDialog(
         Text(
           text = "GPS permission denied or manual fallback. Select your farming district to pull verified Open-Meteo weather and Penman-Monteith irrigation estimates:",
           fontSize = 12.sp,
-          color = KisanMutedSage,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
           lineHeight = 17.sp
         )
 
@@ -560,7 +551,7 @@ fun ManualLocationDialog(
           text = "Major Agricultural Hubs:",
           fontSize = 13.sp,
           fontWeight = FontWeight.SemiBold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(6.dp))
 
@@ -569,7 +560,7 @@ fun ManualLocationDialog(
             val isSelected = district.city.equals(customCity, ignoreCase = true)
             Surface(
               shape = RoundedCornerShape(10.dp),
-              color = if (isSelected) KisanEmeraldLight else KisanWarmIvory,
+              color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.background,
               modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
@@ -587,12 +578,12 @@ fun ManualLocationDialog(
                   text = "${district.city}, ${district.state}",
                   fontSize = 13.sp,
                   fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                  color = if (isSelected) KisanEmerald else KisanCharcoal
+                  color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
                 )
                 Text(
                   text = "${district.latitude}° N",
                   fontSize = 11.sp,
-                  color = KisanMutedSage
+                  color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
               }
             }
@@ -605,7 +596,7 @@ fun ManualLocationDialog(
           text = "Or Enter Custom District:",
           fontSize = 13.sp,
           fontWeight = FontWeight.SemiBold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(6.dp))
 
@@ -629,7 +620,7 @@ fun ManualLocationDialog(
       }
     },
     confirmButton = {
-      Button(
+      KisanPrimaryButton(
         onClick = {
           if (customCity.isNotBlank()) {
             val matched = AGRI_DISTRICTS.find { it.city.equals(customCity.trim(), ignoreCase = true) }
@@ -638,14 +629,14 @@ fun ManualLocationDialog(
             onSelectLocation(customCity.trim(), customState.trim().ifEmpty { "India" }, lat, lon)
           }
         },
-        colors = ButtonDefaults.buttonColors(containerColor = KisanEmerald)
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
       ) {
         Text("Apply Location")
       }
     },
     dismissButton = {
       TextButton(onClick = onDismiss) {
-        Text("Cancel", color = KisanMutedSage)
+        Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
       }
     }
   )
@@ -657,7 +648,7 @@ private fun WeatherMetricCol(icon: ImageVector, value: String, label: String) {
     Icon(
       imageVector = icon,
       contentDescription = label,
-      tint = KisanEmerald,
+      tint = MaterialTheme.colorScheme.primary,
       modifier = Modifier.size(22.dp)
     )
     Spacer(modifier = Modifier.height(6.dp))
@@ -665,12 +656,12 @@ private fun WeatherMetricCol(icon: ImageVector, value: String, label: String) {
       text = value,
       fontSize = 14.sp,
       fontWeight = FontWeight.Bold,
-      color = KisanCharcoal
+      color = MaterialTheme.colorScheme.onBackground
     )
     Text(
       text = label,
       fontSize = 11.sp,
-      color = KisanMutedSage
+      color = MaterialTheme.colorScheme.onSurfaceVariant
     )
   }
 }
@@ -685,7 +676,7 @@ private fun ForecastDayItem(forecast: DailyForecast) {
       text = "${forecast.dayLabel} ${forecast.dayNumber}",
       fontSize = 12.sp,
       fontWeight = FontWeight.Medium,
-      color = KisanCharcoal
+      color = MaterialTheme.colorScheme.onBackground
     )
     Spacer(modifier = Modifier.height(6.dp))
     Icon(
@@ -695,7 +686,7 @@ private fun ForecastDayItem(forecast: DailyForecast) {
         else -> Icons.Default.WbSunny
       },
       contentDescription = forecast.condition,
-      tint = if (forecast.condition.contains("Rain")) KisanEmerald else KisanHarvestGold,
+      tint = if (forecast.condition.contains("Rain")) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
       modifier = Modifier.size(22.dp)
     )
     Spacer(modifier = Modifier.height(6.dp))
@@ -703,7 +694,7 @@ private fun ForecastDayItem(forecast: DailyForecast) {
       text = "${forecast.temperatureC}°",
       fontSize = 13.sp,
       fontWeight = FontWeight.Bold,
-      color = KisanCharcoal
+      color = MaterialTheme.colorScheme.onBackground
     )
   }
 }

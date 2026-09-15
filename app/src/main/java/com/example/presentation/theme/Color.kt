@@ -5,108 +5,60 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
 // =========================================================================
-// KisanAI Brand Colors (Agricultural Identity)
+// Simple Light Brand Colors
 // =========================================================================
-val KisanDeepForest = Color(0xFF12372A)
-val KisanEmerald = Color(0xFF1F7A5A)
-val KisanHarvestGold = Color(0xFFD9A441)
-val KisanWarmIvory = Color(0xFFF7F5EF)
-val KisanCharcoal = Color(0xFF17211C)
-val KisanMutedSage = Color(0xFF68756D)
-val KisanEarthRed = Color(0xFFC94C4C)
+
+val KisanEmerald = Color(0xFF16A34A) // Clean, bright green
+val KisanDeepForest = Color(0xFF14532D) // Dark green for contrast
 val KisanWhite = Color(0xFFFFFFFF)
+val KisanBackground = Color(0xFFFAFAFA)
+val KisanSurfaceVariant = Color(0xFFF3F4F6)
+val KisanCharcoal = Color(0xFF1F2937) // Standard dark gray text
+val KisanMutedSage = Color(0xFF6B7280) // Muted gray for secondary text
+val KisanCardBorder = Color(0xFFE5E7EB) // Subtle border
 
-// Supplementary Tints & Surfaces
-val KisanEmeraldLight = Color(0xFFE8F5EE)
-val KisanGoldLight = Color(0xFFFEF7E6)
-val KisanSageLight = Color(0xFFEDF1EE)
-val KisanRedLight = Color(0xFFFDECEB)
-val KisanCardBorder = Color(0xFFE5E9E4)
-val KisanDivider = Color(0xFFEAECE8)
-
-// Semantic Agricultural Role Mappings
-val ForestGreenPrimary = KisanEmerald
-val ForestGreenOnPrimary = Color(0xFFFFFFFF)
-val ForestGreenContainer = KisanEmeraldLight
-val ForestGreenOnContainer = KisanDeepForest
-
-val HarvestAmber = KisanHarvestGold
-val HarvestAmberContainer = KisanGoldLight
-val HarvestAmberOnContainer = Color(0xFF451A03)
-
-val IrrigationBlue = Color(0xFF0284C7)
-val IrrigationBlueContainer = Color(0xFFE0F2FE)
-val IrrigationBlueOnContainer = Color(0xFF0C4A6E)
-
-// Dark Theme Variants
-val LightGreenPrimaryDark = Color(0xFF5CD29E)
-val ForestGreenContainerDark = Color(0xFF12372A)
-val HarvestAmberDark = Color(0xFFF5BE58)
-val HarvestAmberContainerDark = Color(0xFF5C410B)
-val IrrigationBlueDark = Color(0xFF38BDF8)
-val IrrigationBlueContainerDark = Color(0xFF075985)
-
-val AlertRed = KisanEarthRed
-val AlertYellow = KisanHarvestGold
-val HealthyGreen = KisanEmerald
-val SurfaceEarthy = KisanWarmIvory
-val SurfaceCard = Color(0xFFFFFFFF)
+val KisanEmeraldLight = Color(0xFFDCFCE7)
+val KisanHarvestGold = Color(0xFFF59E0B) // Warning/Amber
+val KisanEarthRed = Color(0xFFEF4444) // Error red
 
 // =========================================================================
 // Material 3 Color Schemes
 // =========================================================================
+
 val KisanLightColorScheme = lightColorScheme(
-  primary = ForestGreenPrimary,
-  onPrimary = ForestGreenOnPrimary,
-  primaryContainer = ForestGreenContainer,
-  onPrimaryContainer = ForestGreenOnContainer,
-  inversePrimary = LightGreenPrimaryDark,
-  secondary = HarvestAmber,
+  primary = KisanEmerald,
+  onPrimary = Color.White,
+  primaryContainer = KisanEmeraldLight,
+  onPrimaryContainer = KisanDeepForest,
+  
+  inversePrimary = KisanEmerald,
+  
+  secondary = KisanHarvestGold,
   onSecondary = Color.White,
-  secondaryContainer = HarvestAmberContainer,
-  onSecondaryContainer = HarvestAmberOnContainer,
-  tertiary = IrrigationBlue,
+  secondaryContainer = Color(0xFFFEF3C7),
+  onSecondaryContainer = Color(0xFF92400E),
+  
+  tertiary = Color(0xFF3B82F6),
   onTertiary = Color.White,
-  tertiaryContainer = IrrigationBlueContainer,
-  onTertiaryContainer = IrrigationBlueOnContainer,
+  tertiaryContainer = Color(0xFFDBEAFE),
+  onTertiaryContainer = Color(0xFF1E3A8A),
+  
   error = KisanEarthRed,
   onError = Color.White,
-  errorContainer = KisanRedLight,
-  onErrorContainer = Color(0xFF410002),
-  background = SurfaceEarthy,
+  errorContainer = Color(0xFFFEE2E2),
+  onErrorContainer = Color(0xFF991B1B),
+  
+  background = KisanBackground,
   onBackground = KisanCharcoal,
-  surface = SurfaceCard,
+  
+  surface = KisanWhite,
   onSurface = KisanCharcoal,
-  surfaceVariant = KisanSageLight,
+  
+  surfaceVariant = KisanSurfaceVariant,
   onSurfaceVariant = KisanMutedSage,
+  
   outline = KisanCardBorder,
-  outlineVariant = Color(0xFFD0D7D2)
+  outlineVariant = Color(0xFFD1D5DB)
 )
 
-val KisanDarkColorScheme = darkColorScheme(
-  primary = LightGreenPrimaryDark,
-  onPrimary = Color(0xFF003915),
-  primaryContainer = ForestGreenContainerDark,
-  onPrimaryContainer = Color(0xFFA6F4C5),
-  inversePrimary = ForestGreenPrimary,
-  secondary = HarvestAmberDark,
-  onSecondary = Color(0xFF451A03),
-  secondaryContainer = HarvestAmberContainerDark,
-  onSecondaryContainer = Color(0xFFFEF3C7),
-  tertiary = IrrigationBlueDark,
-  onTertiary = Color(0xFF00354E),
-  tertiaryContainer = IrrigationBlueContainerDark,
-  onTertiaryContainer = Color(0xFFCBE6FF),
-  error = Color(0xFFFFB4AB),
-  onError = Color(0xFF690005),
-  errorContainer = Color(0xFF93000A),
-  onErrorContainer = Color(0xFFFFDAD6),
-  background = Color(0xFF111813),
-  onBackground = Color(0xFFE2E8F0),
-  surface = Color(0xFF17211A),
-  onSurface = Color(0xFFE2E8F0),
-  surfaceVariant = Color(0xFF223026),
-  onSurfaceVariant = Color(0xFF94A39B),
-  outline = Color(0xFF3B4B40),
-  outlineVariant = Color(0xFF2B3A30)
-)
+val KisanDarkColorScheme = KisanLightColorScheme // Fallback just in case

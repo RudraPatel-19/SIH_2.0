@@ -1,9 +1,7 @@
 package com.example.data.model
 
 enum class AppLanguage(val code: String, val displayName: String, val nativeName: String) {
-  ENGLISH("en", "English", "English"),
-  HINDI("hi", "Hindi", "हिन्दी"),
-  GUJARATI("gu", "Gujarati", "ગુજરાતી")
+  ENGLISH("en", "English", "English")
 }
 
 data class AppStrings(
@@ -49,90 +47,7 @@ data class AppStrings(
 )
 
 object LocalizedStrings {
-  fun get(language: AppLanguage): AppStrings = when (language) {
-    AppLanguage.HINDI -> AppStrings(
-      appName = "किसानAI",
-      tagLine = "स्मार्ट कृषि सहायक • रोग पहचान और सिंचाई",
-      navHome = "होम",
-      navScan = "AI स्कैन",
-      navFarm = "मेरा खेत",
-      navHistory = "इतिहास",
-      aiScanTitle = "फसल रोग स्कैन",
-      aiScanSubtitle = "पत्ती की तस्वीर लें और तुरंत समाधान पाएं",
-      takePhoto = "कैमरा से फोटो लें",
-      uploadGallery = "गैलरी से चुनें",
-      testWithSample = "नमूना पत्ती से जांचें",
-      selectCrop = "फसल चुनें",
-      analyzingLeaf = "पत्ती का विश्लेषण हो रहा है (ऑफलाइन AI)...",
-      offlineModeActive = "ऑफलाइन AI मोड सक्रिय 📴",
-      diseaseDetected = "रोग का पता चला",
-      healthyCrop = "फसल स्वस्थ है!",
-      confidence = "सटीकता",
-      severity = "गंभीरता",
-      symptoms = "लक्षण",
-      treatmentOrganic = "जैविक उपचार",
-      treatmentChemical = "रासायनिक दवा व खुराक",
-      prevention = "रोकथाम के उपाय",
-      estimatedCost = "अनुमानित खर्च",
-      saveToHistory = "इतिहास में सुरक्षित करें",
-      savedSuccess = "स्कैन इतिहास में सहेजा गया",
-      weatherToday = "आज का मौसम एवं कृषि सलाह",
-      irrigationAdvisory = "सिंचाई सलाह",
-      needIrrigation = "सिंचाई की आवश्यकता है",
-      noIrrigationNeeded = "अभी सिंचाई न करें (वर्षा की संभावना)",
-      riskAlertTitle = "मौसम जोखिम चेतावनी",
-      myFarmTitle = "मेरे खेत की फसलें",
-      addCrop = "नई फसल जोड़ें",
-      cropStage = "फसल की अवस्था",
-      area = "क्षेत्रफल (एकड़)",
-      sowingDate = "बुवाई की तिथि",
-      farmerProfile = "किसान प्रोफ़ाइल",
-      farmLocation = "खेत का स्थान",
-      noScansYet = "अभी तक कोई स्कैन नहीं हुआ है",
-      scanNow = "अभी स्कैन करें"
-    )
-    AppLanguage.GUJARATI -> AppStrings(
-      appName = "કિસાનAI",
-      tagLine = "સ્માર્ટ કૃષિ સહાયક • રોગ નિદાન અને પિયત સલાહ",
-      navHome = "હોમ",
-      navScan = "AI સ્કેન",
-      navFarm = "મારું ખેતર",
-      navHistory = "ઇતિહાસ",
-      aiScanTitle = "પાક રોગ સ્કેનર",
-      aiScanSubtitle = "પાંદડાનો ફોટો પાડો અને તાત્કાલિક ઉપાય મેળવો",
-      takePhoto = "કેમેરાથી ફોટો લો",
-      uploadGallery = "ગેલેરીમાંથી પસંદ કરો",
-      testWithSample = "નમૂના પાંદડાથી ચકાસો",
-      selectCrop = "પાક પસંદ કરો",
-      analyzingLeaf = "પાંદડાનું વિશ્લેષણ ચાલુ છે (ઓફલાઇન AI)...",
-      offlineModeActive = "ઓફલાઇન AI મોડ સક્રિય 📴",
-      diseaseDetected = "રોગ જણાયો છે",
-      healthyCrop = "પાક તંદુરસ્ત છે!",
-      confidence = "ચોકસાઈ",
-      severity = "તીવ્રતા",
-      symptoms = "લક્ષણો",
-      treatmentOrganic = "સજીવ / જૈવિક નિયંત્રણ",
-      treatmentChemical = "રાસાયણિક દવા અને પ્રમાણ",
-      prevention = "આગામી તકેદારી",
-      estimatedCost = "અંદાજિત ખર્ચ",
-      saveToHistory = "ઇતિહાસમાં સાચવો",
-      savedSuccess = "સ્કેન સાચવી લેવામાં આવ્યું છે",
-      weatherToday = "આજનું હવામાન અને કૃષિ સલાહ",
-      irrigationAdvisory = "પિયત સલાહ",
-      needIrrigation = "પિયત આપવાની જરૂર છે",
-      noIrrigationNeeded = "હમણાં પિયત ન આપવું (વરસાદની શક્યતા)",
-      riskAlertTitle = "હવામાન જોખમ ચેતવણી",
-      myFarmTitle = "મારા ખેતરના પાકો",
-      addCrop = "નવો પાક ઉમેરો",
-      cropStage = "પાકની અવસ્થા",
-      area = "વિસ્તાર (એકર/વીઘા)",
-      sowingDate = "વાવણી તારીખ",
-      farmerProfile = "ખેડૂત પ્રોફાઇલ",
-      farmLocation = "ખેતરનું સ્થળ",
-      noScansYet = "હજી સુધી કોઈ સ્કેન થયેલ નથી",
-      scanNow = "હમણાં સ્કેન કરો"
-    )
-    AppLanguage.ENGLISH -> AppStrings(
+  fun get(language: AppLanguage): AppStrings = AppStrings(
       appName = "KisanAI",
       tagLine = "Smart Farming Assistant • Disease Detection & Irrigation",
       navHome = "Home",
@@ -173,5 +88,4 @@ object LocalizedStrings {
       noScansYet = "No crop scans recorded yet",
       scanNow = "Scan Crop Now"
     )
-  }
 }

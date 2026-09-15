@@ -1,5 +1,8 @@
 package com.example.ui.screens
 
+import androidx.compose.material3.MaterialTheme
+
+
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
@@ -55,11 +58,11 @@ import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
+import com.example.presentation.components.KisanPrimaryButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -84,14 +87,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.example.ui.theme.KisanCharcoal
-import com.example.ui.theme.KisanDeepForest
-import com.example.ui.theme.KisanEmerald
-import com.example.ui.theme.KisanEmeraldLight
-import com.example.ui.theme.KisanHarvestGold
-import com.example.ui.theme.KisanMutedSage
-import com.example.ui.theme.KisanWarmIvory
-import com.example.ui.theme.KisanWhite
 
 private const val TAG = "CropScannerScreen"
 
@@ -376,7 +371,7 @@ private fun TopControlBar(
     Surface(
       shape = RoundedCornerShape(20.dp),
       color = Color.Black.copy(alpha = 0.65f),
-      border = BorderStroke(1.dp, KisanEmerald.copy(alpha = 0.8f)),
+      border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)),
       modifier = Modifier.testTag("camera_crop_context_badge")
     ) {
       Row(
@@ -386,7 +381,7 @@ private fun TopControlBar(
         Icon(
           imageVector = Icons.Default.Eco,
           contentDescription = null,
-          tint = KisanEmeraldLight,
+          tint = MaterialTheme.colorScheme.primaryContainer,
           modifier = Modifier.size(16.dp)
         )
         Spacer(modifier = Modifier.width(6.dp))
@@ -404,7 +399,7 @@ private fun TopControlBar(
       // Torch
       Surface(
         shape = CircleShape,
-        color = if (isTorchOn) KisanHarvestGold else Color.Black.copy(alpha = 0.45f),
+        color = if (isTorchOn) MaterialTheme.colorScheme.secondary else Color.Black.copy(alpha = 0.45f),
         modifier = Modifier.size(44.dp)
       ) {
         IconButton(
@@ -414,7 +409,7 @@ private fun TopControlBar(
           Icon(
             imageVector = if (isTorchOn) Icons.Default.FlashOn else Icons.Default.FlashOff,
             contentDescription = "Torch",
-            tint = if (isTorchOn) KisanCharcoal else Color.White,
+            tint = if (isTorchOn) MaterialTheme.colorScheme.onBackground else Color.White,
             modifier = Modifier.size(20.dp)
           )
         }
@@ -490,7 +485,7 @@ private fun ViewfinderOverlay(
           modifier = Modifier.fillMaxSize(),
           bracketLength = 28.dp,
           bracketThickness = 3.5.dp,
-          color = KisanEmerald
+          color = MaterialTheme.colorScheme.primary
         )
 
         // Animated Laser Beam
@@ -503,9 +498,9 @@ private fun ViewfinderOverlay(
               brush = Brush.horizontalGradient(
                 listOf(
                   Color.Transparent,
-                  KisanEmerald.copy(alpha = 0.7f),
+                  MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
                   Color(0xFF69F0AE),
-                  KisanEmerald.copy(alpha = 0.7f),
+                  MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
                   Color.Transparent
                 )
               )
@@ -646,7 +641,7 @@ private fun BottomShutterSection(
     ) {
       if (isCapturing) {
         CircularProgressIndicator(
-          color = KisanEmerald,
+          color = MaterialTheme.colorScheme.primary,
           strokeWidth = 3.dp,
           modifier = Modifier.size(54.dp)
         )
@@ -662,7 +657,7 @@ private fun BottomShutterSection(
             modifier = Modifier
               .size(56.dp)
               .clip(CircleShape)
-              .background(KisanEmerald)
+              .background(MaterialTheme.colorScheme.primary)
               .align(Alignment.Center)
           ) {
             Icon(
@@ -701,7 +696,7 @@ private fun CameraPermissionFallbackView(
   Column(
     modifier = modifier
       .fillMaxSize()
-      .background(KisanWarmIvory)
+      .background(MaterialTheme.colorScheme.background)
       .statusBarsPadding()
       .padding(24.dp),
     horizontalAlignment = Alignment.CenterHorizontally,
@@ -709,14 +704,14 @@ private fun CameraPermissionFallbackView(
   ) {
     Surface(
       shape = CircleShape,
-      color = KisanEmeraldLight,
+      color = MaterialTheme.colorScheme.primaryContainer,
       modifier = Modifier.size(88.dp)
     ) {
       Box(contentAlignment = Alignment.Center) {
         Icon(
           imageVector = Icons.Default.PhotoCamera,
           contentDescription = null,
-          tint = KisanDeepForest,
+          tint = MaterialTheme.colorScheme.onPrimaryContainer,
           modifier = Modifier.size(44.dp)
         )
       }
@@ -728,7 +723,7 @@ private fun CameraPermissionFallbackView(
       text = "Camera Permission Required",
       fontSize = 20.sp,
       fontWeight = FontWeight.Bold,
-      color = KisanCharcoal,
+      color = MaterialTheme.colorScheme.onBackground,
       textAlign = TextAlign.Center
     )
 
@@ -737,7 +732,7 @@ private fun CameraPermissionFallbackView(
     Text(
       text = "KisanAI uses your device's camera to scan crop leaves, diagnose plant diseases, and recommend immediate treatment in real-time.",
       fontSize = 14.sp,
-      color = KisanMutedSage,
+      color = MaterialTheme.colorScheme.onSurfaceVariant,
       textAlign = TextAlign.Center,
       lineHeight = 20.sp,
       modifier = Modifier.padding(horizontal = 16.dp)
@@ -745,10 +740,10 @@ private fun CameraPermissionFallbackView(
 
     Spacer(modifier = Modifier.height(32.dp))
 
-    Button(
+    KisanPrimaryButton(
       onClick = onRequestPermission,
       shape = RoundedCornerShape(14.dp),
-      colors = ButtonDefaults.buttonColors(containerColor = KisanEmerald),
+      colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
       modifier = Modifier
         .fillMaxWidth()
         .height(50.dp)
@@ -764,12 +759,12 @@ private fun CameraPermissionFallbackView(
 
     Spacer(modifier = Modifier.height(14.dp))
 
-    Button(
+    KisanPrimaryButton(
       onClick = onClose,
       shape = RoundedCornerShape(14.dp),
       colors = ButtonDefaults.buttonColors(
         containerColor = Color.Transparent,
-        contentColor = KisanMutedSage
+        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
       ),
       modifier = Modifier.fillMaxWidth()
     ) {

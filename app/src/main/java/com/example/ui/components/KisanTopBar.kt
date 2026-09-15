@@ -1,5 +1,8 @@
 package com.example.ui.components
 
+import androidx.compose.material3.MaterialTheme
+
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -19,7 +22,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -104,49 +106,6 @@ fun KisanTopBar(
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onPrimaryContainer
           )
-        }
-      }
-
-      // Language Switcher Dropdown
-      Box {
-        IconButton(
-          onClick = { showLanguageMenu = true },
-          modifier = Modifier.testTag("language_switch_button")
-        ) {
-          Icon(
-            imageVector = Icons.Default.Language,
-            contentDescription = "Select Language",
-            tint = MaterialTheme.colorScheme.primary
-          )
-        }
-
-        DropdownMenu(
-          expanded = showLanguageMenu,
-          onDismissRequest = { showLanguageMenu = false }
-        ) {
-          AppLanguage.values().forEach { language ->
-            DropdownMenuItem(
-              text = {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                  Text(
-                    text = language.nativeName,
-                    fontWeight = if (language == currentLanguage) FontWeight.Bold else FontWeight.Normal,
-                    color = if (language == currentLanguage) MaterialTheme.colorScheme.primary else Color.Unspecified
-                  )
-                  Spacer(modifier = Modifier.width(6.dp))
-                  Text(
-                    text = "(${language.displayName})",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                  )
-                }
-              },
-              onClick = {
-                onLanguageSelected(language)
-                showLanguageMenu = false
-              }
-            )
-          }
         }
       }
 

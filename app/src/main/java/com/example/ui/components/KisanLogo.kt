@@ -1,5 +1,8 @@
 package com.example.ui.components
 
+import androidx.compose.material3.MaterialTheme
+
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,10 +26,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ui.theme.KisanDeepForest
-import com.example.ui.theme.KisanEmerald
-import com.example.ui.theme.KisanHarvestGold
-import com.example.ui.theme.KisanMutedSage
 
 /**
  * High fidelity vector drawing of the KisanAI 3-petal brand logo icon.
@@ -36,9 +35,9 @@ import com.example.ui.theme.KisanMutedSage
 fun KisanLogoIcon(
   modifier: Modifier = Modifier,
   size: Dp = 48.dp,
-  primaryColor: Color = KisanDeepForest,
-  secondaryColor: Color = KisanEmerald,
-  accentGoldColor: Color = KisanHarvestGold
+  primaryColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
+  secondaryColor: Color = MaterialTheme.colorScheme.primary,
+  accentGoldColor: Color = MaterialTheme.colorScheme.secondary
 ) {
   Canvas(modifier = modifier.size(size)) {
     val w = this.size.width
@@ -93,13 +92,13 @@ fun KisanLogoHeader(
   showTagline: Boolean = false,
   orientation: LogoOrientation = LogoOrientation.HORIZONTAL
 ) {
-  val kisanColor = if (isDarkTheme) Color.White else KisanDeepForest
+  val kisanColor = if (isDarkTheme) Color.White else MaterialTheme.colorScheme.onPrimaryContainer
 
   val annotatedTitle = buildAnnotatedString {
     withStyle(SpanStyle(color = kisanColor, fontWeight = FontWeight.Bold)) {
       append("Kisan")
     }
-    withStyle(SpanStyle(color = KisanHarvestGold, fontWeight = FontWeight.ExtraBold)) {
+    withStyle(SpanStyle(color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.ExtraBold)) {
       append("AI")
     }
   }
@@ -112,9 +111,9 @@ fun KisanLogoHeader(
     ) {
       KisanLogoIcon(
         size = iconSize,
-        primaryColor = if (isDarkTheme) Color.White.copy(alpha = 0.85f) else KisanDeepForest,
-        secondaryColor = if (isDarkTheme) KisanEmerald else KisanEmerald,
-        accentGoldColor = KisanHarvestGold
+        primaryColor = if (isDarkTheme) Color.White.copy(alpha = 0.85f) else MaterialTheme.colorScheme.onPrimaryContainer,
+        secondaryColor = if (isDarkTheme) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary,
+        accentGoldColor = MaterialTheme.colorScheme.secondary
       )
       Spacer(modifier = Modifier.width(10.dp))
       Column {
@@ -127,7 +126,7 @@ fun KisanLogoHeader(
           Text(
             text = "AI-powered intelligence for healthier crops.",
             fontSize = 11.sp,
-            color = if (isDarkTheme) Color.White.copy(alpha = 0.75f) else KisanMutedSage
+            color = if (isDarkTheme) Color.White.copy(alpha = 0.75f) else MaterialTheme.colorScheme.onSurfaceVariant
           )
         }
       }
@@ -139,9 +138,9 @@ fun KisanLogoHeader(
     ) {
       KisanLogoIcon(
         size = iconSize,
-        primaryColor = if (isDarkTheme) Color.White.copy(alpha = 0.9f) else KisanDeepForest,
-        secondaryColor = if (isDarkTheme) KisanEmerald else KisanEmerald,
-        accentGoldColor = KisanHarvestGold
+        primaryColor = if (isDarkTheme) Color.White.copy(alpha = 0.9f) else MaterialTheme.colorScheme.onPrimaryContainer,
+        secondaryColor = if (isDarkTheme) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary,
+        accentGoldColor = MaterialTheme.colorScheme.secondary
       )
       Spacer(modifier = Modifier.height(12.dp))
       Text(
@@ -154,7 +153,7 @@ fun KisanLogoHeader(
         Text(
           text = "AI-powered intelligence for healthier crops.",
           fontSize = 13.sp,
-          color = if (isDarkTheme) Color.White.copy(alpha = 0.85f) else KisanMutedSage,
+          color = if (isDarkTheme) Color.White.copy(alpha = 0.85f) else MaterialTheme.colorScheme.onSurfaceVariant,
           fontWeight = FontWeight.Medium
         )
       }

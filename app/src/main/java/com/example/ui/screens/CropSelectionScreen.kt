@@ -1,5 +1,8 @@
 package com.example.ui.screens
 
+import androidx.compose.material3.MaterialTheme
+
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
@@ -34,8 +37,10 @@ import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.RadioButtonChecked
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material3.Button
+import com.example.presentation.components.KisanPrimaryButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import com.example.presentation.components.KisanCard
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -57,15 +62,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.KisanViewModel
-import com.example.ui.theme.KisanCardBorder
-import com.example.ui.theme.KisanCharcoal
-import com.example.ui.theme.KisanDeepForest
-import com.example.ui.theme.KisanEmerald
-import com.example.ui.theme.KisanEmeraldLight
-import com.example.ui.theme.KisanHarvestGold
-import com.example.ui.theme.KisanMutedSage
-import com.example.ui.theme.KisanWarmIvory
-import com.example.ui.theme.KisanWhite
 
 /**
  * Data representation for crop selection items.
@@ -191,8 +187,7 @@ fun CropSelectionScreen(
   Column(
     modifier = modifier
       .fillMaxSize()
-      .background(KisanWarmIvory)
-      .statusBarsPadding()
+      .background(MaterialTheme.colorScheme.background)
       .testTag("crop_selection_screen")
   ) {
     // Top Navigation Bar
@@ -208,41 +203,12 @@ fun CropSelectionScreen(
       item {
         Spacer(modifier = Modifier.height(6.dp))
 
-        // Step Indicator: Step 1 of 2
-        Row(
-          verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-          Surface(
-            shape = RoundedCornerShape(8.dp),
-            color = KisanEmeraldLight,
-            modifier = Modifier.padding(end = 4.dp)
-          ) {
-            Text(
-              text = "STEP 1 OF 2",
-              fontSize = 11.sp,
-              fontWeight = FontWeight.Bold,
-              color = KisanEmerald,
-              modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-            )
-          }
-
-          Text(
-            text = "Prior Context Setup",
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Medium,
-            color = KisanMutedSage
-          )
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
         // Title and Subtitle
         Text(
           text = "Select Crop Type",
           fontSize = 24.sp,
           fontWeight = FontWeight.Bold,
-          color = KisanCharcoal
+          color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -250,17 +216,17 @@ fun CropSelectionScreen(
         Text(
           text = "Selecting your crop beforehand provides biological priors to the detection model, eliminating cross-species false positives.",
           fontSize = 13.sp,
-          color = KisanMutedSage,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
           lineHeight = 18.sp
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
         // Model Context Explanation Card
-        Card(
+        KisanCard(
           shape = RoundedCornerShape(16.dp),
-          colors = CardDefaults.cardColors(containerColor = KisanWhite),
-          border = BorderStroke(1.dp, KisanCardBorder),
+          colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+          border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
           modifier = Modifier.fillMaxWidth()
         ) {
           Row(
@@ -272,13 +238,13 @@ fun CropSelectionScreen(
               modifier = Modifier
                 .size(36.dp)
                 .clip(CircleShape)
-                .background(KisanEmeraldLight),
+                .background(MaterialTheme.colorScheme.primaryContainer),
               contentAlignment = Alignment.Center
             ) {
               Icon(
                 imageVector = Icons.Default.Psychology,
                 contentDescription = null,
-                tint = KisanEmerald,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(20.dp)
               )
             }
@@ -288,13 +254,13 @@ fun CropSelectionScreen(
                 text = "Why select a crop first?",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = KisanCharcoal
+                color = MaterialTheme.colorScheme.onBackground
               )
               Spacer(modifier = Modifier.height(2.dp))
               Text(
                 text = "Conditions the classifier's output probabilities to only focus on known pathogens for ${currentCropItem.name}, increasing detection confidence by up to 25%.",
                 fontSize = 12.sp,
-                color = KisanMutedSage,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 lineHeight = 16.sp
               )
             }
@@ -323,11 +289,9 @@ fun CropSelectionScreen(
 
     // Bottom Sticky CTA
     Surface(
-      color = KisanWhite,
+      color = MaterialTheme.colorScheme.surface,
       shadowElevation = 8.dp,
-      modifier = Modifier
-        .fillMaxWidth()
-        .navigationBarsPadding()
+      modifier = Modifier.fillMaxWidth()
     ) {
       Column(
         modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp)
@@ -341,7 +305,7 @@ fun CropSelectionScreen(
             Text(
               text = "Selected Context",
               fontSize = 11.sp,
-              color = KisanMutedSage
+              color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Row(
               verticalAlignment = Alignment.CenterVertically,
@@ -355,20 +319,20 @@ fun CropSelectionScreen(
                 text = currentCropItem.name,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
-                color = KisanCharcoal
+                color = MaterialTheme.colorScheme.onBackground
               )
             }
           }
 
           Surface(
             shape = RoundedCornerShape(10.dp),
-            color = KisanEmeraldLight
+            color = MaterialTheme.colorScheme.primaryContainer
           ) {
             Text(
               text = currentCropItem.modelAccuracy,
               fontSize = 11.sp,
               fontWeight = FontWeight.SemiBold,
-              color = KisanEmerald,
+              color = MaterialTheme.colorScheme.primary,
               modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
             )
           }
@@ -376,12 +340,12 @@ fun CropSelectionScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Button(
+        KisanPrimaryButton(
           onClick = onProceedToScan,
           shape = RoundedCornerShape(16.dp),
           colors = ButtonDefaults.buttonColors(
-            containerColor = KisanEmerald,
-            contentColor = KisanWhite
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.surface
           ),
           modifier = Modifier
             .fillMaxWidth()
@@ -421,15 +385,15 @@ private fun CropCard(
   onClick: () -> Unit
 ) {
   val borderColor by animateColorAsState(
-    targetValue = if (isSelected) KisanEmerald else KisanCardBorder,
+    targetValue = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
     label = "borderColor"
   )
   val backgroundColor by animateColorAsState(
-    targetValue = if (isSelected) KisanWhite else KisanWhite,
+    targetValue = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surface,
     label = "bgColor"
   )
 
-  Card(
+  KisanCard(
     shape = RoundedCornerShape(16.dp),
     colors = CardDefaults.cardColors(containerColor = backgroundColor),
     border = BorderStroke(if (isSelected) 2.dp else 1.dp, borderColor),
@@ -448,7 +412,7 @@ private fun CropCard(
         modifier = Modifier
           .size(50.dp)
           .clip(CircleShape)
-          .background(if (isSelected) KisanEmeraldLight else KisanWarmIvory),
+          .background(if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
       ) {
         Text(
@@ -467,12 +431,12 @@ private fun CropCard(
             text = crop.name,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
-            color = KisanCharcoal
+            color = MaterialTheme.colorScheme.onBackground
           )
           Text(
             text = "• ${crop.category}",
             fontSize = 11.sp,
-            color = KisanMutedSage
+            color = MaterialTheme.colorScheme.onSurfaceVariant
           )
         }
 
@@ -481,7 +445,7 @@ private fun CropCard(
         Text(
           text = crop.vernacularName,
           fontSize = 12.sp,
-          color = KisanEmerald,
+          color = MaterialTheme.colorScheme.primary,
           fontWeight = FontWeight.Medium
         )
 
@@ -491,7 +455,7 @@ private fun CropCard(
           text = crop.botanicalName,
           fontSize = 11.sp,
           fontStyle = FontStyle.Italic,
-          color = KisanMutedSage
+          color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         Spacer(modifier = Modifier.height(6.dp))
@@ -503,12 +467,12 @@ private fun CropCard(
           crop.primaryDiseases.take(2).forEach { disease ->
             Surface(
               shape = RoundedCornerShape(6.dp),
-              color = KisanWarmIvory
+              color = MaterialTheme.colorScheme.background
             ) {
               Text(
                 text = disease,
                 fontSize = 10.sp,
-                color = KisanCharcoal,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
               )
             }
@@ -516,12 +480,12 @@ private fun CropCard(
           if (crop.primaryDiseases.size > 2) {
             Surface(
               shape = RoundedCornerShape(6.dp),
-              color = KisanWarmIvory
+              color = MaterialTheme.colorScheme.background
             ) {
               Text(
                 text = "+${crop.primaryDiseases.size - 2}",
                 fontSize = 10.sp,
-                color = KisanMutedSage,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
               )
             }
@@ -533,7 +497,7 @@ private fun CropCard(
       Icon(
         imageVector = if (isSelected) Icons.Default.RadioButtonChecked else Icons.Default.RadioButtonUnchecked,
         contentDescription = if (isSelected) "Selected" else "Not selected",
-        tint = if (isSelected) KisanEmerald else KisanMutedSage,
+        tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.size(24.dp)
       )
     }
@@ -557,15 +521,15 @@ private fun CropSelectionTopBar(
       Icon(
         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
         contentDescription = "Back",
-        tint = KisanCharcoal
+        tint = MaterialTheme.colorScheme.onBackground
       )
     }
 
     Text(
-      text = "KisanAI Crop Context",
-      fontSize = 17.sp,
+      text = "AI Crop Scan",
+      fontSize = 18.sp,
       fontWeight = FontWeight.SemiBold,
-      color = KisanCharcoal,
+      color = MaterialTheme.colorScheme.onBackground,
       modifier = Modifier.padding(start = 4.dp)
     )
   }

@@ -20,9 +20,7 @@ data class CropDisease(
   val chemicalTreatment: String,
   val dosage: String,
   val estimatedCostInr: String,
-  val preventiveMeasures: List<String>,
-  val adviceHindi: String,
-  val adviceGujarati: String
+  val preventiveMeasures: List<String>
 )
 
 data class SampleSpecimen(
